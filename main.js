@@ -16,17 +16,24 @@ function createWindow() {
         }
     })
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+
     win.loadFile('./src/views/index.html')
+
+    // Botões
+    ipcMain.on('open-client', () => {
+        clientWindow()
+    })
 }
 
+// Janela sobre
 function aboutWindow() {
     nativeTheme.themeSource = 'dark'
     const main = BrowserWindow.getFocusedWindow()
     let about
     if (main) {
         about = new BrowserWindow({
-            width: 320,
-            height: 210,
+            width: 360,
+            height: 215,
             autoHideMenuBar: true,
             resizable: false,
             minimizable: false,
@@ -39,12 +46,33 @@ function aboutWindow() {
     }
 
     about.loadFile('./src/views/sobre.html')
+
     ipcMain.on('close-about', () => {
         console.log("Recebi a mensagem close-about")
         if (about && !about.isDestroyed()) {
             about.close()
         }
     })
+}
+
+// Janela clientes
+function clientWindow() {
+    nativeTheme.themeSource = 'dark'
+    const main = BrowserWindow.getFocusedWindow()
+    let client
+    if (main) {
+        client = new BrowserWindow({
+            width: 800,
+            height: 600,
+            autoHideMenuBar: true,
+            parent: main,
+            modal: true,
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js')
+            }
+        })
+    }
+    client.loadFile('./src/views/clientes.html')
 }
 
 app.whenReady().then(() => {

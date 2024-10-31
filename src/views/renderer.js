@@ -2,8 +2,11 @@
  * Processos de renderização
  */
 
-console.log("Processo de renderização")
-
+// Botões
 function fechar() {
     api.fecharJanela()
+}
+
+function clientes() {
+    api.janelaClientes()
 }
