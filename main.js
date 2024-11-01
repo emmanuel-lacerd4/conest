@@ -23,6 +23,18 @@ function createWindow() {
     ipcMain.on('open-client', () => {
         clientWindow()
     })
+
+    ipcMain.on('open-supplier', () => {
+        supplierWindow()
+    })
+
+    ipcMain.on('open-product', () => {
+        productWindow()
+    })
+
+    ipcMain.on('open-report', () => {
+        reportWindow()
+    })
 }
 
 // Janela sobre
@@ -73,6 +85,66 @@ function clientWindow() {
         })
     }
     client.loadFile('./src/views/clientes.html')
+}
+
+// Janela fornecedores
+function supplierWindow() {
+    nativeTheme.themeSource = 'dark'
+    const main = BrowserWindow.getFocusedWindow()
+    let supplier
+    if (main) {
+        supplier = new BrowserWindow({
+            width: 800,
+            height: 600,
+            autoHideMenuBar: true,
+            parent: main,
+            modal: true,
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js')
+            }
+        })
+    }
+    supplier.loadFile('./src/views/fornecedores.html')
+}
+
+// Janela produtos
+function productWindow() {
+    nativeTheme.themeSource = 'dark'
+    const main = BrowserWindow.getFocusedWindow()
+    let product
+    if (main) {
+        product = new BrowserWindow({
+            width: 800,
+            height: 600,
+            autoHideMenuBar: true,
+            parent: main,
+            modal: true,
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js')
+            }
+        })
+    }
+    product.loadFile('./src/views/produtos.html')
+}
+
+// Janela relatórios
+function reportWindow() {
+    nativeTheme.themeSource = 'dark'
+    const main = BrowserWindow.getFocusedWindow()
+    let report
+    if (main) {
+        report = new BrowserWindow({
+            width: 800,
+            height: 600,
+            autoHideMenuBar: true,
+            parent: main,
+            modal: true,
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js')
+            }
+        })
+    }
+    report.loadFile('./src/views/relatorios.html')
 }
 
 app.whenReady().then(() => {
