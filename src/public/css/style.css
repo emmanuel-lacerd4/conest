@@ -7,3 +7,24 @@
     border: 1px solid #e8e8e8;
     cursor: pointer;
 }
+
+/* Rodapé */
+footer {
+    background-color: #007acc;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    bottom: 0;
+}
+
+footer p {
+    color: #fff;
+    margin-left: 10px;
+}
+
+footer img {
+    margin-right: 10px;
+}
