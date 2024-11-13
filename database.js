@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 
 /* Definir a URL e autenticação do Banco de Dados */
 
-const url = ''
+const url = 'mongodb+srv://admin:123%40senac@dbmongo.0lqvd.mongodb.net/'
 
 /* Status de Conexão (Icone de Conexão) */
 
