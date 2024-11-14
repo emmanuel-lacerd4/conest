@@ -37,3 +37,13 @@ function obterData() {
 }
 
 document.getElementById('dataAtual').innerHTML = obterData()
+
+// Ícone status do banco de dados
+api.dbMensagem((event, message) => {
+    // Validação e troca de ícone
+    if  (message === "conectado") {
+        document.getElementById('iconDB').src = "../public/img/dbon.png"
+    } else {
+        document.getElementById('iconDB').src = "../public/img/dboff.png"
+    }
+})

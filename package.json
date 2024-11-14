@@ -18,5 +18,8 @@
   "homepage": "https://github.com/emmanuel-lacerd4/conest#readme",
   "devDependencies": {
     "electron": "^33.0.2"
+  },
+  "dependencies": {
+    "mongoose": "^8.8.1"
   }
 }
