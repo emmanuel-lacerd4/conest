@@ -10,7 +10,10 @@ const { dbConnect, desconectar } = require('./database.js')
 
 // Status de conexão com o banco de dados. No MongoDB é mais eficiente manter uma única conexão aberta durante todo o tempo de vida do aplicativo e usá-la quando necessário. Fechar e reabrir constantemente a conexão aumenta a sobrecarga e reduz o desempenho do servidor.
 // A variável abaixo é usada para garantir que o banco de dados inicie desconectado (evitar abrir outra instância)
-let dbconnect = null
+let dbcon = null
+
+// Importação do Schema Clientes da camada model
+const clienteModel = require('./src/models/Clientes.js')
 
 // Janela principal
 let win
