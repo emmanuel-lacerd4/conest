@@ -15,6 +15,12 @@ let dbcon = null
 // Importação do Schema Clientes da camada model
 const clienteModel = require('./src/models/Clientes.js')
 
+// Importação do Schema Fornecedores da camada model
+const fornecedorModel = require('./src/models/Fornecedores.js')
+
+// Importação do Schema Produtos da camada model
+const produtoModel = require('./src/models/Produtos')
+
 // Janela principal
 let win
 function createWindow() {
@@ -234,9 +240,12 @@ const template = [
         ]
     }
 ]
+/***********************************************/
+/****************** Clientes ******************/
+/*********************************************/
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Recebimento dos dados de formulário
+// Recebimento dos dados de formulário clientes
 ipcMain.on('new-client', async (event, cliente) => {
     // Teste de recebimento dos dados (Passo 2 - slide) Importante!
     console.log(cliente)
@@ -257,6 +266,78 @@ ipcMain.on('new-client', async (event, cliente) => {
             type: 'info',
             title: "Aviso",
             message: "Cliente adicionado com sucesso!",
+            buttons: ['OK']
+        })
+        // Enviar uma resposta para o renderizador resetar o form
+        event.reply('reset-form')
+
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+/***********************************************/
+/**************** Fornecedores ****************/
+/*********************************************/
+
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Recebimento dos dados de formulário fornecedores
+ipcMain.on('new-supplier', async (event, fornecedor) => {
+    // Teste de recebimento dos dados (Passo 2 - slide) Importante!
+    console.log(fornecedor)
+
+    // Passo 3 - slide (cadastrar os dados no banco de dados)
+    try {
+        // Criar um novo objeto usando a classe modelo
+        const novoFornecedor = new fornecedorModel({
+            nomeFornecedor: fornecedor.nomeFor,
+            foneFornecedor: fornecedor.foneFor,
+            siteFornecedor: fornecedor.siteFor
+        })
+        // A linha abaixo usa a biblioteca mongoose para salvar
+        await novoFornecedor.save()
+
+        // Confirmação de cliente adicionado no banco de dados
+        dialog.showMessageBox({
+            type: 'info',
+            title: "Aviso",
+            message: "Fornecedor adicionado com sucesso!",
+            buttons: ['OK']
+        })
+        // Enviar uma resposta para o renderizador resetar o form
+        event.reply('reset-form')
+
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+/***********************************************/
+/****************** Produtos ******************/
+/*********************************************/
+
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Recebimento dos dados de formulário produtos
+ipcMain.on('new-product', async (event, produto) => {
+    // Teste de recebimento dos dados (Passo 2 - slide) Importante!
+    console.log(produto)
+
+    // Passo 3 - slide (cadastrar os dados no banco de dados)
+    try {
+        // Criar um novo objeto usando a classe modelo
+        const novoProduto = new produtoModel({
+            nomeProduto: produto.nomePro,
+            codProduto: produto.codPro,
+            precoProduto: produto.precoPro
+        })
+        // A linha abaixo usa a biblioteca mongoose para salvar
+        await novoProduto.save()
+
+        // Confirmação de cliente adicionado no banco de dados
+        dialog.showMessageBox({
+            type: 'info',
+            title: "Aviso",
+            message: "Produto adicionado com sucesso!",
             buttons: ['OK']
         })
         // Enviar uma resposta para o renderizador resetar o form
