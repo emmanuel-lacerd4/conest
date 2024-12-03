@@ -15,6 +15,27 @@ const clienteSchema = new Schema({
     },
     emailCliente: {
         type: String
+    },
+    cepCliente: {
+        type: String
+    },
+    cidadeCliente: {
+        type: String
+    },
+    ufCliente: {
+        type: String
+    },
+    logradouroCliente: {
+        type: String
+    },
+    numeroCliente: {
+        type: String
+    },
+    complementoCliente: {
+        type: String
+    },
+    bairroCliente: {
+        type: String
     }
 })
 

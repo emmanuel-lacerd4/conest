@@ -1,65 +1,168 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br;">
     <title>CONEST - Clientes</title>
     <link rel="stylesheet" href="../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="../public/css/style.css">
+    <script>
+        function formatCep(value) {
+            value = value.replace(/\D/g, '');
+            return value.replace(/(\d{5})(\d)/, '$1-$2');
+        }
+
+        function buscarEndereco() {
+            let cep = document.getElementById('inputCepClient').value;
+            let urlAPI = `https://viacep.com.br/ws/${cep}/json/`;
+
+            fetch(urlAPI)
+                .then(response => response.json())
+                .then(dados => {
+                    document.getElementById('inputStreetClient').value = dados.logradouro;
+                    document.getElementById('inputNeighborhoodClient').value = dados.bairro;
+                    document.getElementById('inputCityClient').value = dados.localidade;
+                    document.getElementById('inputStateClient').value = dados.uf;
+                })
+                .catch(error => console.error('Erro ao buscar o endereço:', error));
+        }
+
+        function formatarCampos() {
+            const cepInput = document.getElementById('inputCepClient');
+            cepInput.value = formatCep(cepInput.value);
+        }
+
+        function enviarCliente() {
+            const cliente = {
+                nomeCli: document.getElementById('inputNameClient').value,
+                foneCli: document.getElementById('inputPhoneClient').value,
+                emailCli: document.getElementById('inputEmailClient').value,
+                cepCli: document.getElementById('inputCepClient').value,
+                cidadeCli: document.getElementById('inputCityClient').value,
+                ufCli: document.getElementById('inputStateClient').value,
+                logradouroCli: document.getElementById('inputStreetClient').value,
+                numeroCli: document.getElementById('inputNumberClient').value,
+                complementoCli: document.getElementById('inputComplementClient').value,
+                bairroCli: document.getElementById('inputNeighborhoodClient').value
+            };
+
+            // Usando o método exposto via preload.js
+            window.api.novoCliente(cliente); // Enviar os dados do cliente
+        }
+    </script>
+
+    </script>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Clientes</h1>
-        <form id="frmClient" class="mt-2 row g-3">
-            <!-- Buscar clientes -->
-            <div class="col-md-6">
-                <input type="text" class="form-control" id="searchClient" maxlength="30" spellcheck="false">
-            </div>
-
-            <div class="col-md-4">
-                <button class="btn btn-primary" id="btnRead">Buscar</button>
-            </div>
-
-            <hr class="mt-4 border border-primary border -1">
-
-            <!-- ID do cliente (oculto) -->
-            <div class="col-md-6" id="idClient">
-                <input class="form-control" type="text" id="inputClient" placeholder="id">
-            </div>
+    <div class="container mt-4">
+        <h1>Cadastro de Clientes</h1>
+        <form id="frmClient" onsubmit="event.preventDefault(); enviarCliente();" class="row g-3">
 
             <!-- Nome do Cliente -->
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <label for="inputNameClient" class="form-label">Nome</label>
-                <input class="form-control" type="text" id="inputNameClient" spellcheck="false" required maxlength="50">
+                <input class="form-control" type="text" id="inputNameClient" required maxlength="50" spellcheck="false">
             </div>
 
-            <!-- Fone -->
-            <div class="col-md-4">
+            <!-- Telefone -->
+            <div class="col-md-6">
                 <label for="inputPhoneClient" class="form-label">Telefone</label>
-                <input class="form-control" type="tel" id="inputPhoneClient" spellcheck="false" required maxlength="15">
+                <input class="form-control" type="tel" id="inputPhoneClient" required maxlength="15" spellcheck="false">
             </div>
 
             <!-- E-mail -->
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <label for="inputEmailClient" class="form-label">E-mail</label>
-                <input class="form-control" type="email" id="inputEmailClient" spellcheck="false" maxlength="50">
+                <input class="form-control" type="email" id="inputEmailClient" maxlength="50" spellcheck="false">
+            </div>
+
+            <!-- CEP -->
+            <div class="col-md-6">
+                <label for="inputCepClient" class="form-label">CEP</label>
+                <input class="form-control" type="text" id="inputCepClient" required maxlength="9"
+                    oninput="formatarCampos()" placeholder="Digite o CEP">
+                <button class="btn btn-primary mt-2 w-100" type="button" onclick="buscarEndereco()">Buscar CEP</button>
+            </div>
+
+            <!-- Endereço -->
+            <div class="col-md-6">
+                <label for="inputStreetClient" class="form-label">Logradouro</label>
+                <input class="form-control" type="text" id="inputStreetClient" placeholder="Digite o logradouro">
+            </div>
+
+            <!-- Bairro -->
+            <div class="col-md-6">
+                <label for="inputNeighborhoodClient" class="form-label">Bairro</label>
+                <input class="form-control" type="text" id="inputNeighborhoodClient" placeholder="Digite o bairro">
+            </div>
+
+            <!-- Cidade e UF -->
+            <div class="col-md-6">
+                <label for="inputCityClient" class="form-label">Cidade</label>
+                <input class="form-control" type="text" id="inputCityClient" placeholder="Digite a cidade">
+            </div>
+            <div class="col-md-6">
+                <label for="inputStateClient" class="form-label">UF</label>
+                <select class="form-control" id="inputStateClient" required>
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="AC">AC</option>
+                    <option value="AL">AL</option>
+                    <option value="AP">AP</option>
+                    <option value="AM">AM</option>
+                    <option value="BA">BA</option>
+                    <option value="CE">CE</option>
+                    <option value="DF">DF</option>
+                    <option value="ES">ES</option>
+                    <option value="GO">GO</option>
+                    <option value="MA">MA</option>
+                    <option value="MT">MT</option>
+                    <option value="MS">MS</option>
+                    <option value="MG">MG</option>
+                    <option value="PA">PA</option>
+                    <option value="PB">PB</option>
+                    <option value="PR">PR</option>
+                    <option value="PE">PE</option>
+                    <option value="PI">PI</option>
+                    <option value="RJ">RJ</option>
+                    <option value="RN">RN</option>
+                    <option value="RS">RS</option>
+                    <option value="RO">RO</option>
+                    <option value="RR">RR</option>
+                    <option value="SC">SC</option>
+                    <option value="SP">SP</option>
+                    <option value="SE">SE</option>
+                    <option value="TO">TO</option>
+                </select>
+            </div>
+
+            <!-- Número e Complemento -->
+            <div class="col-md-6">
+                <label for="inputNumberClient" class="form-label">Número</label>
+                <input class="form-control" type="text" id="inputNumberClient" placeholder="Número">
+            </div>
+            <div class="col-md-6">
+                <label for="inputComplementClient" class="form-label">Complemento</label>
+                <input class="form-control" type="text" id="inputComplementClient" placeholder="Complemento (opcional)">
             </div>
 
             <!-- Botões -->
             <div class="mt-5">
                 <button type="submit" class="btn btn-success" id="btnCreate">Adicionar</button>
-                <button type="submit" class="btn btn-warning" id="btnUpdate">Editar</button>
-                <button type="submit" class="btn btn-danger" id="btnDelete">Excluir</button>
+                <button type="button" class="btn btn-warning" id="btnUpdate">Editar</button>
+                <button type="button" class="btn btn-danger" id="btnDelete">Excluir</button>
                 <button type="reset" class="btn" id="btnReset"></button>
             </div>
         </form>
     </div>
+    </form>
+    </div>
 
     <script src="../public/js/bootstrap.min.js"></script>
+    <script src="../public/js/script.js"></script>
     <script src="clientes.js"></script>
 </body>
 

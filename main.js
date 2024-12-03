@@ -247,32 +247,35 @@ const template = [
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Recebimento dos dados de formulário clientes
 ipcMain.on('new-client', async (event, cliente) => {
-    // Teste de recebimento dos dados (Passo 2 - slide) Importante!
-    console.log(cliente)
+    // Log para depuração
+    console.log(cliente); // Isso deve exibir todos os dados no console
 
-    // Passo 3 - slide (cadastrar os dados no banco de dados)
     try {
-        // Criar um novo objeto usando a classe modelo
         const novoCliente = new clienteModel({
             nomeCliente: cliente.nomeCli,
             foneCliente: cliente.foneCli,
-            emailCliente: cliente.emailCli
-        })
-        // A linha abaixo usa a biblioteca mongoose para salvar
-        await novoCliente.save()
+            emailCliente: cliente.emailCli,
+            cepCliente: cliente.cepCli,
+            cidadeCliente: cliente.cidadeCli,
+            ufCliente: cliente.ufCli,
+            logradouroCliente: cliente.logradouroCli,
+            numeroCliente: cliente.numeroCli,
+            complementoCliente: cliente.complementoCli,
+            bairroCliente: cliente.bairroCli
+        });
 
-        // Confirmação de cliente adicionado no banco de dados
+        await novoCliente.save();
+
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
             message: "Cliente adicionado com sucesso!",
             buttons: ['OK']
-        })
-        // Enviar uma resposta para o renderizador resetar o form
-        event.reply('reset-form')
+        });
 
+        event.reply('reset-form');
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 })
 
