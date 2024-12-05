@@ -59,6 +59,56 @@ function buscarCliente() {
 }
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+// Função para buscar o CEP
+function buscarCep(cep) {
+    // Verifica se o CEP possui 8 caracteres (ex: 12345678)
+    if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.erro) {
+                    alert("CEP não encontrado.")
+                } else {
+                    // Preenche os campos do formulário com os dados do CEP
+                    document.getElementById('inputStreetClient').value = data.logradouro || ""
+                    document.getElementById('inputNeighborhoodClient').value = data.bairro || ""
+                    document.getElementById('inputCityClient').value = data.localidade || ""
+                    document.getElementById('inputStateClient').value = data.uf || ""
+                }
+            })
+            .catch(err => {
+                alert("Erro ao buscar CEP.")
+                console.error(err);
+            });
+    } else {
+        alert("Por favor, insira um CEP válido.")
+    }
+}
+
+// Formatar CEP
+function formatarCEP(input) {
+    let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    if (value.length > 5) {
+        value = value.replace(/(\d{5})(\d)/, '$1-$2') // Adiciona o hífen
+    }
+    input.value = value
+}
+
+// Função chamada ao perder o foco ou ao digitar no campo CEP
+document.getElementById('inputCepClient').addEventListener('blur', function () {
+    const cep = this.value.replace(/\D/g, '') // Remove qualquer caractere não numérico
+    if (cep) {
+        buscarCep(cep)
+    }
+})
+
+// Caso o usuário insira o CEP e pressione Enter, também podemos buscar
+document.getElementById('inputCepClient').addEventListener('input', function () {
+    const cep = this.value.replace(/\D/g, '') // Remove qualquer caractere não numérico
+    if (cep.length === 8) {  // Se o CEP já tiver 8 caracteres
+        buscarCep(cep)
+    }
+})
 // Reset Form >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 api.resetarFormulario((args) => {
     console.log("teste de recebimento do main - pedido para resetar o form")

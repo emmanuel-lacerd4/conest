@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
-    <!-- meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br" -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
     <title>Conest - Clientes</title>
     <link rel="stylesheet" href="../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="../public/css/style.css">
@@ -27,7 +26,7 @@
             <hr class="mt-4 border border-primary border -1">
 
             <!-- Id do cliente (oculto) -->
-            <div class="col-md-6" id="idClient">
+            <div class="col-md-4" id="idClient">
                 <input class="form-control" type="text" id="inputClient" placeholder="id">
             </div>
 
@@ -47,6 +46,49 @@
             <div class="col-md-8">
                 <label for="inputEmailClient" class="form-label">E-mail</label>
                 <input class="form-control" type="email" id="inputEmailClient" spellcheck="false" maxlength="50">
+            </div>
+
+            <!-- CEP -->
+            <div class="col-md-4">
+                <label for="inputCepClient" class="form-label">CEP</label>
+                <input class="form-control" type="text" id="inputCepClient" spellcheck="false"
+                    maxlength="9" placeholder="Digite o CEP">
+            </div>
+
+            <!-- Cidade -->
+            <div class="col-md-8">
+                <label for="inputCityClient" class="form-label">Cidade</label>
+                <input class="form-control" type="email" id="inputCityClient" spellcheck="false" maxlength="50">
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-4">
+                <label for="inputStateClient" class="form-label">Estado</label>
+                <input class="form-control" type="text" id="inputStateClient" spellcheck="false" maxlength="2">
+            </div>
+
+            <!-- Endereço -->
+            <div class="col-md-8">
+                <label for="inputStreetClient" class="form-label">Logradouro</label>
+                <input class="form-control" type="text" id="inputStreetClient" spellcheck="false" maxlength="50">
+            </div>
+
+            <!-- Número do Endereço -->
+            <div class="col-md-4">
+                <label for="inputNumberClient" class="form-label">Nº</label>
+                <input class="form-control" type="text" id="inputNumberClient" spellcheck="false" maxlength="5">
+            </div>
+
+            <!-- Complemento -->
+            <div class="col-md-4">
+                <label for="inputComplementClient" class="form-label">Complemento</label>
+                <input class="form-control" type="text" id="inputComplementClient" spellcheck="false" maxlength="5">
+            </div>
+
+            <!-- Bairro -->
+            <div class="col-md-4">
+                <label for="inputNeighborhoodClient" class="form-label">Bairro</label>
+                <input class="form-control" type="text" id="inputNeighborhoodClient" spellcheck="false" maxlength="50">
             </div>
 
             <!-- Botões -->
