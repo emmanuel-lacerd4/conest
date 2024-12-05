@@ -1,79 +1,69 @@
 /**
- * Processo de Renderização: 
+ * Processo de renderização
  * clientes.html
  */
+// Array usado nós métodos para manipulação da estrutura de dados
+let arrayCliente = []
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Passo 1 - slide (capturar os dados dos inputs form)
+//Passo 1 - slide (capturar os dados dos inputs do form)
 let formCliente = document.getElementById('frmClient')
 let nomeCliente = document.getElementById('inputNameClient')
 let foneCliente = document.getElementById('inputPhoneClient')
 let emailCliente = document.getElementById('inputEmailClient')
-let cepCliente = document.getElementById('inputCepClient');
-let cidadeCliente = document.getElementById('inputCityClient');
-let ufCliente = document.getElementById('inputStateClient');
-let logradouroCliente = document.getElementById('inputStreetClient');
-let numeroCliente = document.getElementById('inputNumberClient');
-let complementoCliente = document.getElementById('inputComplementClient');
-let bairroCliente = document.getElementById('inputNeighborhoodClient');
-
 
 // Evento associado ao botão adicionar (quando o botão for pressionado)
 formCliente.addEventListener('submit', async (event) => {
-    // Evitar o comportamento padrão de envio em um form
-    event.preventDefault();
+    // evitar o comportamento padrão de envio em um form
+    event.preventDefault()
+    //teste importante! (fluxo dos dados)
+    console.log(nomeCliente.value, foneCliente.value, emailCliente.value)
 
-    // Teste importante! (fluxo dos dados)
-    console.log(nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value);
-
-    // Criar um objeto com os dados do cliente
+    //Passo 2 - slide (envio das informações para o main)
+    // criar um objeto
     const cliente = {
         nomeCli: nomeCliente.value,
         foneCli: foneCliente.value,
-        emailCli: emailCliente.value,
-        cepCli: document.getElementById('inputCepClient').value, // Pega o valor do campo correto
-        cidadeCli: document.getElementById('inputCityClient').value,
-        ufCli: document.getElementById('inputStateClient').value,
-        logradouroCli: document.getElementById('inputStreetClient').value,
-        numeroCli: document.getElementById('inputNumberClient').value,
-        complementoCli: document.getElementById('inputComplementClient').value,
-        bairroCli: document.getElementById('inputNeighborhoodClient').value
-    };
-
-    try {
-        // Chama a função api.novoCliente e aguarda a resposta
-        const response = await api.novoCliente(cliente);
-        console.log("Resposta da API:", response);
-
-        // Verifique se a resposta tem a propriedade "success"
-        if (response && response.success) {
-            console.log('Cliente adicionado com sucesso!');
-        } else {
-            console.log('Erro ao adicionar cliente:', response); // Mostra a resposta completa em caso de erro
-        }
-    } catch (error) {
-        // Caso ocorra um erro na chamada da API
-        console.error('Erro ao salvar cliente no banco de dados:', error);
+        emailCli: emailCliente.value
     }
-});
+    api.novoCliente(cliente)
+})
+// Fim CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// Reset form >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+function buscarCliente() {
+    // Passo 1 (slides)
+    let cliNome = document.getElementById('searchClient').value
+    console.log(cliNome) // Teste do passo 1
+    // Passo 2 (slide) - enviar o pedido de busca do cliente ao main
+    api.buscarCliente(cliNome)
+    // Passo 5 - Recebimento dos dados do cliente
+    api.renderizarCliente((event, dadosCliente) => {
+        // (Teste de recebimento dos dados do cliente)
+        console.log(dadosCliente)
+        // Passo 6 (slide): renderização dos dados do cliente no formulário
+        const clienteRenderizado = JSON.parse(dadosCliente)
+        arrayCliente = clienteRenderizado
+        // Teste para entendimento da lógica
+        console.log(arrayCliente)
+        // Percorrer o array de clientes, extrair os dados e setar (preencher) os campos do formulário
+        arrayCliente.forEach((c) => {
+            document.getElementById('inputNameClient').value = c.nomeCliente
+            document.getElementById('inputPhoneClient').value = c.foneCliente
+            document.getElementById('inputEmailClient').value = c.emailCliente
+            document.getElementById('inputClient').value = c._id
+        })
+    })
+}
+// Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// Reset Form >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 api.resetarFormulario((args) => {
-    console.log("teste de recebimento do main.js - pedido para resetar o form")
+    console.log("teste de recebimento do main - pedido para resetar o form")
     document.getElementById('inputNameClient').value = ""
     document.getElementById('inputPhoneClient').value = ""
     document.getElementById('inputEmailClient').value = ""
-    document.getElementById('inputCepClient').value = ""
-    document.getElementById('inputCityClient').value = ""
-    document.getElementById('inputStateClient').value = ""
-    document.getElementById('inputStreetClient').value = ""
-    document.getElementById('inputNumberClient').value = ""
-    document.getElementById('inputComplementClient').value = ""
-    document.getElementById('inputNeighborhoodClient').value = ""
 })
-
-
-// Fim do reset form <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim - reset form <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

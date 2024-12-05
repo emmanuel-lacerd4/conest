@@ -94,7 +94,7 @@ function clientWindow() {
         client = new BrowserWindow({
             width: 800,
             height: 600,
-            //autoHideMenuBar: true,
+            autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
@@ -247,37 +247,56 @@ const template = [
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Recebimento dos dados de formulário clientes
 ipcMain.on('new-client', async (event, cliente) => {
-    // Log para depuração
-    console.log(cliente); // Isso deve exibir todos os dados no console
+    //teste de recebimento dos dados (Passo 2 - slide) Importante!
+    console.log(cliente)
 
+    // Passo 3 - slide (cadastrar os dados no banco de dados)
     try {
+        // criar um novo objeto usando a classe modelo
         const novoCliente = new clienteModel({
             nomeCliente: cliente.nomeCli,
             foneCliente: cliente.foneCli,
-            emailCliente: cliente.emailCli,
-            cepCliente: cliente.cepCli,
-            cidadeCliente: cliente.cidadeCli,
-            ufCliente: cliente.ufCli,
-            logradouroCliente: cliente.logradouroCli,
-            numeroCliente: cliente.numeroCli,
-            complementoCliente: cliente.complementoCli,
-            bairroCliente: cliente.bairroCli
-        });
+            emailCliente: cliente.emailCli
+        })
+        // a linha abaixo usa a biblioteca moongoose para salvar
+        await novoCliente.save()
 
-        await novoCliente.save();
-
+        //confirmação de cliente adicionado no banco
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
-            message: "Cliente adicionado com sucesso!",
+            message: "Cliente adicionado com sucesso",
             buttons: ['OK']
-        });
+        })
+        // enviar uma resposta para o renderizador resetar o form
+        event.reply('reset-form')
 
-        event.reply('reset-form');
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
 })
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('search-client', async (event, cliNome) => {
+    // Teste de recebimento do nome do cliente a ser pesquisado(passo 2)
+    console.log(cliNome)
+    // Passos 3 e 4 - pesquisar no banco de dados o cliente pelo nome
+    // find() -> buscar no banco de dados (moongose)
+    // RegExp -> filtro pelo nome do cliente 'i' insensitive (maiúsculo ou minúsculo)
+    // Atenção: nomeCliente -> model | cliNome -> renderizador
+    try {
+        const dadosCliente = await clienteModel.find({
+            nomeCliente: new RegExp(cliNome, 'i')
+        })
+        console.log(dadosCliente) // Testes dos passos 3 e 4
+        // Passo 5 - slide -> enviar os dados do cliente para o renderizador (JSON.stringfy converte para JSON)
+        event.reply('client-data', JSON.stringify(dadosCliente))
+    } catch (error) {
+        console.log(error)
+    }
+})
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /***********************************************/
 /**************** Fornecedores ****************/
@@ -314,6 +333,7 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
         console.log(error)
     }
 })
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /***********************************************/
 /****************** Produtos ******************/
@@ -350,3 +370,4 @@ ipcMain.on('new-product', async (event, produto) => {
         console.log(error)
     }
 })
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

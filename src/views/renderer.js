@@ -1,7 +1,3 @@
-/**
- * Processos de renderização
- */
-
 // Botões
 function fechar() {
     api.fecharJanela()
@@ -14,6 +10,7 @@ function clientes() {
 function fornecedores() {
     api.janelaFornecedores()
 }
+
 function produtos() {
     api.janelaProdutos()
 }
@@ -23,8 +20,6 @@ function relatorios() {
 }
 
 // Inserção da data no rodapé
-document.getElementById('dataAtual').innerHTML = obterData()
-
 function obterData() {
     const data = new Date()
     const options = {
@@ -33,15 +28,15 @@ function obterData() {
         month: 'long',
         day: 'numeric'
     }
-    return data.toLocaleDateString('pt-br', options)
+    return data.toLocaleDateString('pt-BR', options)
 }
 
 document.getElementById('dataAtual').innerHTML = obterData()
 
-// Ícone status do banco de dados
-api.dbMensagem((event, message) => {
-    // Validação e troca de ícone
-    if  (message === "conectado") {
+// Ícone de status do banco de dados
+api.status((event, message) => {
+    // Validação e troca do ícone
+    if (message === "conectado") {             
         document.getElementById('iconDB').src = "../public/img/dbon.png"
     } else {
         document.getElementById('iconDB').src = "../public/img/dboff.png"

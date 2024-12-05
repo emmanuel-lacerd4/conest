@@ -1,30 +1,22 @@
-@charset "UTF-8";
-
-/* Botões */
-button {
-    transition: all 0.3s ease;
-}
-
-button:hover {
-    opacity: 0.8;
-}
-
-/* Estilo dos botões */
-#btnCreate, #btnUpdate, #btnDelete {
-    width: 100%;
-    padding: 10px;
-    font-size: 1rem;
-}
-
-#btnReset {
-    width: 50px;
-    height: 50px;
-    background-image: url(../img/clear.png);
-    border: none;
+/* botões */
+.button img {
+    margin: 50px 15px 25px 15px;
+    padding: 5px;
+    border: 1px solid #e8e8e8;
     cursor: pointer;
 }
 
-/* Rodapé */
+/* Botão reset */
+#btnReset {
+    width: 50px;
+    height: 50px;
+    background-image: url('../img/clear.png');
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* rodapé */
 footer {
     background-color: #007acc;
     width: 100%;
@@ -38,51 +30,9 @@ footer {
 
 footer p {
     color: #fff;
-    margin-left: 10px;
+    margin: 0px 0px 0px 10px;
 }
 
 footer img {
     margin-right: 10px;
-}
-
-/* Layout de Formulário */
-.form-control {
-    border-radius: 0.375rem;
-    border: 1px solid #ced4da;
-    padding: 0.75rem;
-}
-
-input[type="text"], input[type="email"], input[type="tel"], select {
-    width: 100%;
-}
-
-/* Estilo geral */
-body {
-    font-family: Arial, sans-serif;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 20px auto;
-}
-
-h1 {
-    text-align: center;
-    color: #007acc;
-    margin-bottom: 20px;
-}
-
-hr {
-    border: 1px solid #007acc;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .form-control {
-        padding: 0.5rem;
-    }
-
-    button {
-        width: 100%;
-    }
 }
