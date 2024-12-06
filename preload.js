@@ -16,6 +16,8 @@ contextBridge.exposeInMainWorld('api', {
     novoFornecedor: (fornecedor) => ipcRenderer.send('new-supplier', fornecedor),
     buscarFornecedor: (forNome) => ipcRenderer.send('search-supplier', forNome),
     novoProduto: (produto) => ipcRenderer.send('new-product', produto),
+    buscarProduto: (proNome) => ipcRenderer.send('search-product', proNome),
     renderizarCliente: (dadosCliente) => ipcRenderer.on('client-data', dadosCliente),
-    renderizarFornecedor: (dadosFornecedor) => ipcRenderer.on('supplier-data', dadosFornecedor)
+    renderizarFornecedor: (dadosFornecedor) => ipcRenderer.on('supplier-data', dadosFornecedor),
+    renderizarProduto: (dadosProduto) => ipcRenderer.on('product-data', dadosProduto)
 })

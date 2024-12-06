@@ -93,8 +93,8 @@ function clientWindow() {
     let client
     if (main) {
         client = new BrowserWindow({
-            width: 1280,
-            height: 720,
+            width: 1920,
+            height: 1080,
             resizable: false, // Impede redimensionamento
             autoHideMenuBar: true,
             parent: main,
@@ -104,6 +104,8 @@ function clientWindow() {
             }
         })
     }
+    client.maximize()
+
     client.loadFile('./src/views/clientes.html')
 }
 
@@ -114,8 +116,9 @@ function supplierWindow() {
     let supplier
     if (main) {
         supplier = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 1920,
+            height: 1080,
+            resizable: false, // Impede redimensionamento
             autoHideMenuBar: true,
             parent: main,
             modal: true,
@@ -124,6 +127,8 @@ function supplierWindow() {
             }
         })
     }
+    supplier.maximize()
+
     supplier.loadFile('./src/views/fornecedores.html')
 }
 
@@ -134,8 +139,9 @@ function productWindow() {
     let product
     if (main) {
         product = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 1920,
+            height: 1080,
+            resizable: false, // Impede redimensionamento
             autoHideMenuBar: true,
             parent: main,
             modal: true,
@@ -144,6 +150,8 @@ function productWindow() {
             }
         })
     }
+    product.maximize()
+
     product.loadFile('./src/views/produtos.html')
 }
 
@@ -154,8 +162,9 @@ function reportWindow() {
     let report
     if (main) {
         report = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 1920,
+            height: 1080,
+            resizable: false, // Impede redimensionamento
             autoHideMenuBar: true,
             parent: main,
             modal: true,
@@ -164,6 +173,8 @@ function reportWindow() {
             }
         })
     }
+    report.maximize()
+
     report.loadFile('./src/views/relatorios.html')
 }
 
@@ -403,6 +414,27 @@ ipcMain.on('new-product', async (event, produto) => {
         // Enviar uma resposta para o renderizador resetar o form
         event.reply('reset-form')
 
+    } catch (error) {
+        console.log(error)
+    }
+})
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('search-product', async (event, proNome) => {
+    // Teste de recebimento do nome do produto a ser pesquisado(passo 2)
+    console.log(proNome)
+    // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome
+    // find() -> buscar no banco de dados (moongose)
+    // RegExp -> filtro pelo nome do produto 'i' insensitive (maiúsculo ou minúsculo)
+    // Atenção: nomeProduto -> model | proNome -> renderizador
+    try {
+        const dadosProduto = await produtoModel.find({
+            nomeProduto: new RegExp(proNome, 'i')
+        })
+        console.log(dadosProduto) // Testes dos passos 3 e 4
+        // Passo 5 - slide -> enviar os dados do produto para o renderizador (JSON.stringfy converte para JSON)
+        event.reply('product-data', JSON.stringify(dadosProduto))
     } catch (error) {
         console.log(error)
     }
