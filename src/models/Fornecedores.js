@@ -15,6 +15,27 @@ const fornecedorSchema = new Schema({
     },
     siteFornecedor: {
         type: String
+    },
+    cepFornecedor: {
+        type: String
+    },
+    cidadeFornecedor: {
+        type: String
+    },
+    estadoFornecedor: {
+        type: String
+    },
+    enderecoFornecedor: {
+        type: String
+    },
+    numeroFornecedor: {
+        type: String
+    },
+    complementoFornecedor: {
+        type: String
+    },
+    bairroFornecedor: {
+        type: String
     }
 })
 

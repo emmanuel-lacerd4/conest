@@ -6,26 +6,39 @@
 let arrayCliente = []
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
 //Passo 1 - slide (capturar os dados dos inputs do form)
 let formCliente = document.getElementById('frmClient')
 let nomeCliente = document.getElementById('inputNameClient')
 let foneCliente = document.getElementById('inputPhoneClient')
 let emailCliente = document.getElementById('inputEmailClient')
+let cepCliente = document.getElementById('inputCepClient')
+let cidadeCliente = document.getElementById('inputCityClient')
+let estadoCliente = document.getElementById('inputStateClient')
+let enderecoCliente = document.getElementById('inputStreetClient')
+let numeroCliente = document.getElementById('inputNumberClient')
+let complementoCliente = document.getElementById('inputComplementClient')
+let bairroCliente = document.getElementById('inputNeighborhoodClient')
 
 // Evento associado ao botão adicionar (quando o botão for pressionado)
 formCliente.addEventListener('submit', async (event) => {
-    // evitar o comportamento padrão de envio em um form
+    // Evitar o comportamento padrão de envio em um form
     event.preventDefault()
-    //teste importante! (fluxo dos dados)
-    console.log(nomeCliente.value, foneCliente.value, emailCliente.value)
+    // Teste importante! (fluxo dos dados)
+    console.log(nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente, enderecoCliente, numeroCliente, complementoCliente, bairroCliente)
 
-    //Passo 2 - slide (envio das informações para o main)
+    // Passo 2 - slide (envio das informações para o main)
     // criar um objeto
     const cliente = {
         nomeCli: nomeCliente.value,
         foneCli: foneCliente.value,
-        emailCli: emailCliente.value
+        emailCli: emailCliente.value,
+        cepCli: cepCliente.value,
+        cidadeCli: cidadeCliente.value,
+        estadoCli: estadoCliente.value,
+        enderecoCli: enderecoCliente.value,
+        numeroCli: numeroCliente.value,
+        complementoCli: complementoCliente.value,
+        bairroCli: bairroCliente.value
     }
     api.novoCliente(cliente)
 })
@@ -50,10 +63,17 @@ function buscarCliente() {
         console.log(arrayCliente)
         // Percorrer o array de clientes, extrair os dados e setar (preencher) os campos do formulário
         arrayCliente.forEach((c) => {
+            document.getElementById('inputClient').value = c._id
             document.getElementById('inputNameClient').value = c.nomeCliente
             document.getElementById('inputPhoneClient').value = c.foneCliente
             document.getElementById('inputEmailClient').value = c.emailCliente
-            document.getElementById('inputClient').value = c._id
+            document.getElementById('inputCepClient').value = c.cepCliente
+            document.getElementById('inputCityClient').value = c.cidadeCliente
+            document.getElementById('inputStateClient').value = c.estadoCliente
+            document.getElementById('inputStreetClient').value = c.enderecoCliente
+            document.getElementById('inputNumberClient').value = c.numeroCliente
+            document.getElementById('inputComplementClient').value = c.complementoCliente
+            document.getElementById('inputNeighborhoodClient').value = c.bairroCliente
         })
     })
 }
@@ -67,7 +87,7 @@ function buscarCep(cep) {
             .then(response => response.json())
             .then(data => {
                 if (data.erro) {
-                    alert("CEP não encontrado.")
+                    //alert("CEP não encontrado.")
                 } else {
                     // Preenche os campos do formulário com os dados do CEP
                     document.getElementById('inputStreetClient').value = data.logradouro || ""
@@ -76,12 +96,12 @@ function buscarCep(cep) {
                     document.getElementById('inputStateClient').value = data.uf || ""
                 }
             })
-            .catch(err => {
-                alert("Erro ao buscar CEP.")
-                console.error(err);
+            .catch(erro => {
+                //alert("Erro ao buscar CEP.")
+                console.error(erro);
             });
     } else {
-        alert("Por favor, insira um CEP válido.")
+        //alert("Por favor, insira um CEP válido.")
     }
 }
 
@@ -109,11 +129,19 @@ document.getElementById('inputCepClient').addEventListener('input', function () 
         buscarCep(cep)
     }
 })
+
 // Reset Form >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 api.resetarFormulario((args) => {
     console.log("teste de recebimento do main - pedido para resetar o form")
     document.getElementById('inputNameClient').value = ""
     document.getElementById('inputPhoneClient').value = ""
     document.getElementById('inputEmailClient').value = ""
+    document.getElementById('inputCepClient').value = ""
+    document.getElementById('inputCityClient').value = ""
+    document.getElementById('inputStateClient').value = ""
+    document.getElementById('inputStreetClient').value = ""
+    document.getElementById('inputNumberClient').value = ""
+    document.getElementById('inputComplementClient').value = ""
+    document.getElementById('inputNeighborhoodClient').value = ""
 })
 // Fim - reset form <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

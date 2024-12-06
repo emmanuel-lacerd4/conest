@@ -256,7 +256,14 @@ ipcMain.on('new-client', async (event, cliente) => {
         const novoCliente = new clienteModel({
             nomeCliente: cliente.nomeCli,
             foneCliente: cliente.foneCli,
-            emailCliente: cliente.emailCli
+            emailCliente: cliente.emailCli,
+            cepCliente: cliente.cepCli,
+            cidadeCliente: cliente.cidadeCli,
+            estadoCliente: cliente.estadoCli,
+            enderecoCliente: cliente.enderecoCli,
+            numeroCliente: cliente.numeroCli,
+            complementoCliente: cliente.complementoCli,
+            bairroCliente: cliente.bairroCli
         })
         // a linha abaixo usa a biblioteca moongoose para salvar
         await novoCliente.save()
@@ -314,12 +321,19 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
         const novoFornecedor = new fornecedorModel({
             nomeFornecedor: fornecedor.nomeFor,
             foneFornecedor: fornecedor.foneFor,
-            siteFornecedor: fornecedor.siteFor
+            siteFornecedor: fornecedor.siteFor,
+            cepFornecedor: fornecedor.cepFor,
+            cidadeFornecedor: fornecedor.cidadeFor,
+            estadoFornecedor: fornecedor.estadoFor,
+            enderecoFornecedor: fornecedor.enderecoFor,
+            numeroFornecedor: fornecedor.numeroFor,
+            complementoFornecedor: fornecedor.complementoFor,
+            bairroFornecedor: fornecedor.bairroFor
         })
         // A linha abaixo usa a biblioteca mongoose para salvar
         await novoFornecedor.save()
 
-        // Confirmação de cliente adicionado no banco de dados
+        // Confirmação de fornecedor adicionado no banco de dados
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
@@ -329,6 +343,27 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
         // Enviar uma resposta para o renderizador resetar o form
         event.reply('reset-form')
 
+    } catch (error) {
+        console.log(error)
+    }
+})
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('search-supplier', async (event, forNome) => {
+    // Teste de recebimento do nome do fornecedor a ser pesquisado(passo 2)
+    console.log(forNome)
+    // Passos 3 e 4 - pesquisar no banco de dados o fornecedor pelo nome
+    // find() -> buscar no banco de dados (moongose)
+    // RegExp -> filtro pelo nome do fornecedor 'i' insensitive (maiúsculo ou minúsculo)
+    // Atenção: nomeFornecedor -> model | forNome -> renderizador
+    try {
+        const dadosFornecedor = await fornecedorModel.find({
+            nomeFornecedor: new RegExp(forNome, 'i')
+        })
+        console.log(dadosFornecedor) // Testes dos passos 3 e 4
+        // Passo 5 - slide -> enviar os dados do fornecedor para o renderizador (JSON.stringfy converte para JSON)
+        event.reply('supplier-data', JSON.stringify(dadosFornecedor))
     } catch (error) {
         console.log(error)
     }

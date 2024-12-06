@@ -18,8 +18,6 @@ function buscarEndereco() {
         .catch(error => console.error('Erro ao buscar o endereço:', error))
 }
 
-
-
 // Formatar CEP
 function formatarCEP(input) {
     let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
@@ -70,7 +68,7 @@ function verificarCampos() {
         } else {
             elemento.style.borderColor = '' // Remove o destaque caso preenchido
         }
-    });
+    })
 
     if (camposVazios.length > 0) {
         alert('Por favor, preencha todos os campos obrigatórios.')

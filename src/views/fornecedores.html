@@ -5,7 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
     <title>CONEST - Fornecedores</title>
     <link rel="stylesheet" href="../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="../public/css/style.css">
@@ -15,13 +16,14 @@
     <div class="container">
         <h1>Fornecedores</h1>
         <form id="frmSupplier" class="mt-2 row g-3">
+
             <!-- Buscar fornecedores -->
             <div class="col-md-6">
                 <input type="text" class="form-control" id="searchSupplier" maxlength="30" spellcheck="false">
             </div>
 
             <div class="col-md-4">
-                <button class="btn btn-primary" id="btnRead">Buscar</button>
+                <button class="btn btn-primary" id="btnRead" onclick="buscarFornecedor()">Buscar</button>
             </div>
 
             <hr class="mt-4 border border-primary border -1">
@@ -47,6 +49,50 @@
             <div class="col-md-8">
                 <label for="inputSiteSupplier" class="form-label">Site</label>
                 <input class="form-control" type="text" id="inputSiteSupplier" spellcheck="false" maxlength="50">
+            </div>
+
+            <!-- CEP -->
+            <div class="col-md-4">
+                <label for="inputCepSupplier" class="form-label">CEP</label>
+                <input class="form-control" type="text" id="inputCepSupplier" spellcheck="false" maxlength="9"
+                    placeholder="Digite o CEP">
+            </div>
+
+            <!-- Cidade -->
+            <div class="col-md-8">
+                <label for="inputCitySupplier" class="form-label">Cidade</label>
+                <input class="form-control" type="text" id="inputCitySupplier" spellcheck="false" maxlength="50">
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-4">
+                <label for="inputStateSupplier" class="form-label">Estado</label>
+                <input class="form-control" type="text" id="inputStateSupplier" spellcheck="false" maxlength="2">
+            </div>
+
+            <!-- Endereço -->
+            <div class="col-md-8">
+                <label for="inputStreetSupplier" class="form-label">Logradouro</label>
+                <input class="form-control" type="text" id="inputStreetSupplier" spellcheck="false" maxlength="50">
+            </div>
+
+            <!-- Número do Endereço -->
+            <div class="col-md-4">
+                <label for="inputNumberSupplier" class="form-label">Nº</label>
+                <input class="form-control" type="text" id="inputNumberSupplier" spellcheck="false" maxlength="5">
+            </div>
+
+            <!-- Complemento -->
+            <div class="col-md-4">
+                <label for="inputComplementSupplier" class="form-label">Complemento</label>
+                <input class="form-control" type="text" id="inputComplementSupplier" spellcheck="false" maxlength="5">
+            </div>
+
+            <!-- Bairro -->
+            <div class="col-md-4">
+                <label for="inputNeighborhoodSupplier" class="form-label">Bairro</label>
+                <input class="form-control" type="text" id="inputNeighborhoodSupplier" spellcheck="false"
+                    maxlength="50">
             </div>
 
             <!-- Botões -->
