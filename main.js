@@ -28,6 +28,7 @@ function createWindow() {
     win = new BrowserWindow({
         width: 1010,
         height: 720,
+        resizable: false, // Impede redimensionamento
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -92,8 +93,9 @@ function clientWindow() {
     let client
     if (main) {
         client = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 1280,
+            height: 720,
+            resizable: false, // Impede redimensionamento
             autoHideMenuBar: true,
             parent: main,
             modal: true,
