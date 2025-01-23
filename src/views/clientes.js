@@ -8,6 +8,7 @@ let arrayCliente = []
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //Passo 1 - slide (capturar os dados dos inputs do form)
 let formCliente = document.getElementById('frmClient')
+let idCliente = document.getElementById('inputIdClient')
 let nomeCliente = document.getElementById('inputNameClient')
 let foneCliente = document.getElementById('inputPhoneClient')
 let emailCliente = document.getElementById('inputEmailClient')
@@ -24,23 +25,42 @@ formCliente.addEventListener('submit', async (event) => {
     // Evitar o comportamento padrão de envio em um form
     event.preventDefault()
     // Teste importante! (fluxo dos dados)
-    console.log(nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente, enderecoCliente, numeroCliente, complementoCliente, bairroCliente)
+    console.log(idCliente.value, nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente, enderecoCliente, numeroCliente, complementoCliente, bairroCliente)
 
     // Passo 2 - slide (envio das informações para o main)
-    // criar um objeto
-    const cliente = {
-        nomeCli: nomeCliente.value,
-        foneCli: foneCliente.value,
-        emailCli: emailCliente.value,
-        cepCli: cepCliente.value,
-        cidadeCli: cidadeCliente.value,
-        estadoCli: estadoCliente.value,
-        enderecoCli: enderecoCliente.value,
-        numeroCli: numeroCliente.value,
-        complementoCli: complementoCliente.value,
-        bairroCli: bairroCliente.value
+    //Estratégia para determinar se é um novo cadastro de clientes ou a edição de um cliente já existente
+    if (idCliente.value) {
+        // Criar um objeto.
+        const cliente = {
+            nomeCli: nomeCliente.value,
+            foneCli: foneCliente.value,
+            emailCli: emailCliente.value,
+            cepCli: cepCliente.value,
+            cidadeCli: cidadeCliente.value,
+            estadoCli: estadoCliente.value,
+            enderecoCli: enderecoCliente.value,
+            numeroCli: numeroCliente.value,
+            complementoCli: complementoCliente.value,
+            bairroCli: bairroCliente.value
+        }
+        api.novoCliente(cliente)
+    } else {
+        // Criar um novo objeto com o ID do cliente.
+        const cliente = {
+            idCli: idCliente.value,
+            nomeCli: nomeCliente.value,
+            foneCli: foneCliente.value,
+            emailCli: emailCliente.value,
+            cepCli: cepCliente.value,
+            cidadeCli: cidadeCliente.value,
+            estadoCli: estadoCliente.value,
+            enderecoCli: enderecoCliente.value,
+            numeroCli: numeroCliente.value,
+            complementoCli: complementoCliente.value,
+            bairroCli: bairroCliente.value
+        }
+        api.editarCliente(cliente)
     }
-    api.novoCliente(cliente)
 })
 // Fim CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -63,7 +83,6 @@ function buscarCliente() {
         console.log(arrayCliente)
         // Percorrer o array de clientes, extrair os dados e setar (preencher) os campos do formulário
         arrayCliente.forEach((c) => {
-            document.getElementById('inputClient').value = c._id
             document.getElementById('inputNameClient').value = c.nomeCliente
             document.getElementById('inputPhoneClient').value = c.foneCliente
             document.getElementById('inputEmailClient').value = c.emailCliente
@@ -74,6 +93,7 @@ function buscarCliente() {
             document.getElementById('inputNumberClient').value = c.numeroCliente
             document.getElementById('inputComplementClient').value = c.complementoCliente
             document.getElementById('inputNeighborhoodClient').value = c.bairroCliente
+            document.getElementById('inputIdClient').value = c._id
         })
     })
 }
@@ -129,6 +149,12 @@ document.getElementById('inputCepClient').addEventListener('input', function () 
         buscarCep(cep)
     }
 })
+
+// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+function excluirCliente() {
+    api.deletarCliente(idCliente.value) //Passo 1 do slide
+}
+// Fim CRUD Delete
 
 // Reset Form >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 api.resetarFormulario((args) => {

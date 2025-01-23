@@ -96,7 +96,7 @@ function clientWindow() {
             width: 1920,
             height: 1080,
             resizable: false, // Impede redimensionamento
-            autoHideMenuBar: true,
+            //autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
@@ -119,7 +119,7 @@ function supplierWindow() {
             width: 1920,
             height: 1080,
             resizable: false, // Impede redimensionamento
-            autoHideMenuBar: true,
+            //autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
@@ -297,19 +297,19 @@ ipcMain.on('new-client', async (event, cliente) => {
 })
 // Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-client', async (event, cliNome) => {
-    // Teste de recebimento do nome do cliente a ser pesquisado(passo 2)
+    //teste de recebimento do nome do cliente a ser pesquisado(passo 2)
     console.log(cliNome)
-    // Passos 3 e 4 - pesquisar no banco de dados o cliente pelo nome
-    // find() -> buscar no banco de dados (moongose)
+    //Passos 3 e 4 - Pesquisar no banco de dados o cliente pelo nome
+    // find() -> buscar no banco de dados (mongoose)
     // RegExp -> filtro pelo nome do cliente 'i' insensitive (maiúsculo ou minúsculo)
     // Atenção: nomeCliente -> model | cliNome -> renderizador
     try {
         const dadosCliente = await clienteModel.find({
             nomeCliente: new RegExp(cliNome, 'i')
         })
-        console.log(dadosCliente) // Testes dos passos 3 e 4
+        console.log(dadosCliente) // teste dos passos 3 e 4
         // Passo 5 - slide -> enviar os dados do cliente para o renderizador (JSON.stringfy converte para JSON)
         event.reply('client-data', JSON.stringify(dadosCliente))
     } catch (error) {

@@ -19,7 +19,11 @@ contextBridge.exposeInMainWorld('api', {
     buscarProduto: (proNome) => ipcRenderer.send('search-product', proNome),
     buscarProdutoCod: (proCod) => ipcRenderer.send('search-product', proCod),
     renderizarCliente: (dadosCliente) => ipcRenderer.on('client-data', dadosCliente),
+    deletarCliente: (idCliente) => ipcRenderer.send('delete-client', idCliente),
+    editarCliente: (cliente) => ipcRenderer.send('update-client', cliente),
     renderizarFornecedor: (dadosFornecedor) => ipcRenderer.on('supplier-data', dadosFornecedor),
+    deletarFornecedor: (idFornecedor) => ipcRenderer.send('delete-supplier', idFornecedor),
+    editarFornecedor: (fornecedor) => ipcRenderer.send('update-supplier', fornecedor),
     renderizarProduto: (dadosProduto) => ipcRenderer.on('product-data', dadosProduto),
     renderizarProdutoCod: (dadosProdutoCod) => ipcRenderer.on('product-data', dadosProdutoCod)
 })
