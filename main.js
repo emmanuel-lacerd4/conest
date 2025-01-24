@@ -93,8 +93,8 @@ function clientWindow() {
     let client
     if (main) {
         client = new BrowserWindow({
-            width: 1920,
-            height: 1080,
+            width: 1280,
+            height: 800,
             resizable: false, // Impede redimensionamento
             //autoHideMenuBar: true,
             parent: main,
@@ -104,7 +104,7 @@ function clientWindow() {
             }
         })
     }
-    client.maximize()
+    //client.maximize()
 
     client.loadFile('./src/views/clientes.html')
 }
@@ -116,8 +116,8 @@ function supplierWindow() {
     let supplier
     if (main) {
         supplier = new BrowserWindow({
-            width: 1920,
-            height: 1080,
+            width: 1280,
+            height: 720,
             resizable: false, // Impede redimensionamento
             //autoHideMenuBar: true,
             parent: main,
@@ -139,10 +139,10 @@ function productWindow() {
     let product
     if (main) {
         product = new BrowserWindow({
-            width: 1920,
-            height: 1080,
+            width: 1280,
+            height: 720,
             resizable: false, // Impede redimensionamento
-            autoHideMenuBar: true,
+            //autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
@@ -162,10 +162,10 @@ function reportWindow() {
     let report
     if (main) {
         report = new BrowserWindow({
-            width: 1920,
-            height: 1080,
+            width: 1280,
+            height: 720,
             resizable: false, // Impede redimensionamento
-            autoHideMenuBar: true,
+            //autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
