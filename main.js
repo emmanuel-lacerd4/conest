@@ -34,7 +34,7 @@ function createWindow() {
         }
     })
     // Menu personalizado (comentar para debugar)
-    //Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+    // Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 
     win.loadFile('./src/views/index.html')
 
@@ -58,15 +58,15 @@ function createWindow() {
 
 // Janela sobre
 function aboutWindow() {
+    let about
     nativeTheme.themeSource = 'dark'
     const main = BrowserWindow.getFocusedWindow()
-    let about
     if (main) {
         about = new BrowserWindow({
             width: 360,
             height: 215,
             autoHideMenuBar: true,
-            resizable: false,
+            resizable: false, // Impede redimensionamento
             minimizable: false,
             parent: main,
             modal: true,
@@ -87,10 +87,10 @@ function aboutWindow() {
 }
 
 // Janela clientes
+let client
 function clientWindow() {
     nativeTheme.themeSource = 'dark'
     const main = BrowserWindow.getFocusedWindow()
-    let client
     if (main) {
         client = new BrowserWindow({
             width: 1280,
@@ -110,10 +110,10 @@ function clientWindow() {
 }
 
 // Janela fornecedores
+let supplier
 function supplierWindow() {
     nativeTheme.themeSource = 'dark'
     const main = BrowserWindow.getFocusedWindow()
-    let supplier
     if (main) {
         supplier = new BrowserWindow({
             width: 1280,
@@ -133,10 +133,10 @@ function supplierWindow() {
 }
 
 // Janela produtos
+let product
 function productWindow() {
     nativeTheme.themeSource = 'dark'
     const main = BrowserWindow.getFocusedWindow()
-    let product
     if (main) {
         product = new BrowserWindow({
             width: 1280,
@@ -156,10 +156,10 @@ function productWindow() {
 }
 
 // Janela relatórios
+let report
 function reportWindow() {
     nativeTheme.themeSource = 'dark'
     const main = BrowserWindow.getFocusedWindow()
-    let report
     if (main) {
         report = new BrowserWindow({
             width: 1280,
@@ -180,11 +180,10 @@ function reportWindow() {
 
 app.whenReady().then(() => {
     createWindow()
-
     // Melhor local para estabelecer a conexão com o banco de dados
-    // Importar o módulo de conexão no início do código
-
-    // Conexão com o banco de dados
+    // Importar antes o módulo de conexão no início do código
+    // No MongoDB é mais eficiente manter uma única conexão aberta durante todo o tempo de vida do aplicativo e usá-la quando necessário. Fechar e reabrir constantemente a conexão aumenta a sobrecarga e reduz o desempenho do servidor.
+    // Conexão com o banco ao iniciar a aplicação
     ipcMain.on('db-connect', async (event, message) => {
         // A linha abaixo estabelece a conexão com o banco de dados
         dbcon = await dbConnect()
@@ -226,8 +225,7 @@ const template = [
         submenu: [
             {
                 label: 'Aplicar zoom',
-                accelerator: 'CmdOrCtrl+=',
-                click: () => win.webContents.zoomFactor += 0.1
+                role: 'zoomIn'
             },
             {
                 label: 'Reduzir',
@@ -257,7 +255,7 @@ const template = [
 /****************** Clientes ******************/
 /*********************************************/
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Recebimento dos dados de formulário clientes
 ipcMain.on('new-client', async (event, cliente) => {
     //teste de recebimento dos dados (Passo 2 - slide) Importante!
@@ -288,18 +286,27 @@ ipcMain.on('new-client', async (event, cliente) => {
             message: "Cliente adicionado com sucesso",
             buttons: ['OK']
         })
-        // enviar uma resposta para o renderizador resetar o form
+        // Enviar uma resposta para o renderizador resetar o form.
         event.reply('reset-form')
 
     } catch (error) {
         console.log(error)
     }
 })
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('dialog-search', () => {
+    dialog.showMessageBox({
+        type: 'warning',
+        title: 'Atenção!',
+        message: 'Preencha um nome no campo de busca',
+        buttons: ['OK']
+    })
+})
+
 ipcMain.on('search-client', async (event, cliNome) => {
-    //teste de recebimento do nome do cliente a ser pesquisado(passo 2)
+    // Teste de recebimento do nome do cliente a ser pesquisado(passo 2)
     console.log(cliNome)
     //Passos 3 e 4 - Pesquisar no banco de dados o cliente pelo nome
     // find() -> buscar no banco de dados (mongoose)
@@ -309,14 +316,106 @@ ipcMain.on('search-client', async (event, cliNome) => {
         const dadosCliente = await clienteModel.find({
             nomeCliente: new RegExp(cliNome, 'i')
         })
-        console.log(dadosCliente) // teste dos passos 3 e 4
-        // Passo 5 - slide -> enviar os dados do cliente para o renderizador (JSON.stringfy converte para JSON)
+        console.log(dadosCliente) // Teste dos passos 3 e 4
+        // Passo 5 - slide -> enviar os dados do cliente para o renderizador (JSON.stringfy converte para JSON).
+
+        // Melhoria na experiência do usuário (se não existir o cliente cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo cliente).
+        if (dadosCliente.length === 0) {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: 'Clientes',
+                message: 'Cliente não cadastrado.\nDeseja cadastrar este cliente?',
+                defaultId: 0,
+                buttons: ['Sim', 'Não']
+            }).then((result) => {
+                console.log(result)
+                if (result.response === 0) {
+                    // Enviar ao renderizador um pedido para setar o nome do cliente (trazendo do campo de busca) e liberar o botão adicionar.
+                    event.reply('set-nameClient')
+                } else {
+                    // Enviar ao renderizador um pedido para limpar os campos do formulário.
+                    event.reply('reset-form')
+                }
+            })
+        }
         event.reply('client-data', JSON.stringify(dadosCliente))
     } catch (error) {
         console.log(error)
     }
 })
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('delete-client', async (event, idCliente) => {
+    // Teste de recebimento do id do cliente (passo 2 - slide)
+    console.log(idCliente)
+    // Confirmação antes de excluir o cliente (IMPORTANTE!)
+    // Client é a variável ref a janela de clientes.
+    const { response } = await dialog.showMessageBox(client, {
+        type: 'warning',
+        buttons: ['Cancelar', 'Excluir'], //[0,1]
+        title: 'Atenção!',
+        message: 'Tem certeza que deseja excluir este cliente?'
+    })
+    // Apoio a lógica.
+    console.log(response)
+    if (response === 1) {
+        // Passo 3 slide.
+        try {
+            const clienteExcluido = await clienteModel.findByIdAndDelete(idCliente)
+            dialog.showMessageBox({
+                type: 'info',
+                title: 'Aviso',
+                message: 'Cliente excluído com sucesso',
+                buttons: ['OK']
+            })
+            event.reply('reset-form')
+        } catch (error) {
+            console.log(error)
+        }
+    }
+})
+// Fim do CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('update-client', async (event, cliente) => {
+    // Teste de recebimento dos dados do cliente (passo 2)
+    console.log(cliente)
+    try {
+        const clienteEditado = await clienteModel.findByIdAndUpdate(
+            cliente.idCli, {
+            nomeCliente: cliente.nomeCli,
+            foneCliente: cliente.foneCli,
+            emailCliente: cliente.emailCli,
+            cepCliente: cliente.cepCli,
+            cidadeCliente: cliente.cidadeCli,
+            estadoCliente: cliente.estadoCli,
+            enderecoCliente: cliente.enderecoCli,
+            numeroCliente: cliente.numeroCli,
+            complementoCliente: cliente.complementoCli,
+            bairroCliente: cliente.bairroCli
+        },
+            {
+                new: true
+            }
+        )
+    } catch (error) {
+        console.log(error)
+    }
+    dialog.showMessageBox(client, {
+        type: 'info',
+        message: 'Dados do cliente alterados com sucesso.',
+        buttons: ['OK']
+    }).then((result) => {
+        if (result.response === 0) {
+            event.reply('reset-form')
+        }
+    })
+})
+// Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /***********************************************/
 /**************** Fornecedores ****************/

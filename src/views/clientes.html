@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
     <title>Conest - Clientes</title>
     <link rel="stylesheet" href="../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="../public/css/style.css">
@@ -97,10 +96,11 @@
                 <button type="submit" class="btn btn-success" id="btnCreate">Adicionar</button>
                 <button type="submit" class="btn btn-warning" id="btnUpdate">Editar</button>
                 <button type="button" class="btn btn-danger" id="btnDelete" onclick="excluirCliente()">Excluir</button>
-                <button type="reset" class="btn" id="btnReset"></button>
+                <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
             </div>
 
         </form>
+
     </div>
     <script src="../public/js/bootstrap.min.js"></script>
     <script src="../public/js/script.js"></script>
