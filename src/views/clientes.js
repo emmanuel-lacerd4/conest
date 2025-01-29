@@ -25,7 +25,7 @@ formCliente.addEventListener('submit', async (event) => {
     // Evitar o comportamento padrão de envio em um form
     event.preventDefault()
     // Teste importante! (fluxo dos dados)
-    console.log(idCliente.value, nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente, enderecoCliente, numeroCliente, complementoCliente, bairroCliente)
+    console.log(idCliente.value, nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente.value, enderecoCliente.value, numeroCliente.value, complementoCliente.value, bairroCliente.value)
 
     // Passo 2 - slide (envio das informações para o main)
     //Estratégia para determinar se é um novo cadastro de clientes ou a edição de um cliente já existente
@@ -43,7 +43,7 @@ formCliente.addEventListener('submit', async (event) => {
             complementoCli: complementoCliente.value,
             bairroCli: bairroCliente.value
         }
-        api.novoCliente(cliente)
+        api.editarCliente(cliente)
     } else {
         // Criar um novo objeto com o ID do cliente.
         const cliente = {
@@ -59,7 +59,7 @@ formCliente.addEventListener('submit', async (event) => {
             complementoCli: complementoCliente.value,
             bairroCli: bairroCliente.value
         }
-        api.editarCliente(cliente)
+        api.novoCliente(cliente)
     }
 })
 // Fim CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -152,7 +152,7 @@ document.getElementById('inputCepClient').addEventListener('input', function () 
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function excluirCliente() {
-    api.deletarCliente(idCliente.value) //Passo 1 do slide
+    api.deletarCliente(idCliente.value) // Passo 1 do slide
 }
 // Fim CRUD Delete
 

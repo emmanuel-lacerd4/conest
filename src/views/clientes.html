@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
     <title>Conest - Clientes</title>
     <link rel="stylesheet" href="../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="../public/css/style.css">
@@ -19,7 +20,7 @@
             <div class="col-md-6">
                 <input type="text" class="form-control" id="searchClient" maxlength="30" spellcheck="false">
             </div>
-            
+
             <div class="col-md-4">
                 <button type="button" class="btn btn-primary" id="btnRead" onclick="buscarCliente()">Buscar</button>
             </div>
@@ -39,11 +40,11 @@
 
             <!-- Fone -->
             <div class="col-md-4">
-                <label for="inputPhoneClient" class="form-label">Telefone</label>
+                <label for="inputPhoneClient" class="form-label">Celular</label>
                 <input class="form-control" type="tel" id="inputPhoneClient" spellcheck="false" required maxlength="15">
             </div>
 
-            <!-- Email -->
+            <!-- E-mail -->
             <div class="col-md-8">
                 <label for="inputEmailClient" class="form-label">E-mail</label>
                 <input class="form-control" type="email" id="inputEmailClient" spellcheck="false" maxlength="50">
@@ -52,8 +53,7 @@
             <!-- CEP -->
             <div class="col-md-4">
                 <label for="inputCepClient" class="form-label">CEP</label>
-                <input class="form-control" type="text" id="inputCepClient" spellcheck="false"
-                    maxlength="9" placeholder="Digite o CEP">
+                <input class="form-control" type="text" id="inputCepClient" spellcheck="false" maxlength="9">
             </div>
 
             <!-- Cidade -->
@@ -76,7 +76,7 @@
 
             <!-- Número do Endereço -->
             <div class="col-md-4">
-                <label for="inputNumberClient" class="form-label">Nº</label>
+                <label for="inputNumberClient" class="form-label">Número</label>
                 <input class="form-control" type="text" id="inputNumberClient" spellcheck="false" maxlength="5">
             </div>
 
