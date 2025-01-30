@@ -5,7 +5,7 @@
 
 const foco = document.getElementById('searchClient')
 
-//Mudar as propriedades do documento html ao iniciar a janela
+// Mudar as propriedades do documento html ao iniciar a janela
 document.addEventListener('DOMContentLoaded', () => {
     btnCreate.disabled = true
     btnUpdate.disabled = true
@@ -60,7 +60,7 @@ formCliente.addEventListener('submit', async (event) => {
     console.log(idCliente.value, nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente.value, enderecoCliente.value, numeroCliente.value, complementoCliente.value, bairroCliente.value)
 
     // Passo 2 - slide (envio das informações para o main)
-    //Estratégia para determinar se é um novo cadastro de clientes ou a edição de um cliente já existente
+    // Estratégia para determinar se é um novo cadastro de clientes ou a edição de um cliente já existente.
     if (idCliente.value === "") {
         // Criar um objeto.
         const cliente = {
@@ -105,12 +105,12 @@ function buscarCliente() {
         api.validarBusca() // Validação do campo obrigatório 
         foco.focus()
     } else {
-        //console.log(cliNome) // Teste do passo 1
-        // Passo 2 (slide) - enviar o pedido de busca do cliente ao main
+        //console.log(cliNome) // Teste do passo 1.
+        // Passo 2 (slide) - enviar o pedido de busca do cliente ao main.
         api.buscarCliente(cliNome)
-        // Passo 5 - Recebimento dos dados do cliente
+        // Passo 5 - Recebimento dos dados do cliente.
         api.renderizarCliente((event, dadosCliente) => {
-            // Teste de recebimento dos dados do cliente
+            // Teste de recebimento dos dados do cliente.
             console.log(dadosCliente)
             // Passo 6 (slide): renderização dos dados do cliente no formulário.
             const clienteRenderizado = JSON.parse(dadosCliente)
@@ -130,35 +130,35 @@ function buscarCliente() {
                 document.getElementById('inputComplementClient').value = c.complementoCliente
                 document.getElementById('inputNeighborhoodClient').value = c.bairroCliente
                 document.getElementById('inputIdClient').value = c._id
-                // Limpar o campo de busca e remover o foco
+                // Limpar o campo de busca e remover o foco.
                 foco.value = ""
                 foco.blur()
-                // Liberar os botões editar e excluir
+                // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
                 document.getElementById('btnDelete').disabled = false
-                // Restaurar o padrão da tecla Enter
+                // Restaurar o padrão da tecla Enter.
                 restaurarEnter()
-                // Reativar os inputs das caixas de textos
+                // Reativar os inputs das caixas de textos.
                 document.querySelectorAll('.bloqueio input').forEach(input => {
                     input.disabled = false
                 })
             })
         })
     }
-    // Setar o nome do cliente e liberar o botão adicionar
+    // Setar o nome do cliente e liberar o botão adicionar.
     api.setarNomeCliente(() => {
-        // Setar o nome do cliente       
+        // Setar o nome do cliente.     
         let campoNome = document.getElementById('searchClient').value
         document.getElementById('inputNameClient').focus()
         document.getElementById('inputNameClient').value = campoNome
-        // Limpar o campo de busca e remover o foco
+        // Limpar o campo de busca e remover o foco.
         foco.value = ""
         foco.blur()
-        // Liberar o botão adicionar
+        // Liberar o botão adicionar.
         btnCreate.disabled = false
-        // Restaurar o padrão da tecla Enter
+        // Restaurar o padrão da tecla Enter.
         restaurarEnter()
-        // Reativar os inputs das caixas de textos
+        // Reativar os inputs das caixas de textos.
         document.querySelectorAll('.bloqueio input').forEach(input => {
             input.disabled = false
         })

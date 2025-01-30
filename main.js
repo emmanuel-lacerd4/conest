@@ -259,9 +259,9 @@ const template = [
 /*********************************************/
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Recebimento dos dados de formulário clientes
+// Recebimento dos dados de formulário clientes.
 ipcMain.on('new-client', async (event, cliente) => {
-    //teste de recebimento dos dados (Passo 2 - slide) Importante!
+    // Teste de recebimento dos dados (Passo 2 - slide) Importante!
     console.log(cliente)
 
     // Passo 3 - slide (cadastrar os dados no banco de dados)
@@ -279,19 +279,18 @@ ipcMain.on('new-client', async (event, cliente) => {
             complementoCliente: cliente.complementoCli,
             bairroCliente: cliente.bairroCli
         })
-        // a linha abaixo usa a biblioteca moongoose para salvar
+        // A linha abaixo usa a biblioteca moongoose para salvar
         await novoCliente.save()
 
-        //confirmação de cliente adicionado no banco
+        // Confirmação de cliente adicionado no banco
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
-            message: "Cliente adicionado com sucesso",
+            message: "Cliente adicionado com sucesso!",
             buttons: ['OK']
         })
         // Enviar uma resposta para o renderizador resetar o form.
         event.reply('reset-form')
-
     } catch (error) {
         console.log(error)
     }
@@ -303,7 +302,7 @@ ipcMain.on('dialog-search', () => {
     dialog.showMessageBox({
         type: 'warning',
         title: 'Atenção!',
-        message: 'Preencha um nome no campo de busca',
+        message: 'Preencha um nome no campo de busca.',
         buttons: ['OK']
     })
 })
@@ -369,7 +368,7 @@ ipcMain.on('delete-client', async (event, idCliente) => {
             dialog.showMessageBox({
                 type: 'info',
                 title: 'Aviso',
-                message: 'Cliente excluído com sucesso',
+                message: 'Cliente excluído com sucesso!',
                 buttons: ['OK']
             })
             event.reply('reset-form')
@@ -425,7 +424,7 @@ ipcMain.on('update-client', async (event, cliente) => {
 /*********************************************/
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Recebimento dos dados de formulário fornecedores
+// Recebimento dos dados de formulário fornecedores.
 ipcMain.on('new-supplier', async (event, fornecedor) => {
     // Teste de recebimento dos dados (Passo 2 - slide) Importante!
     console.log(fornecedor)
@@ -454,12 +453,9 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
             title: "Aviso",
             message: "Fornecedor adicionado com sucesso!",
             buttons: ['OK']
-        }).then((result) => {
-            if (result.response === 0) {
-                event.reply('reset-form')
-            }
         })
-
+        // Enviar uma resposta para o renderizador resetar o form.
+        event.reply('reset-form')
     } catch (error) {
         console.log(error)
     }
@@ -471,7 +467,7 @@ ipcMain.on('dialog-search', () => {
     dialog.showMessageBox({
         type: 'warning',
         title: 'Atenção!',
-        message: 'Preencha um nome no campo de busca',
+        message: 'Preencha um nome no campo de busca.',
         buttons: ['OK']
     })
 })
@@ -501,10 +497,10 @@ ipcMain.on('search-supplier', async (event, forNome) => {
             }).then((result) => {
                 console.log(result)
                 if (result.response === 0) {
-                    // Enviar ao renderizador um pedido para setar o nome do fornecedor (trazendo do campo de busca) e liberar o botão adicionar
+                    // Enviar ao renderizador um pedido para setar o nome do fornecedor (trazendo do campo de busca) e liberar o botão adicionar.
                     event.reply('set-nameSupplier')
                 } else {
-                    // Enviar ao renderizador um pedido para limpar os campos do formulário
+                    // Enviar ao renderizador um pedido para limpar os campos do formulário.
                     event.reply('reset-form')
                 }
             })
@@ -517,12 +513,12 @@ ipcMain.on('search-supplier', async (event, forNome) => {
 })
 // Fim do CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('delete-supplier', async (event, idFornecedor) => {
     // Teste de recebimento do id do fornecedor (passo 2 - slide)
     console.log(idFornecedor)
     // Confirmação antes de excluir o fornecedor (IMPORTANTE!)
-    // supplier é a variável ref a janela de fornecedores
+    // Supplier é a variável ref a janela de fornecedores
     const { response } = await dialog.showMessageBox(supplier, {
         type: 'warning',
         buttons: ['Cancelar', 'Excluir'], //[0,1]
@@ -538,7 +534,7 @@ ipcMain.on('delete-supplier', async (event, idFornecedor) => {
             dialog.showMessageBox({
                 type: 'info',
                 title: 'Aviso',
-                message: 'Fornecedor excluído com sucesso',
+                message: 'Fornecedor excluído com sucesso!',
                 buttons: ['OK']
             })
             event.reply('reset-form')

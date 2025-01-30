@@ -5,7 +5,7 @@
 
 const foco = document.getElementById('searchSupplier')
 
-//Mudar as propriedades do documento html ao iniciar a janela
+// Mudar as propriedades do documento html ao iniciar a janela
 document.addEventListener('DOMContentLoaded', () => {
     btnCreate.disabled = true
     btnUpdate.disabled = true
@@ -29,14 +29,13 @@ function teclaEnter(event) {
 function restaurarEnter() {
     document.getElementById('frmSupplier').removeEventListener('keydown', teclaEnter)
 }
-
 // Manipulando o evento (tecla Enter)
 document.getElementById('frmSupplier').addEventListener('keydown', teclaEnter)
 
 // Array usado nós métodos para manipulação da estrutura de dados
 let arrayFornecedor = []
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Passo 1 - slide (capturar os dados dos inputs form)
 let formFornecedor = document.getElementById('frmSupplier')
 let idFornecedor = document.getElementById('inputIdSupplier')
@@ -51,6 +50,7 @@ let numeroFornecedor = document.getElementById('inputNumberSupplier')
 let complementoFornecedor = document.getElementById('inputComplementSupplier')
 let bairroFornecedor = document.getElementById('inputNeighborhoodSupplier')
 
+// CRUD Create/Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Evento associado ao botão adicionar (quando o botão for pressionado)
 formFornecedor.addEventListener('submit', async (event) => {
     // Evitar o comportamento padrão de envio em um form
@@ -93,7 +93,7 @@ formFornecedor.addEventListener('submit', async (event) => {
         api.editarFornecedor(fornecedor)
     }
 })
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function buscarFornecedor() {
@@ -101,22 +101,22 @@ function buscarFornecedor() {
     let forNome = document.getElementById('searchSupplier').value
     // Validação
     if (forNome === "") {
-        api.validarBusca() // Validação do campo obrigatório 
+        api.validarBusca() // Validação do campo obrigatório.
         foco.focus()
     } else {
-        //console.log(forNome) // Teste do passo 1
-        // Passo 2 (slide) - enviar o pedido de busca do fornecedor ao main
+        //console.log(forNome) // Teste do passo 1.
+        // Passo 2 (slide) - enviar o pedido de busca do fornecedor ao main.
         api.buscarFornecedor(forNome)
-        // Passo 5 - Recebimento dos dados do fornecedor
+        // Passo 5 - Recebimento dos dados do fornecedor.
         api.renderizarFornecedor((event, dadosFornecedor) => {
-            // (Teste de recebimento dos dados do fornecedor)
+            // Teste de recebimento dos dados do fornecedor.
             console.log(dadosFornecedor)
-            // Passo 6 (slide): renderização dos dados do fornecedor no formulário
+            // Passo 6 (slide): renderização dos dados do fornecedor no formulário.
             const fornecedorRenderizado = JSON.parse(dadosFornecedor)
             arrayFornecedor = fornecedorRenderizado
-            // Teste para entendimento da lógica
+            // Teste para entendimento da lógica.
             console.log(arrayFornecedor)
-            // Percorrer o array de fornecedores, extrair os dados e setar (preencher) os campos do formulário
+            // Percorrer o array de fornecedores, extrair os dados e setar (preencher) os campos do formulário.
             arrayFornecedor.forEach((c) => {
                 document.getElementById('inputNameSupplier').value = c.nomeFornecedor
                 document.getElementById('inputPhoneSupplier').value = c.foneFornecedor
@@ -128,36 +128,36 @@ function buscarFornecedor() {
                 document.getElementById('inputNumberSupplier').value = c.numeroFornecedor
                 document.getElementById('inputComplementSupplier').value = c.complementoFornecedor
                 document.getElementById('inputNeighborhoodSupplier').value = c.bairroFornecedor
-                document.getElementById('inputSupplier').value = c._id
-                // Limpar o campo de busca e remover o foco
+                document.getElementById('inputIdSupplier').value = c._id
+                // Limpar o campo de busca e remover o foco.
                 foco.value = ""
                 foco.blur()
-                // Liberar os botões editar e excluir
+                // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
                 document.getElementById('btnDelete').disabled = false
-                // Restaurar o padrão da tecla Enter
+                // Restaurar o padrão da tecla Enter.
                 restaurarEnter()
-                // Reativar os inputs das caixas de textos
+                // Reativar os inputs das caixas de textos.
                 document.querySelectorAll('.bloqueio input').forEach(input => {
                     input.disabled = false
                 })
             })
         })
     }
-    // Setar o nome do fornecedor e liberar o botão adicionar
+    // Setar o nome do fornecedor e liberar o botão adicionar.
     api.setarNomeFornecedor(() => {
-        // Setar o nome do fornecedor       
+        // Setar o nome do fornecedor.      
         let campoNome = document.getElementById('searchSupplier').value
         document.getElementById('inputNameSupplier').focus()
         document.getElementById('inputNameSupplier').value = campoNome
-        // Limpar o campo de busca e remover o foco
+        // Limpar o campo de busca e remover o foco.
         foco.value = ""
         foco.blur()
-        // Liberar o botão adicionar
+        // Liberar o botão adicionar.
         btnCreate.disabled = false
-        // Restaurar o padrão da tecla Enter
+        // Restaurar o padrão da tecla Enter.
         restaurarEnter()
-        // Reativar os inputs das caixas de textos
+        // Reativar os inputs das caixas de textos.
         document.querySelectorAll('.bloqueio input').forEach(input => {
             input.disabled = false
         })
