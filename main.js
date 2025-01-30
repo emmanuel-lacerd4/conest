@@ -214,6 +214,9 @@ const template = [
         label: 'Arquivo',
         submenu: [
             {
+                type: 'separator'
+            },
+            {
                 label: 'Sair',
                 accelerator: 'Alt+F4',
                 click: () => app.quit()
@@ -421,7 +424,7 @@ ipcMain.on('update-client', async (event, cliente) => {
 /**************** Fornecedores ****************/
 /*********************************************/
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Recebimento dos dados de formulário fornecedores
 ipcMain.on('new-supplier', async (event, fornecedor) => {
     // Teste de recebimento dos dados (Passo 2 - slide) Importante!
@@ -451,17 +454,28 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
             title: "Aviso",
             message: "Fornecedor adicionado com sucesso!",
             buttons: ['OK']
+        }).then((result) => {
+            if (result.response === 0) {
+                event.reply('reset-form')
+            }
         })
-        // Enviar uma resposta para o renderizador resetar o form
-        event.reply('reset-form')
 
     } catch (error) {
         console.log(error)
     }
 })
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('dialog-search', () => {
+    dialog.showMessageBox({
+        type: 'warning',
+        title: 'Atenção!',
+        message: 'Preencha um nome no campo de busca',
+        buttons: ['OK']
+    })
+})
+
 ipcMain.on('search-supplier', async (event, forNome) => {
     // Teste de recebimento do nome do fornecedor a ser pesquisado(passo 2)
     console.log(forNome)
@@ -474,13 +488,103 @@ ipcMain.on('search-supplier', async (event, forNome) => {
             nomeFornecedor: new RegExp(forNome, 'i')
         })
         console.log(dadosFornecedor) // Testes dos passos 3 e 4
-        // Passo 5 - slide -> enviar os dados do fornecedor para o renderizador (JSON.stringfy converte para JSON)
+        // Passo 5 - slide -> enviar os dados do fornecedor para o renderizador (JSON.stringfy converte para JSON).
+
+        // Melhoria na experiência do usuário (se não existir o fornecedor cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo fornecedor).
+        if (dadosFornecedor.length === 0) {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: 'Fornecedor',
+                message: 'Fornecedor não cadastrado.\nDeseja cadastrar este fornecedor?',
+                defaultId: 0,
+                buttons: ['Sim', 'Não']
+            }).then((result) => {
+                console.log(result)
+                if (result.response === 0) {
+                    // Enviar ao renderizador um pedido para setar o nome do fornecedor (trazendo do campo de busca) e liberar o botão adicionar
+                    event.reply('set-nameSupplier')
+                } else {
+                    // Enviar ao renderizador um pedido para limpar os campos do formulário
+                    event.reply('reset-form')
+                }
+            })
+        }
+
         event.reply('supplier-data', JSON.stringify(dadosFornecedor))
     } catch (error) {
         console.log(error)
     }
 })
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('delete-supplier', async (event, idFornecedor) => {
+    // Teste de recebimento do id do fornecedor (passo 2 - slide)
+    console.log(idFornecedor)
+    // Confirmação antes de excluir o fornecedor (IMPORTANTE!)
+    // supplier é a variável ref a janela de fornecedores
+    const { response } = await dialog.showMessageBox(supplier, {
+        type: 'warning',
+        buttons: ['Cancelar', 'Excluir'], //[0,1]
+        title: 'Atenção!',
+        message: 'Tem certeza que deseja excluir este fornecedor?'
+    })
+    // Apoio a lógica
+    console.log(response)
+    if (response === 1) {
+        // Passo 3 slide
+        try {
+            const fornecedorExcluido = await fornecedorModel.findByIdAndDelete(idFornecedor)
+            dialog.showMessageBox({
+                type: 'info',
+                title: 'Aviso',
+                message: 'Fornecedor excluído com sucesso',
+                buttons: ['OK']
+            })
+            event.reply('reset-form')
+        } catch (error) {
+            console.log(error)
+        }
+    }
+})
+// Fim do CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('update-supplier', async (event, fornecedor) => {
+    // Teste de recebimento dos dados do fornecedor (passo 2)
+    console.log(fornecedor)
+    try {
+        const fornecedorEditado = await fornecedorModel.findByIdAndUpdate(
+            fornecedor.idFor, {
+            nomeFornecedor: fornecedor.nomeFor,
+            foneFornecedor: fornecedor.foneFor,
+            siteFornecedor: fornecedor.siteFor,
+            cepFornecedor: fornecedor.cepFor,
+            cidadeFornecedor: fornecedor.cidadeFor,
+            estadoFornecedor: fornecedor.estadoFor,
+            enderecoFornecedor: fornecedor.enderecoFor,
+            numeroFornecedor: fornecedor.numeroFor,
+            complementoFornecedor: fornecedor.complementoFor,
+            bairroFornecedor: fornecedor.bairroFor
+        },
+            {
+                new: true
+            }
+        )
+    } catch (error) {
+        console.log(error)
+    }
+    dialog.showMessageBox(supplier, {
+        type: 'info',
+        message: 'Dados do fornecedor alterados com sucesso.',
+        buttons: ['OK']
+    }).then((result) => {
+        if (result.response === 0) {
+            event.reply('reset-form')
+        }
+    })
+})
+// Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /***********************************************/
 /****************** Produtos ******************/

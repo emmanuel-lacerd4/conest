@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
     <title>Conest - Clientes</title>
     <link rel="stylesheet" href="../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="../public/css/style.css">
@@ -31,65 +32,74 @@
                 <input class="form-control" type="text" id="inputIdClient" placeholder="id">
             </div>
 
-            <!-- Nome -->
-            <div class="col-md-8">
-                <label for="inputNameClient" class="form-label">Nome</label>
-                <input class="form-control" type="text" id="inputNameClient" spellcheck="false" required maxlength="50">
-            </div>
+            <!-- Bloqueio dos input form -->
+            <div class="bloqueio">
 
-            <!-- Fone -->
-            <div class="col-md-4">
-                <label for="inputPhoneClient" class="form-label">Celular</label>
-                <input class="form-control" type="tel" id="inputPhoneClient" spellcheck="false" required maxlength="15">
-            </div>
+                <!-- Nome -->
+                <div class="col-md-8">
+                    <label for="inputNameClient" class="form-label">Nome</label>
+                    <input class="form-control" type="text" id="inputNameClient" spellcheck="false" required
+                        maxlength="50">
+                </div>
 
-            <!-- E-mail -->
-            <div class="col-md-8">
-                <label for="inputEmailClient" class="form-label">E-mail</label>
-                <input class="form-control" type="email" id="inputEmailClient" spellcheck="false" maxlength="50">
-            </div>
+                <!-- Fone -->
+                <div class="col-md-4">
+                    <label for="inputPhoneClient" class="form-label">Celular</label>
+                    <input class="form-control" type="tel" id="inputPhoneClient" spellcheck="false" required
+                        maxlength="15">
+                </div>
 
-            <!-- CEP -->
-            <div class="col-md-4">
-                <label for="inputCepClient" class="form-label">CEP</label>
-                <input class="form-control" type="text" id="inputCepClient" spellcheck="false" maxlength="9">
-            </div>
+                <!-- E-mail -->
+                <div class="col-md-8">
+                    <label for="inputEmailClient" class="form-label">E-mail</label>
+                    <input class="form-control" type="email" id="inputEmailClient" spellcheck="false" maxlength="50">
+                </div>
 
-            <!-- Cidade -->
-            <div class="col-md-8">
-                <label for="inputCityClient" class="form-label">Cidade</label>
-                <input class="form-control" type="text" id="inputCityClient" spellcheck="false" maxlength="50">
-            </div>
+                <!-- CEP -->
+                <div class="col-md-4">
+                    <label for="inputCepClient" class="form-label">CEP</label>
+                    <input class="form-control" type="text" id="inputCepClient" spellcheck="false" maxlength="9">
+                </div>
 
-            <!-- Estado -->
-            <div class="col-md-4">
-                <label for="inputStateClient" class="form-label">Estado</label>
-                <input class="form-control" type="text" id="inputStateClient" spellcheck="false" maxlength="2">
-            </div>
+                <!-- Cidade -->
+                <div class="col-md-8">
+                    <label for="inputCityClient" class="form-label">Cidade</label>
+                    <input class="form-control" type="text" id="inputCityClient" spellcheck="false" maxlength="50">
+                </div>
 
-            <!-- Endereço -->
-            <div class="col-md-8">
-                <label for="inputStreetClient" class="form-label">Logradouro</label>
-                <input class="form-control" type="text" id="inputStreetClient" spellcheck="false" maxlength="50">
-            </div>
+                <!-- Estado -->
+                <div class="col-md-4">
+                    <label for="inputStateClient" class="form-label">Estado</label>
+                    <input class="form-control" type="text" id="inputStateClient" spellcheck="false" maxlength="2">
+                </div>
 
-            <!-- Número do Endereço -->
-            <div class="col-md-4">
-                <label for="inputNumberClient" class="form-label">Número</label>
-                <input class="form-control" type="text" id="inputNumberClient" spellcheck="false" maxlength="5">
-            </div>
+                <!-- Endereço -->
+                <div class="col-md-8">
+                    <label for="inputStreetClient" class="form-label">Logradouro</label>
+                    <input class="form-control" type="text" id="inputStreetClient" spellcheck="false" maxlength="50">
+                </div>
 
-            <!-- Complemento -->
-            <div class="col-md-4">
-                <label for="inputComplementClient" class="form-label">Complemento</label>
-                <input class="form-control" type="text" id="inputComplementClient" spellcheck="false" maxlength="5">
-            </div>
+                <!-- Número do Endereço -->
+                <div class="col-md-4">
+                    <label for="inputNumberClient" class="form-label">Número</label>
+                    <input class="form-control" type="text" id="inputNumberClient" spellcheck="false" maxlength="5">
+                </div>
 
-            <!-- Bairro -->
-            <div class="col-md-4">
-                <label for="inputNeighborhoodClient" class="form-label">Bairro</label>
-                <input class="form-control" type="text" id="inputNeighborhoodClient" spellcheck="false" maxlength="50">
+                <!-- Complemento -->
+                <div class="col-md-4">
+                    <label for="inputComplementClient" class="form-label">Complemento</label>
+                    <input class="form-control" type="text" id="inputComplementClient" spellcheck="false" maxlength="5">
+                </div>
+
+                <!-- Bairro -->
+                <div class="col-md-4">
+                    <label for="inputNeighborhoodClient" class="form-label">Bairro</label>
+                    <input class="form-control" type="text" id="inputNeighborhoodClient" spellcheck="false"
+                        maxlength="50">
+                </div>
+
             </div>
+            <!-- Fim dos bloqueio input -->
 
             <!-- Botões -->
             <div class="mt-5">
@@ -98,9 +108,7 @@
                 <button type="button" class="btn btn-danger" id="btnDelete" onclick="excluirCliente()">Excluir</button>
                 <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
             </div>
-
         </form>
-
     </div>
     <script src="../public/js/bootstrap.min.js"></script>
     <script src="../public/js/script.js"></script>

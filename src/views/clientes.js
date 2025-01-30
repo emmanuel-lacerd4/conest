@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     btnUpdate.disabled = true
     btnDelete.disabled = true
     foco.focus()
+    // Desativar o input das caixas de texto denro da div .bloqueio
+    document.querySelectorAll('.bloqueio input').forEach(input => {
+        input.disabled = true
+    })
 })
 
 // Função para manipular o evento da tecla Enter
@@ -98,7 +102,7 @@ function buscarCliente() {
     let cliNome = document.getElementById('searchClient').value
     // Validação
     if (cliNome === "") {
-        api.validarBusca() //validação do campo obrigatório 
+        api.validarBusca() // Validação do campo obrigatório 
         foco.focus()
     } else {
         //console.log(cliNome) // Teste do passo 1
@@ -134,10 +138,13 @@ function buscarCliente() {
                 document.getElementById('btnDelete').disabled = false
                 // Restaurar o padrão da tecla Enter
                 restaurarEnter()
+                // Reativar os inputs das caixas de textos
+                document.querySelectorAll('.bloqueio input').forEach(input => {
+                    input.disabled = false
+                })
             })
         })
     }
-
     // Setar o nome do cliente e liberar o botão adicionar
     api.setarNomeCliente(() => {
         // Setar o nome do cliente       
@@ -151,6 +158,10 @@ function buscarCliente() {
         btnCreate.disabled = false
         // Restaurar o padrão da tecla Enter
         restaurarEnter()
+        // Reativar os inputs das caixas de textos
+        document.querySelectorAll('.bloqueio input').forEach(input => {
+            input.disabled = false
+        })
     })
 }
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -210,7 +221,7 @@ document.getElementById('inputCepClient').addEventListener('input', function () 
 function excluirCliente() {
     api.deletarCliente(idCliente.value) // Passo 1 do slide
 }
-// Fim CRUD Delete
+// Fim CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // Reset Form >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 api.resetarFormulario((args) => {
