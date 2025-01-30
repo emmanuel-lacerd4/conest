@@ -381,7 +381,7 @@ ipcMain.on('delete-client', async (event, idCliente) => {
 
 // CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('update-client', async (event, cliente) => {
-    // Teste de recebimento dos dados do cliente (passo 2)
+    // Teste de recebimento dos dados do cliente (passo 2).
     console.log(cliente)
     try {
         const clienteEditado = await clienteModel.findByIdAndUpdate(
@@ -406,7 +406,7 @@ ipcMain.on('update-client', async (event, cliente) => {
     }
     dialog.showMessageBox(client, {
         type: 'info',
-        message: 'Dados do cliente alterados com sucesso.',
+        message: 'Dados do cliente alterados com sucesso!',
         buttons: ['OK']
     }).then((result) => {
         if (result.response === 0) {
@@ -547,7 +547,7 @@ ipcMain.on('delete-supplier', async (event, idFornecedor) => {
 
 // CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('update-supplier', async (event, fornecedor) => {
-    // Teste de recebimento dos dados do fornecedor (passo 2)
+    // Teste de recebimento dos dados do fornecedor (passo 2).
     console.log(fornecedor)
     try {
         const fornecedorEditado = await fornecedorModel.findByIdAndUpdate(
@@ -572,7 +572,7 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
     }
     dialog.showMessageBox(supplier, {
         type: 'info',
-        message: 'Dados do fornecedor alterados com sucesso.',
+        message: 'Dados do fornecedor alterados com sucesso!',
         buttons: ['OK']
     }).then((result) => {
         if (result.response === 0) {
@@ -582,28 +582,30 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 })
 // Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 /***********************************************/
 /****************** Produtos ******************/
 /*********************************************/
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Recebimento dos dados de formulário produtos
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Recebimento dos dados de formulário produtos.
 ipcMain.on('new-product', async (event, produto) => {
     // Teste de recebimento dos dados (Passo 2 - slide) Importante!
     console.log(produto)
 
-    // Passo 3 - slide (cadastrar os dados no banco de dados)
+    // Passo 3 - slide (cadastrar os dados no banco de dados).
     try {
-        // Criar um novo objeto usando a classe modelo
+        // Criar um novo objeto usando a classe modelo.
         const novoProduto = new produtoModel({
             nomeProduto: produto.nomePro,
             codProduto: produto.codPro,
             precoProduto: produto.precoPro
         })
-        // A linha abaixo usa a biblioteca mongoose para salvar
+        // A linha abaixo usa a biblioteca mongoose para salvar.
         await novoProduto.save()
 
-        // Confirmação de cliente adicionado no banco de dados
+        // Confirmação de cliente adicionado no banco de dados.
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
