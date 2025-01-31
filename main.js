@@ -263,10 +263,9 @@ const template = [
 ipcMain.on('new-client', async (event, cliente) => {
     // Teste de recebimento dos dados (Passo 2 - slide) Importante!
     console.log(cliente)
-
-    // Passo 3 - slide (cadastrar os dados no banco de dados)
+    // Passo 3 - slide (cadastrar os dados no banco de dados).
     try {
-        // criar um novo objeto usando a classe modelo
+        // Criar um novo objeto usando a classe modelo.
         const novoCliente = new clienteModel({
             nomeCliente: cliente.nomeCli,
             foneCliente: cliente.foneCli,
@@ -308,17 +307,17 @@ ipcMain.on('dialog-search', () => {
 })
 
 ipcMain.on('search-client', async (event, cliNome) => {
-    // Teste de recebimento do nome do cliente a ser pesquisado(passo 2)
+    // Teste de recebimento do nome do cliente a ser pesquisado(passo 2).
     console.log(cliNome)
-    //Passos 3 e 4 - Pesquisar no banco de dados o cliente pelo nome
-    // find() -> buscar no banco de dados (mongoose)
-    // RegExp -> filtro pelo nome do cliente 'i' insensitive (maiúsculo ou minúsculo)
-    // Atenção: nomeCliente -> model | cliNome -> renderizador
+    //Passos 3 e 4 - Pesquisar no banco de dados o cliente pelo nome.
+    // find() -> buscar no banco de dados (mongoose).
+    // RegExp -> filtro pelo nome do cliente 'i' insensitive (maiúsculo ou minúsculo).
+    // Atenção: nomeCliente -> model | cliNome -> renderizador.
     try {
         const dadosCliente = await clienteModel.find({
             nomeCliente: new RegExp(cliNome, 'i')
         })
-        console.log(dadosCliente) // Teste dos passos 3 e 4
+        console.log(dadosCliente) // Teste dos passos 3 e 4.
         // Passo 5 - slide -> enviar os dados do cliente para o renderizador (JSON.stringfy converte para JSON).
 
         // Melhoria na experiência do usuário (se não existir o cliente cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo cliente).
@@ -593,7 +592,6 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 ipcMain.on('new-product', async (event, produto) => {
     // Teste de recebimento dos dados (Passo 2 - slide) Importante!
     console.log(produto)
-
     // Passo 3 - slide (cadastrar os dados no banco de dados).
     try {
         // Criar um novo objeto usando a classe modelo.
@@ -612,29 +610,57 @@ ipcMain.on('new-product', async (event, produto) => {
             message: "Produto adicionado com sucesso!",
             buttons: ['OK']
         })
-        // Enviar uma resposta para o renderizador resetar o form
+        // Enviar uma resposta para o renderizador resetar o form.
         event.reply('reset-form')
-
     } catch (error) {
         console.log(error)
     }
 })
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('dialog-search', () => {
+    dialog.showMessageBox({
+        type: 'warning',
+        title: 'Atenção!',
+        message: 'Preencha um nome no campo de busca.',
+        buttons: ['OK']
+    })
+})
+
 ipcMain.on('search-product', async (event, proNome) => {
-    // Teste de recebimento do nome do produto a ser pesquisado(passo 2)
+    // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
     console.log(proNome)
-    // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome
-    // find() -> buscar no banco de dados (moongose)
-    // RegExp -> filtro pelo nome do produto 'i' insensitive (maiúsculo ou minúsculo)
-    // Atenção: nomeProduto -> model | proNome -> renderizador
+    // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome.
+    // find() -> buscar no banco de dados (moongose).
+    // RegExp -> filtro pelo nome do produto 'i' insensitive (maiúsculo ou minúsculo).
+    // Atenção: nomeProduto -> model | proNome -> renderizador.
     try {
         const dadosProduto = await produtoModel.find({
             nomeProduto: new RegExp(proNome, 'i')
         })
-        console.log(dadosProduto) // Testes dos passos 3 e 4
-        // Passo 5 - slide -> enviar os dados do produto para o renderizador (JSON.stringfy converte para JSON)
+        console.log(dadosProduto) // Testes dos passos 3 e 4.
+        // Passo 5 - slide -> enviar os dados do produto para o renderizador (JSON.stringfy converte para JSON).
+
+        // Melhoria na experiência do usuário (se não existir o produto cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo produto).
+        if (dadosProduto.length === 0) {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: 'Produtos',
+                message: 'Produto não cadastrado.\nDeseja cadastrar este produto?',
+                defaultId: 0,
+                buttons: ['Sim', 'Não']
+            }).then((result) => {
+                console.log(result)
+                if (result.response === 0) {
+                    // Enviar ao renderizador um pedido para setar o nome do produto (trazendo do campo de busca) e liberar o botão adicionar.
+                    event.reply('set-nameProduct')
+                } else {
+                    // Enviar ao renderizador um pedido para limpar os campos do formulário.
+                    event.reply('reset-form')
+                }
+            })
+        }
         event.reply('product-data', JSON.stringify(dadosProduto))
     } catch (error) {
         console.log(error)
@@ -642,20 +668,49 @@ ipcMain.on('search-product', async (event, proNome) => {
 })
 // Fim do CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('dialog-search', () => {
+    dialog.showMessageBox({
+        type: 'warning',
+        title: 'Atenção!',
+        message: 'Preencha um nome no campo de busca.',
+        buttons: ['OK']
+    })
+})
+
 ipcMain.on('search-product', async (event, proCod) => {
-    // Teste de recebimento do nome do produto a ser pesquisado(passo 2)
+    // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
     console.log(proCod)
-    // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome
-    // find() -> buscar no banco de dados (moongose)
-    // RegExp -> filtro pelo nome do produto 'i' insensitive (maiúsculo ou minúsculo)
-    // Atenção: nomeProduto -> model | proCod -> renderizador
+    // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome.
+    // find() -> buscar no banco de dados (moongose).
+    // RegExp -> filtro pelo nome do produto 'i' insensitive (maiúsculo ou minúsculo).
+    // Atenção: codProduto -> model | proCod -> renderizador.
     try {
         const dadosProdutoCod = await produtoModel.find({
             codProduto: new RegExp(proCod, 'i')
         })
-        console.log(dadosProdutoCod) // Testes dos passos 3 e 4
-        // Passo 5 - slide -> enviar os dados do produto para o renderizador (JSON.stringfy converte para JSON)
+        console.log(dadosProdutoCod) // Testes dos passos 3 e 4.
+        // Passo 5 - slide -> enviar os dados do produto para o renderizador (JSON.stringfy converte para JSON).
+
+        // Melhoria na experiência do usuário (se não existir o produto cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo produto).
+        if (dadosProdutoCod.length === 0) {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: 'Produtos',
+                message: 'Produto não cadastrado.\nDeseja cadastrar este produto?',
+                defaultId: 0,
+                buttons: ['Sim', 'Não']
+            }).then((result) => {
+                console.log(result)
+                if (result.response === 0) {
+                    // Enviar ao renderizador um pedido para setar o nome do produto (trazendo do campo de busca) e liberar o botão adicionar.
+                    event.reply('set-nameProduct')
+                } else {
+                    // Enviar ao renderizador um pedido para limpar os campos do formulário.
+                    event.reply('reset-form')
+                }
+            })
+        }
         event.reply('product-data', JSON.stringify(dadosProdutoCod))
     } catch (error) {
         console.log(error)

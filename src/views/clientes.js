@@ -5,19 +5,19 @@
 
 const foco = document.getElementById('searchClient')
 
-// Mudar as propriedades do documento html ao iniciar a janela
+// Mudar as propriedades do documento html ao iniciar a janela.
 document.addEventListener('DOMContentLoaded', () => {
     btnCreate.disabled = true
     btnUpdate.disabled = true
     btnDelete.disabled = true
     foco.focus()
-    // Desativar o input das caixas de texto denro da div .bloqueio
+    // Desativar o input das caixas de texto denro da div .bloqueio.
     document.querySelectorAll('.bloqueio input').forEach(input => {
         input.disabled = true
     })
 })
 
-// Função para manipular o evento da tecla Enter
+// Função para manipular o evento da tecla Enter.
 function teclaEnter(event) {
     if (event.key === "Enter") {
         event.preventDefault()
@@ -25,15 +25,15 @@ function teclaEnter(event) {
     }
 }
 
-// Função para remover o manipulador do evento da tecla Enter
+// Função para remover o manipulador do evento da tecla Enter.
 function restaurarEnter() {
     document.getElementById('frmClient').removeEventListener('keydown', teclaEnter)
 }
 
-// Manipulando o evento (tecla Enter)
+// Manipulando o evento (tecla Enter).
 document.getElementById('frmClient').addEventListener('keydown', teclaEnter)
 
-// Array usado nós métodos para manipulação da estrutura de dados
+// Array usado nós métodos para manipulação da estrutura de dados.
 let arrayCliente = []
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -52,14 +52,14 @@ let complementoCliente = document.getElementById('inputComplementClient')
 let bairroCliente = document.getElementById('inputNeighborhoodClient')
 
 // CRUD Create/Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Evento associado ao botão adicionar (quando o botão for pressionado)
+// Evento associado ao botão adicionar (quando o botão for pressionado).
 formCliente.addEventListener('submit', async (event) => {
-    // Evitar o comportamento padrão de envio em um form
+    // Evitar o comportamento padrão de envio em um form.
     event.preventDefault()
-    // Teste importante! (fluxo dos dados)
+    // Teste importante! (fluxo dos dados).
     console.log(idCliente.value, nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente.value, enderecoCliente.value, numeroCliente.value, complementoCliente.value, bairroCliente.value)
 
-    // Passo 2 - slide (envio das informações para o main)
+    // Passo 2 - slide (envio das informações para o main).
     // Estratégia para determinar se é um novo cadastro de clientes ou a edição de um cliente já existente.
     if (idCliente.value === "") {
         // Criar um objeto.
@@ -98,11 +98,11 @@ formCliente.addEventListener('submit', async (event) => {
 
 // CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function buscarCliente() {
-    // Passo 1 (slides)
+    // Passo 1 (slides).
     let cliNome = document.getElementById('searchClient').value
-    // Validação
+    // Validação.
     if (cliNome === "") {
-        api.validarBusca() // Validação do campo obrigatório 
+        api.validarBusca() // Validação do campo obrigatório.
         foco.focus()
     } else {
         //console.log(cliNome) // Teste do passo 1.
