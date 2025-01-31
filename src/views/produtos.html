@@ -15,7 +15,7 @@
     <div class="container">
         <h1>Produtos</h1>
         <form id="frmProduct" class="mt-2 row g-3">
-            <!-- Buscar produtos -->
+            <!-- Buscar Produtos por Nome -->
             <div class="col-md-6">
                 <input type="text" class="form-control" id="searchProduct" maxlength="30" spellcheck="false">
             </div>
@@ -23,7 +23,16 @@
             <div class="col-md-4">
                 <button type="button" class="btn btn-primary" id="btnRead" onclick="buscarProduto()">Buscar
                     Nome</button>
+            </div>
 
+            <hr class="mt-4 border border-primary border -1">
+
+            <!-- Buscar Produtos por Código -->
+            <div class="col-md-6">
+                <input type="text" class="form-control" id="searchProduct" maxlength="30" spellcheck="false">
+            </div>
+            
+            <div class="col-md-4">
                 <button type="button" class="btn btn-primary" id="btnRead" onclick="buscarProdutoCod()">Buscar
                     Código</button>
             </div>
@@ -35,31 +44,24 @@
                 <input class="form-control" type="text" id="inputIdProduct" placeholder="id">
             </div>
 
-            <!-- Bloqueio dos input form -->
-            <div class="bloqueio">
-
-                <!-- Nome do produto -->
-                <div class="col-md-8">
-                    <label for="inputNameProduct" class="form-label">Nome do Produto</label>
-                    <input class="form-control" type="text" id="inputNameProduct" spellcheck="false" required
-                        maxlength="50">
-                </div>
-
-                <!-- Código de barras -->
-                <div class="col-md-4">
-                    <label for="inputCodProduct" class="form-label">Código de Barras</label>
-                    <input class="form-control" type="text" id="inputCodProduct" spellcheck="false" required
-                        maxlength="15">
-                </div>
-
-                <!-- Preço -->
-                <div class="col-md-8">
-                    <label for="inputPrecoProduct" class="form-label">Preço</label>
-                    <input class="form-control" type="text" id="inputPrecoProduct" spellcheck="false" maxlength="50">
-                </div>
-
+            <!-- Nome do produto -->
+            <div class="col-md-8">
+                <label for="inputNameProduct" class="form-label">Nome do Produto</label>
+                <input class="form-control" type="text" id="inputNameProduct" spellcheck="false" required
+                    maxlength="50">
             </div>
-            <!-- Fim dos bloqueio input -->
+
+            <!-- Código de barras -->
+            <div class="col-md-4">
+                <label for="inputCodProduct" class="form-label">Código de Barras</label>
+                <input class="form-control" type="text" id="inputCodProduct" spellcheck="false" required maxlength="15">
+            </div>
+
+            <!-- Preço -->
+            <div class="col-md-8">
+                <label for="inputPrecoProduct" class="form-label">Preço</label>
+                <input class="form-control" type="text" id="inputPrecoProduct" spellcheck="false" maxlength="50">
+            </div>
 
             <!-- Botões -->
             <div class="mt-5">

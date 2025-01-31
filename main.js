@@ -258,6 +258,16 @@ const template = [
 /****************** Clientes ******************/
 /*********************************************/
 
+// Aviso (pop-up) ao abrir a janela
+ipcMain.on('notice-client', () => {
+    dialog.showMessageBox({
+        type: 'info',
+        title: "Atenção!",
+        message: "Pesquise um cliente antes de continuar.",
+        buttons: ['OK']
+    })
+})
+
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Recebimento dos dados de formulário clientes.
 ipcMain.on('new-client', async (event, cliente) => {

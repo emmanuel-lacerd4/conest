@@ -135,7 +135,11 @@ function buscarFornecedor() {
                 document.getElementById('inputIdSupplier').value = c._id
                 // Limpar o campo de busca e remover o foco.
                 foco.value = ""
-                foco.blur()
+                // Validação e correção de BUGs.
+                foco.disabled = true
+                btnRead.disabled = true
+                btnCreate = true
+                //foco.blur()
                 // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
                 document.getElementById('btnDelete').disabled = false
