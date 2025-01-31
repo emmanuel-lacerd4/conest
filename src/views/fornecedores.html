@@ -43,9 +43,16 @@
                         maxlength="50">
                 </div>
 
-                <!-- Fone -->
+                <!-- CNPJ -->
                 <div class="col-md-4">
-                    <label for="inputPhoneSupplier" class="form-label">Telefone</label>
+                    <label for="inputCnpjSupplier" class="form-label">CNPJ</label>
+                    <input class="form-control" type="text" id="inputCnpjSupplier" spellcheck="false" required
+                        maxlength="18">
+                </div>
+
+                <!-- Celular -->
+                <div class="col-md-4">
+                    <label for="inputPhoneSupplier" class="form-label">DDD e Celular</label>
                     <input class="form-control" type="tel" id="inputPhoneSupplier" spellcheck="false" required
                         maxlength="15">
                 </div>
@@ -108,7 +115,8 @@
             <div class="mt-5">
                 <button type="submit" class="btn btn-success" id="btnCreate">Adicionar</button>
                 <button type="submit" class="btn btn-warning" id="btnUpdate">Editar</button>
-                <button type="button" class="btn btn-danger" id="btnDelete" onclick="excluirFornecedor()">Excluir</button>
+                <button type="button" class="btn btn-danger" id="btnDelete"
+                    onclick="excluirFornecedor()">Excluir</button>
                 <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
             </div>
         </form>

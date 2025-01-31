@@ -10,6 +10,9 @@ const clienteSchema = new Schema({
     nomeCliente: {
         type: String
     },
+    cpfCliente: {
+        type: String
+    },
     foneCliente: {
         type: String
     },

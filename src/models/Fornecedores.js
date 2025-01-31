@@ -10,6 +10,9 @@ const fornecedorSchema = new Schema({
     nomeFornecedor: {
         type: String
     },
+    cnpjFornecedor: {
+        type: String
+    },
     foneFornecedor: {
         type: String
     },

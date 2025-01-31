@@ -268,6 +268,7 @@ ipcMain.on('new-client', async (event, cliente) => {
         // Criar um novo objeto usando a classe modelo.
         const novoCliente = new clienteModel({
             nomeCliente: cliente.nomeCli,
+            cpfCliente: cliente.cpfCli,
             foneCliente: cliente.foneCli,
             emailCliente: cliente.emailCli,
             cepCliente: cliente.cepCli,
@@ -386,6 +387,7 @@ ipcMain.on('update-client', async (event, cliente) => {
         const clienteEditado = await clienteModel.findByIdAndUpdate(
             cliente.idCli, {
             nomeCliente: cliente.nomeCli,
+            cpfCliente: cliente.cpfCli,
             foneCliente: cliente.foneCli,
             emailCliente: cliente.emailCli,
             cepCliente: cliente.cepCli,
@@ -433,6 +435,7 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
         // Criar um novo objeto usando a classe modelo
         const novoFornecedor = new fornecedorModel({
             nomeFornecedor: fornecedor.nomeFor,
+            cnpjFornecedor: fornecedor.cnpjFor,
             foneFornecedor: fornecedor.foneFor,
             siteFornecedor: fornecedor.siteFor,
             cepFornecedor: fornecedor.cepFor,
@@ -552,6 +555,7 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
         const fornecedorEditado = await fornecedorModel.findByIdAndUpdate(
             fornecedor.idFor, {
             nomeFornecedor: fornecedor.nomeFor,
+            cnpjFornecedor: fornecedor.cnpjFor,
             foneFornecedor: fornecedor.foneFor,
             siteFornecedor: fornecedor.siteFor,
             cepFornecedor: fornecedor.cepFor,

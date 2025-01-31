@@ -159,14 +159,14 @@ function buscarProdutoCod() {
     } else {
         //console.log(proCod) // Teste do passo 1.
         // Passo 2 (slide) - enviar o pedido de busca do produto ao main.
-        api.buscarProduto(proCod)
+        api.buscarProdutoCod(proCod)
         // Passo 5 - Recebimento dos dados do produto.
-        api.renderizarProduto((event, dadosProdutoCod) => {
+        api.renderizarProdutoCod((event, dadosProdutoCod) => {
             // Teste de recebimento dos dados do produto.
             console.log(dadosProdutoCod)
             // Passo 6 (slide): renderização dos dados do produto no formulário.
-            const produtoRenderizado = JSON.parse(dadosProdutoCod)
-            arrayProduto = produtoRenderizado
+            const produtoRenderizadoCod = JSON.parse(dadosProdutoCod)
+            arrayProduto = produtoRenderizadoCod
             // Teste para entendimento da lógica.
             console.log(arrayProduto)
             // Percorrer o array de produtos, extrair os dados e setar (preencher) os campos do formulário.

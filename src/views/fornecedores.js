@@ -40,6 +40,7 @@ let arrayFornecedor = []
 let formFornecedor = document.getElementById('frmSupplier')
 let idFornecedor = document.getElementById('inputIdSupplier')
 let nomeFornecedor = document.getElementById('inputNameSupplier')
+let cnpjFornecedor = document.getElementById('inputCnpjSupplier')
 let foneFornecedor = document.getElementById('inputPhoneSupplier')
 let siteFornecedor = document.getElementById('inputSiteSupplier')
 let cepFornecedor = document.getElementById('inputCepSupplier')
@@ -56,7 +57,7 @@ formFornecedor.addEventListener('submit', async (event) => {
     // Evitar o comportamento padrão de envio em um form
     event.preventDefault()
     // Teste importante! (fluxo dos dados)
-    console.log(idFornecedor.value, nomeFornecedor.value, foneFornecedor.value, siteFornecedor.value, cepFornecedor.value, cidadeFornecedor.value, estadoFornecedor.value, enderecoFornecedor.value, numeroFornecedor.value, complementoFornecedor.value, bairroFornecedor.value)
+    console.log(idFornecedor.value, nomeFornecedor.value, cnpjFornecedor.value, foneFornecedor.value, siteFornecedor.value, cepFornecedor.value, cidadeFornecedor.value, estadoFornecedor.value, enderecoFornecedor.value, numeroFornecedor.value, complementoFornecedor.value, bairroFornecedor.value)
 
     // Passo 2 - slide (envio das informações para o main).
     // Estratégia para determinar se é um novo cadastro de fornecedores ou a edição de um fornecedor já existente.
@@ -64,6 +65,7 @@ formFornecedor.addEventListener('submit', async (event) => {
         // Criar um objeto.
         const fornecedor = {
             nomeFor: nomeFornecedor.value,
+            cnpjFor: cnpjFornecedor.value,
             foneFor: foneFornecedor.value,
             siteFor: siteFornecedor.value,
             cepFor: cepFornecedor.value,
@@ -80,6 +82,7 @@ formFornecedor.addEventListener('submit', async (event) => {
         const fornecedor = {
             idFor: idFornecedor.value,
             nomeFor: nomeFornecedor.value,
+            cnpjFor: cnpjFornecedor.value,
             foneFor: foneFornecedor.value,
             siteFor: siteFornecedor.value,
             cepFor: cepFornecedor.value,
@@ -119,6 +122,7 @@ function buscarFornecedor() {
             // Percorrer o array de fornecedores, extrair os dados e setar (preencher) os campos do formulário.
             arrayFornecedor.forEach((c) => {
                 document.getElementById('inputNameSupplier').value = c.nomeFornecedor
+                document.getElementById('inputCnpjSupplier').value = c.cnpjFornecedor
                 document.getElementById('inputPhoneSupplier').value = c.foneFornecedor
                 document.getElementById('inputSiteSupplier').value = c.siteFornecedor
                 document.getElementById('inputCepSupplier').value = c.cepFornecedor

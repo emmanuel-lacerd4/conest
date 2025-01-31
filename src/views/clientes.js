@@ -41,6 +41,7 @@ let arrayCliente = []
 let formCliente = document.getElementById('frmClient')
 let idCliente = document.getElementById('inputIdClient')
 let nomeCliente = document.getElementById('inputNameClient')
+let cpfCliente = document.getElementById('inputCpfClient')
 let foneCliente = document.getElementById('inputPhoneClient')
 let emailCliente = document.getElementById('inputEmailClient')
 let cepCliente = document.getElementById('inputCepClient')
@@ -57,7 +58,7 @@ formCliente.addEventListener('submit', async (event) => {
     // Evitar o comportamento padrão de envio em um form.
     event.preventDefault()
     // Teste importante! (fluxo dos dados).
-    console.log(idCliente.value, nomeCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente.value, enderecoCliente.value, numeroCliente.value, complementoCliente.value, bairroCliente.value)
+    console.log(idCliente.value, nomeCliente.value, cpfCliente.value, foneCliente.value, emailCliente.value, cepCliente.value, cidadeCliente.value, estadoCliente.value, enderecoCliente.value, numeroCliente.value, complementoCliente.value, bairroCliente.value)
 
     // Passo 2 - slide (envio das informações para o main).
     // Estratégia para determinar se é um novo cadastro de clientes ou a edição de um cliente já existente.
@@ -65,6 +66,7 @@ formCliente.addEventListener('submit', async (event) => {
         // Criar um objeto.
         const cliente = {
             nomeCli: nomeCliente.value,
+            cpfCli: cpfCliente.value,
             foneCli: foneCliente.value,
             emailCli: emailCliente.value,
             cepCli: cepCliente.value,
@@ -81,6 +83,7 @@ formCliente.addEventListener('submit', async (event) => {
         const cliente = {
             idCli: idCliente.value,
             nomeCli: nomeCliente.value,
+            cpfCli: cpfCliente.value,
             foneCli: foneCliente.value,
             emailCli: emailCliente.value,
             cepCli: cepCliente.value,
@@ -120,6 +123,7 @@ function buscarCliente() {
             // Percorrer o array de clientes, extrair os dados e setar (preencher) os campos do formulário.
             arrayCliente.forEach((c) => {
                 document.getElementById('inputNameClient').value = c.nomeCliente
+                document.getElementById('inputCpfClient').value = c.cpfCliente
                 document.getElementById('inputPhoneClient').value = c.foneCliente
                 document.getElementById('inputEmailClient').value = c.emailCliente
                 document.getElementById('inputCepClient').value = c.cepCliente
