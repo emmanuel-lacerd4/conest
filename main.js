@@ -692,7 +692,7 @@ ipcMain.on('dialog-search', () => {
     })
 })
 
-ipcMain.on('search-product', async (event, proCod) => {
+ipcMain.on('search-barcode', async (event, proCod) => {
     // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
     console.log(proCod)
     // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome.
@@ -725,7 +725,7 @@ ipcMain.on('search-product', async (event, proCod) => {
                 }
             })
         }
-        event.reply('product-data', JSON.stringify(dadosProdutoCod))
+        event.reply('product-data-barcode', JSON.stringify(dadosProdutoCod))
     } catch (error) {
         console.log(error)
     }

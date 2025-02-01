@@ -5,6 +5,7 @@
 
 const foco = document.getElementById('searchProduct')
 
+
 // Mudar as propriedades do documento html ao iniciar a janela.
 document.addEventListener('DOMContentLoaded', () => {
     btnCreate.disabled = true
@@ -113,7 +114,11 @@ function buscarProduto() {
                 document.getElementById('inputIdProduct').value = c._id
                 // Limpar o campo de busca e remover o foco.
                 foco.value = ""
-                foco.blur()
+                // Validação e correção de BUGs.
+                foco.disabled = true
+                btnRead.disabled = true
+                btnCreate = true
+                //foco.blur()
                 // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
                 document.getElementById('btnDelete').disabled = false
@@ -150,7 +155,7 @@ function buscarProduto() {
 // CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function buscarProdutoCod() {
     // Passo 1 (slides).
-    let proCod = document.getElementById('searchProduct').value
+    let proCod = document.getElementById('searchBarcode').value
     console.log(proCod)
     // Validação.
     if (proCod === "") {
@@ -197,7 +202,7 @@ function buscarProdutoCod() {
     // Setar o nome do produto e liberar o botão adicionar.
     api.setarNomeProduto(() => {
         // Setar o nome do produto.     
-        let campoNome = document.getElementById('searchProduct').value
+        let campoNome = document.getElementById('searchBarcode').value
         document.getElementById('inputNameProduct').focus()
         document.getElementById('inputNameProduct').value = campoNome
         // Limpar o campo de busca e remover o foco.
