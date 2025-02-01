@@ -254,6 +254,14 @@ const template = [
         ]
     }
 ]
+ipcMain.on('dialog-search', () => {
+    dialog.showMessageBox({
+        type: 'warning',
+        title: 'Atenção!',
+        message: 'Preencha um nome no campo de busca.',
+        buttons: ['OK']
+    })
+})
 /***********************************************/
 /****************** Clientes ******************/
 /*********************************************/
@@ -292,15 +300,18 @@ ipcMain.on('new-client', async (event, cliente) => {
         // A linha abaixo usa a biblioteca moongoose para salvar
         await novoCliente.save()
 
-        // Confirmação de cliente adicionado no banco
+        // Confirmação de cliente adicionado no banco.
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
             message: "Cliente adicionado com sucesso!",
             buttons: ['OK']
+        }).then((result) => {
+            if (result.response === 0) {
+                // Enviar uma resposta para o renderizador resetar o form.
+                event.reply('reset-form')
+            }
         })
-        // Enviar uma resposta para o renderizador resetar o form.
-        event.reply('reset-form')
     } catch (error) {
         console.log(error)
     }
@@ -308,15 +319,6 @@ ipcMain.on('new-client', async (event, cliente) => {
 // Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ipcMain.on('dialog-search', () => {
-    dialog.showMessageBox({
-        type: 'warning',
-        title: 'Atenção!',
-        message: 'Preencha um nome no campo de busca.',
-        buttons: ['OK']
-    })
-})
-
 ipcMain.on('search-client', async (event, cliNome) => {
     // Teste de recebimento do nome do cliente a ser pesquisado(passo 2).
     console.log(cliNome)
@@ -475,15 +477,6 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
 // Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ipcMain.on('dialog-search', () => {
-    dialog.showMessageBox({
-        type: 'warning',
-        title: 'Atenção!',
-        message: 'Preencha um nome no campo de busca.',
-        buttons: ['OK']
-    })
-})
-
 ipcMain.on('search-supplier', async (event, forNome) => {
     // Teste de recebimento do nome do fornecedor a ser pesquisado(passo 2)
     console.log(forNome)
@@ -632,16 +625,7 @@ ipcMain.on('new-product', async (event, produto) => {
 })
 // Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ipcMain.on('dialog-search', () => {
-    dialog.showMessageBox({
-        type: 'warning',
-        title: 'Atenção!',
-        message: 'Preencha um nome no campo de busca.',
-        buttons: ['OK']
-    })
-})
-
+// CRUD Read Nome >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-product', async (event, proNome) => {
     // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
     console.log(proNome)
@@ -680,18 +664,9 @@ ipcMain.on('search-product', async (event, proNome) => {
         console.log(error)
     }
 })
-// Fim do CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD Read Nome <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ipcMain.on('dialog-search', () => {
-    dialog.showMessageBox({
-        type: 'warning',
-        title: 'Atenção!',
-        message: 'Preencha um nome no campo de busca.',
-        buttons: ['OK']
-    })
-})
-
+// CRUD Read Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-barcode', async (event, proCod) => {
     // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
     console.log(proCod)
@@ -718,7 +693,7 @@ ipcMain.on('search-barcode', async (event, proCod) => {
                 console.log(result)
                 if (result.response === 0) {
                     // Enviar ao renderizador um pedido para setar o nome do produto (trazendo do campo de busca) e liberar o botão adicionar.
-                    event.reply('set-nameProduct')
+                    event.reply('set-barcodeProduct')
                 } else {
                     // Enviar ao renderizador um pedido para limpar os campos do formulário.
                     event.reply('reset-form')
@@ -730,4 +705,67 @@ ipcMain.on('search-barcode', async (event, proCod) => {
         console.log(error)
     }
 })
-// Fim do CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD Read Código de Barras <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('delete-product', async (event, idProduto) => {
+    // Teste de recebimento do id do produto (passo 2 - slide).
+    console.log(idProduto)
+    // Confirmação antes de excluir o produto (IMPORTANTE!).
+    // product é a variável ref a janela de produtos.
+    const { response } = await dialog.showMessageBox(product, {
+        type: 'warning',
+        buttons: ['Cancelar', 'Excluir'], //[0,1]
+        title: 'Atenção!',
+        message: 'Tem certeza que deseja excluir este produto?'
+    })
+    // Apoio a lógica.
+    console.log(response)
+    if (response === 1) {
+        // Passo 3 slide
+        try {
+            const produtoExcluido = await produtoModel.findByIdAndDelete(idProduto)
+            dialog.showMessageBox({
+                type: 'info',
+                title: 'Aviso',
+                message: 'Produto excluído com sucesso',
+                buttons: ['OK']
+            })
+            event.reply('reset-form')
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+})
+// Fim do CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('update-product', async (event, produto) => {
+    //teste de recebimento dos dados do produto (passo 2)
+    console.log(produto)
+    try {
+        const produtoEditado = await produtoModel.findByIdAndUpdate(
+            produto.idPro, {
+            nomeCliente: cliente.nomeCli,
+            foneCliente: cliente.foneCli,
+            emailCliente: cliente.emailCli
+        },
+            {
+                new: true
+            }
+        )
+    } catch (error) {
+        console.log(error)
+    }
+    dialog.showMessageBox(client, {
+        type: 'info',
+        message: 'Dados do cliente alterados com sucesso.',
+        buttons: ['OK']
+    }).then((result) => {
+        if (result.response === 0) {
+            event.reply('reset-form')
+        }
+    })
+})
+// Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

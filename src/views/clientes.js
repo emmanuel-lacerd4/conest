@@ -7,14 +7,17 @@ const foco = document.getElementById('searchClient')
 
 // Mudar as propriedades do documento html ao iniciar a janela.
 document.addEventListener('DOMContentLoaded', () => {
-    btnCreate.disabled = true
     btnUpdate.disabled = true
     btnDelete.disabled = true
     foco.focus()
     // Desativar o input das caixas de texto denro da div .bloqueio.
+    /*
     document.querySelectorAll('.bloqueio input').forEach(input => {
         input.disabled = true
     })
+        */
+    // Aviso (pop-up)
+    //api.avisoCliente()
 })
 
 // Função para manipular o evento da tecla Enter.
@@ -139,7 +142,8 @@ function buscarCliente() {
                 // Validação e correção de BUGs.
                 foco.disabled = true
                 btnRead.disabled = true
-                btnCreate = true
+                // Desativar o botão adicionar.
+                btnCreate.disabled = true
                 //foco.blur()
                 // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
@@ -147,9 +151,11 @@ function buscarCliente() {
                 // Restaurar o padrão da tecla Enter.
                 restaurarEnter()
                 // Reativar os inputs das caixas de textos.
+                /*
                 document.querySelectorAll('.bloqueio input').forEach(input => {
                     input.disabled = false
                 })
+                    */
             })
         })
     }
@@ -162,14 +168,15 @@ function buscarCliente() {
         // Limpar o campo de busca e remover o foco.
         foco.value = ""
         foco.blur()
-        // Liberar o botão adicionar.
-        btnCreate.disabled = false
         // Restaurar o padrão da tecla Enter.
         restaurarEnter()
         // Reativar os inputs das caixas de textos.
+        /*
         document.querySelectorAll('.bloqueio input').forEach(input => {
             input.disabled = false
+            
         })
+            */
     })
 }
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

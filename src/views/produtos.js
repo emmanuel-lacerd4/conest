@@ -200,11 +200,11 @@ function buscarProdutoCod() {
         })
     }
     // Setar o nome do produto e liberar o botão adicionar.
-    api.setarNomeProduto(() => {
+    api.setarCodProduto(() => {
         // Setar o nome do produto.     
         let campoNome = document.getElementById('searchBarcode').value
-        document.getElementById('inputNameProduct').focus()
-        document.getElementById('inputNameProduct').value = campoNome
+        document.getElementById('inputCodProduct').focus()
+        document.getElementById('inputCodProduct').value = campoNome
         // Limpar o campo de busca e remover o foco.
         foco.value = ""
         foco.blur()
