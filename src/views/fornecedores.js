@@ -205,16 +205,16 @@ function buscarCep(cep) {
 
 // Função para formatar CEP (XXXXX-XXX)
 function formatarCEP(input) {
-    let value = input.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
     if (value.length > 5) {
-        value = value.replace(/(\d{5})(\d)/, '$1-$2'); // Adiciona o hífen após os 5 primeiros números
+        value = value.replace(/(\d{5})(\d)/, '$1-$2') // Adiciona o hífen após os 5 primeiros números
     }
     input.value = value
 }
 
 // Evento: Formatar e buscar CEP ao digitar
 document.getElementById('inputCepSupplier').addEventListener('input', function () {
-    formatarCEP(this); // Aplica a formatação
+    formatarCEP(this) // Aplica a formatação
     const cep = this.value.replace(/\D/g, '') // Remove qualquer caractere não numérico
     if (cep.length === 8) {  // Se o CEP já tiver 8 caracteres
         buscarCep(cep)
@@ -268,7 +268,7 @@ document.getElementById('inputCnpjSupplier').addEventListener('input', function 
 })
 
 document.getElementById('inputPhoneSupplier').addEventListener('input', function() {
-    formatarTelefone(this);
+    formatarTelefone(this)
 })
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
