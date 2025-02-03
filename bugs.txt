@@ -1,5 +1,4 @@
 Clientes e fornecedores:
-3x buscar [OK] Enter para fechar o dialog
 Habilitar botão adicionar
 Ocultar ID
 

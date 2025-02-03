@@ -188,7 +188,7 @@ function buscarCep(cep) {
             .then(response => response.json())
             .then(data => {
                 if (data.erro) {
-                    //alert("CEP não encontrado.")
+                    console.error("CEP não encontrado.")
                 } else {
                     // Preenche os campos do formulário com os dados do CEP
                     document.getElementById('inputStreetSupplier').value = data.logradouro || ""
@@ -198,37 +198,77 @@ function buscarCep(cep) {
                 }
             })
             .catch(erro => {
-                //alert("Erro ao buscar CEP.")
-                console.error(erro);
-            });
-    } else {
-        //alert("Por favor, insira um CEP válido.")
+                console.error("Erro ao buscar CEP:", erro)
+            })
     }
 }
 
-// Formatar CEP
+// Função para formatar CEP (XXXXX-XXX)
 function formatarCEP(input) {
-    let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    let value = input.value.replace(/\D/g, ''); // Remove caracteres não numéricos
     if (value.length > 5) {
-        value = value.replace(/(\d{5})(\d)/, '$1-$2') // Adiciona o hífen
+        value = value.replace(/(\d{5})(\d)/, '$1-$2'); // Adiciona o hífen após os 5 primeiros números
     }
     input.value = value
 }
 
-// Função chamada ao perder o foco ou ao digitar no campo CEP
-document.getElementById('inputCepSupplier').addEventListener('blur', function () {
-    const cep = this.value.replace(/\D/g, '') // Remove qualquer caractere não numérico
-    if (cep) {
-        buscarCep(cep)
-    }
-})
-
-// Caso o usuário insira o CEP e pressione Enter, também podemos buscar
+// Evento: Formatar e buscar CEP ao digitar
 document.getElementById('inputCepSupplier').addEventListener('input', function () {
+    formatarCEP(this); // Aplica a formatação
     const cep = this.value.replace(/\D/g, '') // Remove qualquer caractere não numérico
     if (cep.length === 8) {  // Se o CEP já tiver 8 caracteres
         buscarCep(cep)
     }
+});
+
+// Evento: Buscar CEP ao perder o foco
+document.getElementById('inputCepSupplier').addEventListener('blur', function () {
+    const cep = this.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    if (cep.length === 8) {
+        buscarCep(cep)
+    }
+});
+
+// Função para formatar CNPJ (XX.XXX.XXX/XXXX-XX)
+function formatarCNPJ(input) {
+    let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    if (value.length > 2) {
+        value = value.replace(/(\d{2})(\d)/, '$1.$2')
+    }
+    if (value.length > 5) {
+        value = value.replace(/(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    }
+    if (value.length > 8) {
+        value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4')
+    }
+    if (value.length > 12) {
+        value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5')
+    }
+    input.value = value
+}
+
+
+
+
+// Formatar Telefone (DDD + Número)
+function formatarTelefone(input) {
+    let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    if (value.length > 2) {
+        value = value.replace(/(\d{2})(\d)/, '($1) $2')
+    }
+    if (value.length > 7) {
+        value = value.replace(/(\d{5})(\d)/, '$1-$2')
+    }
+    input.value = value
+}
+
+// Aplicar eventos para CNPJ e Telefone
+document.getElementById('inputCnpjSupplier').addEventListener('input', function () {
+    formatarCNPJ(this)
+})
+
+document.getElementById('inputPhoneSupplier').addEventListener('input', function() {
+    formatarTelefone(this);
 })
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
