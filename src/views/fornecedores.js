@@ -244,11 +244,13 @@ function formatarCNPJ(input) {
     if (value.length > 12) {
         value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5')
     }
-    input.value = value
+    input.value = value;
 }
 
-
-
+// Aplicar a formatação de CNPJ ao digitar
+document.getElementById('inputCnpjSupplier').addEventListener('input', function () {
+    formatarCNPJ(this);  // Aplica a formatação ao campo de CNPJ
+})
 
 // Formatar Telefone (DDD + Número)
 function formatarTelefone(input) {

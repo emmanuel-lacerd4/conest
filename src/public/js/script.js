@@ -96,6 +96,43 @@ function validarCPF(input) {
     }
 }
 
+// Função para validar o CNPJ
+function validarCNPJ(cnpj) {
+    cnpj = cnpj.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
+
+    if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) {
+        return false; // CNPJ inválido (sequência de números iguais)
+    }
+
+    let soma = 0;
+    let peso = 5;
+    for (let i = 0; i < 12; i++) {
+        soma += parseInt(cnpj[i]) * peso;
+        peso = (peso === 9) ? 2 : peso + 1;
+    }
+
+    let resto = soma % 11;
+    let digito1 = (resto < 2) ? 0 : 11 - resto;
+    if (parseInt(cnpj[12]) !== digito1) {
+        return false;
+    }
+
+    soma = 0;
+    peso = 6;
+    for (let i = 0; i < 13; i++) {
+        soma += parseInt(cnpj[i]) * peso;
+        peso = (peso === 9) ? 2 : peso + 1;
+    }
+
+    resto = soma % 11;
+    let digito2 = (resto < 2) ? 0 : 11 - resto;
+    if (parseInt(cnpj[13]) !== digito2) {
+        return false;
+    }
+
+    return true;
+}
+
 // Formatar Celular
 function formatarCelular(input) {
     let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
