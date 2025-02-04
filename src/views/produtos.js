@@ -8,14 +8,15 @@ const foco = document.getElementById('searchProduct')
 
 // Mudar as propriedades do documento html ao iniciar a janela.
 document.addEventListener('DOMContentLoaded', () => {
-    btnCreate.disabled = true
     btnUpdate.disabled = true
     btnDelete.disabled = true
     foco.focus()
     // Desativar o input das caixas de texto denro da div .bloqueio.
+    /*
     document.querySelectorAll('.bloqueio input').forEach(input => {
         input.disabled = true
     })
+        */
 })
 
 // Função para manipular o evento da tecla Enter.
@@ -88,7 +89,6 @@ formProduto.addEventListener('submit', async (event) => {
 function buscarProduto() {
     // Passo 1 (slides).
     let proNome = document.getElementById('searchProduct').value
-    console.log(proNome)
     // Validação.
     if (proNome === "") {
         api.validarBusca() // Validação do campo obrigatório.
@@ -117,7 +117,8 @@ function buscarProduto() {
                 // Validação e correção de BUGs.
                 foco.disabled = true
                 btnRead.disabled = true
-                btnCreate = true
+                // Desativar o botão adicionar.
+                btnCreate.disabled = true
                 //foco.blur()
                 // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
@@ -125,9 +126,11 @@ function buscarProduto() {
                 // Restaurar o padrão da tecla Enter.
                 restaurarEnter()
                 // Reativar os inputs das caixas de textos.
+                /*
                 document.querySelectorAll('.bloqueio input').forEach(input => {
                     input.disabled = false
                 })
+                    */
             })
         })
     }
@@ -140,14 +143,14 @@ function buscarProduto() {
         // Limpar o campo de busca e remover o foco.
         foco.value = ""
         foco.blur()
-        // Liberar o botão adicionar.
-        btnCreate.disabled = false
         // Restaurar o padrão da tecla Enter.
         restaurarEnter()
         // Reativar os inputs das caixas de textos.
+        /*
         document.querySelectorAll('.bloqueio input').forEach(input => {
             input.disabled = false
         })
+            */
     })
 }
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -156,7 +159,6 @@ function buscarProduto() {
 function buscarProdutoCod() {
     // Passo 1 (slides).
     let proCod = document.getElementById('searchBarcode').value
-    console.log(proCod)
     // Validação.
     if (proCod === "") {
         api.validarBusca() // Validação do campo obrigatório.
@@ -185,7 +187,8 @@ function buscarProdutoCod() {
                 // Validação e correção de BUGs.
                 foco.disabled = true
                 btnRead.disabled = true
-                btnCreate = true
+                // Desativar o botão adicionar.
+                btnCreate.disabled = true
                 //foco.blur()
                 // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
@@ -193,10 +196,11 @@ function buscarProdutoCod() {
                 // Restaurar o padrão da tecla Enter.
                 restaurarEnter()
                 // Reativar os inputs das caixas de textos.
+                /*
                 document.querySelectorAll('.bloqueio input').forEach(input => {
                     input.disabled = false
-                })
-            })
+                }) */
+            }) 
         })
     }
     // Setar o nome do produto e liberar o botão adicionar.
@@ -213,12 +217,31 @@ function buscarProdutoCod() {
         // Restaurar o padrão da tecla Enter.
         restaurarEnter()
         // Reativar os inputs das caixas de textos.
+        /*
         document.querySelectorAll('.bloqueio input').forEach(input => {
             input.disabled = false
         })
+            */
     })
 }
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// Função para formatar preço em Reais (R$ XX.XXX,XX)
+function formatarPreco(input) {
+    let value = input.value.replace(/\D/g, '')
+    
+    if (value === "") return
+
+    value = (parseFloat(value) / 100).toFixed(2)
+    value = value.replace('.', ',')
+    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+
+    input.value = value
+}
+
+document.getElementById('inputPrecoProduct').addEventListener('input', function () {
+    formatarPreco(this)
+})
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function excluirProduto() {

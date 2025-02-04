@@ -3,8 +3,17 @@
     display: none;
 }
 
+#idSupplier {
+    display: none;
+}
+
+#idProduct {
+    display: none;
+}
+
 body {
-    overflow: hidden; /* Desativa a rolagem */
+    overflow: hidden;
+    /* Desativa a rolagem */
 }
 
 /* botões */

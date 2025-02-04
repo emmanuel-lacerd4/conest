@@ -467,9 +467,12 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
             title: "Aviso",
             message: "Fornecedor adicionado com sucesso!",
             buttons: ['OK']
+        }).then((result) => {
+            if (result.response === 0) {
+                // Enviar uma resposta para o renderizador resetar o form.
+                event.reply('reset-form')
+            }
         })
-        // Enviar uma resposta para o renderizador resetar o form.
-        event.reply('reset-form')
     } catch (error) {
         console.log(error)
     }
@@ -614,9 +617,12 @@ ipcMain.on('new-product', async (event, produto) => {
             title: "Aviso",
             message: "Produto adicionado com sucesso!",
             buttons: ['OK']
+        }).then((result) => {
+            if (result.response === 0) {
+                // Enviar uma resposta para o renderizador resetar o form.
+                event.reply('reset-form')
+            }
         })
-        // Enviar uma resposta para o renderizador resetar o form.
-        event.reply('reset-form')
     } catch (error) {
         console.log(error)
     }
@@ -745,9 +751,9 @@ ipcMain.on('update-product', async (event, produto) => {
     try {
         const produtoEditado = await produtoModel.findByIdAndUpdate(
             produto.idPro, {
-            nomeCliente: cliente.nomeCli,
-            foneCliente: cliente.foneCli,
-            emailCliente: cliente.emailCli
+            nomeProduto: produto.nomePro,
+            codProduto: produto.codPro,
+            precoProduto: produto.precoPro
         },
             {
                 new: true
@@ -756,9 +762,9 @@ ipcMain.on('update-product', async (event, produto) => {
     } catch (error) {
         console.log(error)
     }
-    dialog.showMessageBox(client, {
+    dialog.showMessageBox(product, {
         type: 'info',
-        message: 'Dados do cliente alterados com sucesso.',
+        message: 'Dados do produto alterados com sucesso.',
         buttons: ['OK']
     }).then((result) => {
         if (result.response === 0) {

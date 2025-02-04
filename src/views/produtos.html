@@ -31,7 +31,7 @@
             <div class="col-md-6">
                 <input type="text" class="form-control" id="searchBarcode" maxlength="30" spellcheck="false">
             </div>
-            
+
             <div class="col-md-4">
                 <button type="button" class="btn btn-primary" id="btnRead" onclick="buscarProdutoCod()">Buscar
                     Código</button>
@@ -43,6 +43,9 @@
             <div class="col-md-6" id="idProduct">
                 <input class="form-control" type="text" id="inputIdProduct" placeholder="id">
             </div>
+
+            <!-- Técnica para bloqueio dos inputs do form -->
+            <!-- div class="bloqueio" -->
 
             <!-- Nome do produto -->
             <div class="col-md-8">
@@ -60,14 +63,17 @@
             <!-- Preço -->
             <div class="col-md-8">
                 <label for="inputPrecoProduct" class="form-label">Preço</label>
-                <input class="form-control" type="text" id="inputPrecoProduct" spellcheck="false" maxlength="50">
+                <input class="form-control" type="text" id="inputPrecoProduct" spellcheck="false" required
+                    maxlength="50">
             </div>
+
+            <!--/div --> <!-- fim do bloqueio -->
 
             <!-- Botões -->
             <div class="mt-5">
                 <button type="submit" class="btn btn-success" id="btnCreate">Adicionar</button>
                 <button type="submit" class="btn btn-warning" id="btnUpdate">Editar</button>
-                <button type="button" class="btn btn-danger" id="btnDelete" onclick="excluirProduto()">Excluir</button>
+                <button type="button" class="btn btn-danger" id="btnDelete" onclick="excluirCliente()">Excluir</button>
                 <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
             </div>
         </form>

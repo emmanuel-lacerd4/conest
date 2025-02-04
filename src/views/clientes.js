@@ -234,7 +234,7 @@ document.getElementById('inputCepClient').addEventListener('blur', function () {
 function formatarCPF(input) {
     let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
     if (value.length > 3) {
-        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2')
     }
     if (value.length > 6) {
         value = value.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
@@ -244,6 +244,8 @@ function formatarCPF(input) {
     }
     input.value = value
 }
+
+
 
 // Formatar Telefone (DDD + Número)
 function formatarTelefone(input) {
