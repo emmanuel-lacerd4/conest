@@ -39,6 +39,60 @@ function formatarCPF(input) {
     input.value = value;
 }
 
+// Validação de CPF
+function validarCPF(input) {
+    function validarCPF(cpf) {
+        // Remover caracteres não numéricos
+        cpf = cpf.replace(/[^\d]+/g, '');
+    
+        // Verificar se o CPF tem 11 caracteres
+        if (cpf.length !== 11) {
+            return false;
+        }
+    
+        // Verificar se o CPF é uma sequência de números repetidos (ex: 111.111.111-11)
+        if (/^(\d)\1{10}$/.test(cpf)) {
+            return false;
+        }
+    
+        // Validar o primeiro dígito verificador
+        let soma = 0;
+        let peso = 10;
+        for (let i = 0; i < 9; i++) {
+            soma += parseInt(cpf[i]) * peso;
+            peso--;
+        }
+        let resto = soma % 11;
+        let digito1 = resto < 2 ? 0 : 11 - resto;
+        if (parseInt(cpf[9]) !== digito1) {
+            return false;
+        }
+    
+        // Validar o segundo dígito verificador
+        soma = 0;
+        peso = 11;
+        for (let i = 0; i < 10; i++) {
+            soma += parseInt(cpf[i]) * peso;
+            peso--;
+        }
+        resto = soma % 11;
+        let digito2 = resto < 2 ? 0 : 11 - resto;
+        if (parseInt(cpf[10]) !== digito2) {
+            return false;
+        }
+    
+        return true;
+    }
+    
+    // Exemplo de uso:
+    const cpf = '123.456.789-09';
+    if (validarCPF(cpf)) {
+        console.log('CPF válido!');
+    } else {
+        console.log('CPF inválido!');
+    }    
+}
+
 // Formatar Celular
 function formatarCelular(input) {
     let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos

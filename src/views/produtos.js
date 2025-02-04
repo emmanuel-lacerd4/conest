@@ -117,6 +117,59 @@ function buscarProduto() {
     })
 }
 
+function buscarProduto() {
+    let proNome = document.getElementById('searchProduct').value
+
+    if (proNome === "") {
+        api.validarBusca() // Validação do campo obrigatório
+        foco.focus()
+    } else {
+        api.buscarProduto(proNome)
+        api.renderizarProduto((event, dadosProduto) => {
+            const produtoRenderizado = JSON.parse(dadosProduto)
+            arrayProduto = produtoRenderizado
+            arrayProduto.forEach((c) => {
+                document.getElementById('inputNameProduct').value = c.nomeProduto
+                document.getElementById('inputCodProduct').value = c.codProduto
+                document.getElementById('inputPrecoProduct').value = c.precoProduto
+                document.getElementById('inputIdProduct').value = c._id
+                foco.value = ""
+                foco.disabled = true
+                btnRead.disabled = true
+                btnCreate.disabled = true
+                document.getElementById('btnUpdate').disabled = false
+                document.getElementById('btnDelete').disabled = false
+                restaurarEnter()
+
+                // Limpar e desabilitar o campo de busca de nome
+                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
+                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
+
+                // Limpar e desabilitar o campo de busca de código de barras, mas mantendo o foco em nome
+                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
+
+                // Focar no campo de nome do produto para continuar o cadastro
+                document.getElementById('inputNameProduct').focus() // Focar no campo de nome do produto
+            })
+        })
+    }
+
+    api.setarNomeProduto(() => {
+        let campoNome = document.getElementById('searchProduct').value
+        document.getElementById('inputNameProduct').focus()
+        document.getElementById('inputNameProduct').value = campoNome
+        foco.value = ""
+        foco.blur()
+        btnCreate.disabled = false
+        restaurarEnter()
+
+        // Desabilitar novamente o campo de busca de nome
+        document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
+        // Deixe o campo de busca de código de barras habilitado para uso após o cadastro
+        document.getElementById('searchBarcode').disabled = false // Reabilitar a barra de busca de código de barras
+    })
+}
+
 function buscarProdutoCod() {
     let proCod = document.getElementById('searchBarcode').value
 
@@ -132,14 +185,10 @@ function buscarProdutoCod() {
                 // Caso não encontre produto, limpar e bloquear o campo de código de barras
                 document.getElementById('searchBarcode').value = ""  // Limpar o campo de código de barras
                 document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
-
-                // Limpar e desabilitar o campo de busca de nome
-                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
                 document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
-
-                // Focar de volta no campo de nome para cadastro
-                document.getElementById('searchProduct').focus() // Garantir que o foco vá para o campo de nome
-                document.getElementById('searchProduct').scrollIntoView({ behavior: 'smooth', block: 'center' }); // "Arrasta" até o campo de nome
+                foco.focus() // Focar de volta no campo de busca
+                document.getElementById('searchBarcode').focus() // Garantir que o foco vá para o campo de código de barras
+                document.getElementById('searchBarcode').scrollIntoView({ behavior: 'smooth', block: 'center' }); // "Arrasta" até o campo de código de barras
                 return // Sai da função caso não encontre o produto
             }
 
