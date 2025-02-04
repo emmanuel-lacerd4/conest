@@ -216,6 +216,12 @@ function formatarCEP(input) {
     input.value = value
 }
 
+// Chamar a função de formatação do CEP no evento de input
+document.getElementById('inputCepClient').addEventListener('input', function () {
+    formatarCEP(this); // Chama a função de formatação do CEP
+})
+
+
 // Função chamada ao perder o foco ou ao digitar no campo CEP
 document.getElementById('inputCepClient').addEventListener('blur', function () {
     const cep = this.value.replace(/\D/g, '') // Remove qualquer caractere não numérico
@@ -230,6 +236,43 @@ document.getElementById('inputCepClient').addEventListener('input', function () 
     if (cep.length === 8) {  // Se o CEP já tiver 8 caracteres
         buscarCep(cep)
     }
+})
+
+// Formatar celular
+function formatarCelular(input) {
+    let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    if (value.length > 10) {
+        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3') // Formato (XX) XXXXX-XXXX
+    } else if (value.length > 6) {
+        value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3') // Formato (XX) XXXX-XXXX
+    } else if (value.length > 2) {
+        value = value.replace(/(\d{2})(\d{0,4})/, '($1) $2') // Formato (XX) XXXX
+    }
+    input.value = value
+}
+
+// Chamar a função de formatação do celular no evento de input
+document.getElementById('inputPhoneClient').addEventListener('input', function () {
+    formatarCelular(this); // Chama a função de formatação do celular
+})
+
+// Validação de CPF
+document.getElementById('inputCpfClient').addEventListener('input', function () {
+    validarCPF(this) // Chama a função de validação enquanto o usuário digita
+})
+
+// Formatar CPF
+function formatarCPF(input) {
+    let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    if (value.length > 9) {
+        value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4') // Adiciona pontos e o hífen
+    }
+    input.value = value
+}
+
+// Chamar a função de formatação do CPF no evento de input
+document.getElementById('inputCpfClient').addEventListener('input', function () {
+    formatarCPF(this); // Chama a função de formatação do CPF
 })
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

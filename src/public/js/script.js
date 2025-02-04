@@ -84,13 +84,16 @@ function validarCPF(input) {
         return true;
     }
     
-    // Exemplo de uso:
-    const cpf = '123.456.789-09';
-    if (validarCPF(cpf)) {
-        console.log('CPF válido!');
+    const cpf = input.value; // Pega o valor do input
+    const campoCpf = document.getElementById('inputCpfClient');
+    
+    if (!validarCPF(cpf)) {
+        campoCpf.style.borderColor = 'red'; // Destaca o campo em vermelho
+        campoCpf.setCustomValidity("CPF inválido!"); // Define uma mensagem de erro customizada
     } else {
-        console.log('CPF inválido!');
-    }    
+        campoCpf.style.borderColor = 'green'; // Destaca o campo em verde
+        campoCpf.setCustomValidity(""); // Limpa qualquer mensagem de erro
+    }
 }
 
 // Formatar Celular
