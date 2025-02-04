@@ -5,45 +5,36 @@
 
 const foco = document.getElementById('searchProduct')
 
-
 // Mudar as propriedades do documento html ao iniciar a janela.
 document.addEventListener('DOMContentLoaded', () => {
     btnUpdate.disabled = true
     btnDelete.disabled = true
     foco.focus()
-    // Desativar o input das caixas de texto denro da div .bloqueio.
-    /*
-    document.querySelectorAll('.bloqueio input').forEach(input => {
-        input.disabled = true
-    })
-        */
 })
 
-// Função para manipular o evento da tecla Enter.
+// Função para manipular o evento da tecla Enter
 function teclaEnter(event) {
     if (event.key === "Enter") {
         event.preventDefault()
-        buscarProduto()
+
+        // Verificar qual campo está focado e chamar a função correspondente
+        if (document.activeElement === document.getElementById('searchProduct')) {
+            buscarProduto()
+        } else if (document.activeElement === document.getElementById('searchBarcode')) {
+            buscarProdutoCod()
+        }
     }
 }
 
-// Função para manipular o evento da tecla Enter.
-function teclaEnter(event) {
-    if (event.key === "Enter") {
-        event.preventDefault()
-        buscarProdutoCod()
-    }
-}
+// Adicionando o evento da tecla Enter para o formulário
+document.getElementById('frmProduct').addEventListener('keydown', teclaEnter)
 
 // Função para remover o manipulador do evento da tecla Enter.
 function restaurarEnter() {
     document.getElementById('frmProduct').removeEventListener('keydown', teclaEnter)
 }
 
-// Manipulando o evento (tecla Enter).
-document.getElementById('frmProduct').addEventListener('keydown', teclaEnter)
-
-// Array usado nós métodos para manipulação da estrutura de dados.
+// Array usado nos métodos para manipulação da estrutura de dados.
 let arrayProduto = []
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -55,17 +46,11 @@ let codProduto = document.getElementById('inputCodProduct')
 let precoProduto = document.getElementById('inputPrecoProduct')
 
 // CRUD Create/Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Evento associado ao botão adicionar (quando o botão for pressionado).
 formProduto.addEventListener('submit', async (event) => {
-    // Evitar o comportamento padrão de envio em um form.
     event.preventDefault()
-    // Teste importante! (fluxo dos dados).
     console.log(idProduto.value, nomeProduto.value, codProduto.value, precoProduto.value)
 
-    // Passo 2 - slide (envio das informações para o main).
-    // Estratégia para determinar se é um novo cadastro de produtos ou a edição de um produto já existente.
     if (idProduto.value === "") {
-        // Criar um objeto.
         const produto = {
             nomePro: nomeProduto.value,
             codPro: codProduto.value,
@@ -73,7 +58,6 @@ formProduto.addEventListener('submit', async (event) => {
         }
         api.novoProduto(produto)
     } else {
-        // Criar um novo objeto com o ID do produto.
         const produto = {
             idPro: idProduto.value,
             nomePro: nomeProduto.value,
@@ -87,144 +71,114 @@ formProduto.addEventListener('submit', async (event) => {
 
 // CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function buscarProduto() {
-    // Passo 1 (slides).
     let proNome = document.getElementById('searchProduct').value
-    // Validação.
+
     if (proNome === "") {
-        api.validarBusca() // Validação do campo obrigatório.
+        api.validarBusca() // Validação do campo obrigatório
         foco.focus()
     } else {
-        //console.log(proNome) // Teste do passo 1.
-        // Passo 2 (slide) - enviar o pedido de busca do produto ao main.
         api.buscarProduto(proNome)
-        // Passo 5 - Recebimento dos dados do produto.
         api.renderizarProduto((event, dadosProduto) => {
-            // Teste de recebimento dos dados do produto.
-            console.log(dadosProduto)
-            // Passo 6 (slide): renderização dos dados do produto no formulário.
             const produtoRenderizado = JSON.parse(dadosProduto)
             arrayProduto = produtoRenderizado
-            // Teste para entendimento da lógica.
-            console.log(arrayProduto)
-            // Percorrer o array de produtos, extrair os dados e setar (preencher) os campos do formulário.
             arrayProduto.forEach((c) => {
                 document.getElementById('inputNameProduct').value = c.nomeProduto
                 document.getElementById('inputCodProduct').value = c.codProduto
                 document.getElementById('inputPrecoProduct').value = c.precoProduto
                 document.getElementById('inputIdProduct').value = c._id
-                // Limpar o campo de busca e remover o foco.
                 foco.value = ""
-                // Validação e correção de BUGs.
                 foco.disabled = true
                 btnRead.disabled = true
-                // Desativar o botão adicionar.
                 btnCreate.disabled = true
-                //foco.blur()
-                // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
                 document.getElementById('btnDelete').disabled = false
-                // Restaurar o padrão da tecla Enter.
                 restaurarEnter()
-                // Reativar os inputs das caixas de textos.
-                /*
-                document.querySelectorAll('.bloqueio input').forEach(input => {
-                    input.disabled = false
-                })
-                    */
+
+                // Limpar e desabilitar o campo de busca de nome
+                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
+                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
+
+                // Limpar e desabilitar o campo de busca de código de barras
+                document.getElementById('searchBarcode').value = ""  // Limpar o campo de código de barras
+                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
             })
         })
     }
-    // Setar o nome do produto e liberar o botão adicionar.
+
     api.setarNomeProduto(() => {
-        // Setar o nome do produto.     
         let campoNome = document.getElementById('searchProduct').value
         document.getElementById('inputNameProduct').focus()
         document.getElementById('inputNameProduct').value = campoNome
-        // Limpar o campo de busca e remover o foco.
         foco.value = ""
         foco.blur()
-        // Restaurar o padrão da tecla Enter.
+        btnCreate.disabled = false
         restaurarEnter()
-        // Reativar os inputs das caixas de textos.
-        /*
-        document.querySelectorAll('.bloqueio input').forEach(input => {
-            input.disabled = false
-        })
-            */
+        document.getElementById('searchProduct').disabled = true // Desabilitar o campo de nome
     })
 }
-// Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function buscarProdutoCod() {
-    // Passo 1 (slides).
     let proCod = document.getElementById('searchBarcode').value
-    // Validação.
+
     if (proCod === "") {
-        api.validarBusca() // Validação do campo obrigatório.
+        api.validarBusca() // Validação do campo obrigatório
         foco.focus()
     } else {
-        //console.log(proCod) // Teste do passo 1.
-        // Passo 2 (slide) - enviar o pedido de busca do produto ao main.
         api.buscarProdutoCod(proCod)
-        // Passo 5 - Recebimento dos dados do produto.
         api.renderizarProdutoCod((event, dadosProdutoCod) => {
-            // Teste de recebimento dos dados do produto.
-            console.log(dadosProdutoCod)
-            // Passo 6 (slide): renderização dos dados do produto no formulário.
             const produtoRenderizadoCod = JSON.parse(dadosProdutoCod)
+            
+            if (produtoRenderizadoCod.length === 0) {
+                // Caso não encontre produto, limpar e bloquear o campo de código de barras
+                document.getElementById('searchBarcode').value = ""  // Limpar o campo de código de barras
+                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
+
+                // Limpar e desabilitar o campo de busca de nome
+                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
+                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
+
+                // Focar de volta no campo de nome para cadastro
+                document.getElementById('searchProduct').focus() // Garantir que o foco vá para o campo de nome
+                document.getElementById('searchProduct').scrollIntoView({ behavior: 'smooth', block: 'center' }); // "Arrasta" até o campo de nome
+                return // Sai da função caso não encontre o produto
+            }
+
             arrayProduto = produtoRenderizadoCod
-            // Teste para entendimento da lógica.
-            console.log(arrayProduto)
-            // Percorrer o array de produtos, extrair os dados e setar (preencher) os campos do formulário.
             arrayProduto.forEach((c) => {
                 document.getElementById('inputNameProduct').value = c.nomeProduto
                 document.getElementById('inputCodProduct').value = c.codProduto
                 document.getElementById('inputPrecoProduct').value = c.precoProduto
                 document.getElementById('inputIdProduct').value = c._id
-                // Limpar o campo de busca e remover o foco.
                 foco.value = ""
-                // Validação e correção de BUGs.
                 foco.disabled = true
                 btnRead.disabled = true
-                // Desativar o botão adicionar.
                 btnCreate.disabled = true
-                //foco.blur()
-                // Liberar os botões editar e excluir.
                 document.getElementById('btnUpdate').disabled = false
                 document.getElementById('btnDelete').disabled = false
-                // Restaurar o padrão da tecla Enter.
                 restaurarEnter()
-                // Reativar os inputs das caixas de textos.
-                /*
-                document.querySelectorAll('.bloqueio input').forEach(input => {
-                    input.disabled = false
-                }) */
-            }) 
+
+                // Limpar e desabilitar o campo de busca de nome
+                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
+                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
+
+                // Limpar e desabilitar o campo de busca de código de barras
+                document.getElementById('searchBarcode').value = ""  // Limpar o campo de código de barras
+                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
+            })
         })
     }
-    // Setar o nome do produto e liberar o botão adicionar.
+
     api.setarCodProduto(() => {
-        // Setar o nome do produto.     
-        let campoNome = document.getElementById('searchBarcode').value
+        let campoCod = document.getElementById('searchBarcode').value
         document.getElementById('inputCodProduct').focus()
-        document.getElementById('inputCodProduct').value = campoNome
-        // Limpar o campo de busca e remover o foco.
+        document.getElementById('inputCodProduct').value = campoCod
         foco.value = ""
         foco.blur()
-        // Liberar o botão adicionar.
         btnCreate.disabled = false
-        // Restaurar o padrão da tecla Enter.
         restaurarEnter()
-        // Reativar os inputs das caixas de textos.
-        /*
-        document.querySelectorAll('.bloqueio input').forEach(input => {
-            input.disabled = false
-        })
-            */
+        document.getElementById('searchBarcode').disabled = true // Desabilitar o campo de código de barras
     })
 }
-// Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // Função para formatar preço em Reais (R$ XX.XXX,XX)
 function formatarPreco(input) {
@@ -245,7 +199,7 @@ document.getElementById('inputPrecoProduct').addEventListener('input', function 
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function excluirProduto() {
-    api.deletarProduto(idProduto.value) // Passo 1 do slide
+    api.deletarProduto(idProduto.value)
 }
 // Fim CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -255,7 +209,6 @@ api.resetarFormulario((args) => {
 })
 
 function resetForm() {
-    // Recarregar a página.
     location.reload()
 }
 // Fim do reset form <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
