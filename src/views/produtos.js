@@ -116,13 +116,13 @@ function buscarProduto() {
                 })
                     */
 
-                // Limpar e desabilitar o campo de busca de nome
-                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
-                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
-
                 // Limpar e desabilitar o campo de busca de código de barras
                 document.getElementById('searchBarcode').value = ""  // Limpar o campo de código de barras
                 document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
+
+                // Limpar e desabilitar o campo de busca de nome
+                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
+                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
             })
         })
     }
@@ -192,9 +192,18 @@ function buscarProdutoCod() {
                     input.disabled = false
                 })
                     */
+
+                // Limpar e desabilitar o campo de busca de código de barras
+                document.getElementById('searchBarcode').value = ""  // Limpar o campo de código de barras
+                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
+
+                // Limpar e desabilitar o campo de busca de nome
+                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
+                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
             })
         })
     }
+    
     // Setar o código do produto e liberar o botão adicionar.
     api.setarCodProduto(() => {
         // Setar o código do produto. 
