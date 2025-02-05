@@ -192,90 +192,19 @@ function buscarProdutoCod() {
                     input.disabled = false
                 })
                     */
-
-                // Limpar e desabilitar o campo de busca de nome
-                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
-                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
-
-                // Limpar e desabilitar o campo de busca de código de barras, mas mantendo o foco em nome
-                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
-                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
-
             })
         })
     }
-
-    api.setarNomeProduto(() => {
-        let campoNome = document.getElementById('searchProduct').value
-        document.getElementById('inputNameProduct').focus()
-        document.getElementById('inputNameProduct').value = campoNome
-        foco.value = ""
-        foco.blur()
-        btnCreate.disabled = false
-        restaurarEnter()
-
-        // Desabilitar novamente o campo de busca de nome
-        document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
-        // Deixe o campo de busca de código de barras habilitado para uso após o cadastro
-        document.getElementById('searchBarcode').disabled = false // Reabilitar a barra de busca de código de barras
-    })
-}
-
-function buscarProdutoCod() {
-    let proCod = document.getElementById('searchBarcode').value
-
-    if (proCod === "") {
-        api.validarBusca() // Validação do campo obrigatório
-        foco.focus()
-    } else {
-        api.buscarProdutoCod(proCod)
-        api.renderizarProdutoCod((event, dadosProdutoCod) => {
-            const produtoRenderizadoCod = JSON.parse(dadosProdutoCod)
-
-            if (produtoRenderizadoCod.length === 0) {
-                // Caso não encontre produto, limpar e bloquear o campo de código de barras
-                document.getElementById('searchBarcode').value = ""  // Limpar o campo de código de barras
-                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
-                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
-                foco.focus() // Focar de volta no campo de busca
-                document.getElementById('searchBarcode').focus() // Garantir que o foco vá para o campo de código de barras
-                document.getElementById('searchBarcode').scrollIntoView({ behavior: 'smooth', block: 'center' }); // "Arrasta" até o campo de código de barras
-                return // Sai da função caso não encontre o produto
-            }
-
-            arrayProduto = produtoRenderizadoCod
-            arrayProduto.forEach((c) => {
-                document.getElementById('inputNameProduct').value = c.nomeProduto
-                document.getElementById('inputCodProduct').value = c.codProduto
-                document.getElementById('inputPrecoProduct').value = c.precoProduto
-                document.getElementById('inputIdProduct').value = c._id
-                foco.value = ""
-                foco.disabled = true
-                btnRead.disabled = true
-                btnCreate.disabled = true
-                document.getElementById('btnUpdate').disabled = false
-                document.getElementById('btnDelete').disabled = false
-                restaurarEnter()
-
-                // Limpar e desabilitar o campo de busca de nome
-                document.getElementById('searchProduct').value = ""  // Limpar o campo de nome
-                document.getElementById('searchProduct').disabled = true // Desabilitar a barra de busca de nome
-
-                // Limpar e desabilitar o campo de busca de código de barras
-                document.getElementById('searchBarcode').value = ""  // Limpar o campo de código de barras
-                document.getElementById('searchBarcode').disabled = true // Desabilitar a barra de busca de código de barras
-            })
-        })
-    }
-// Setar o nome do produto e liberar o botão adicionar.
+    // Setar o código do produto e liberar o botão adicionar.
     api.setarCodProduto(() => {
-        // Setar o nome do produto.  
+        // Setar o código do produto. 
         let campoCod = document.getElementById('searchBarcode').value
         document.getElementById('inputCodProduct').focus()
         document.getElementById('inputCodProduct').value = campoCod
         // Limpar o campo de busca e remover o foco.
         foco.value = ""
         foco.blur()
+        // Restaurar o padrão da tecla Enter.
         // Restaurar o padrão da tecla Enter.
         restaurarEnter()
         // Reativar os inputs das caixas de textos.
