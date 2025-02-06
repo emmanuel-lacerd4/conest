@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld('api', {
     deletarFornecedor: (idFornecedor) => ipcRenderer.send('delete-supplier', idFornecedor),
     editarFornecedor: (fornecedor) => ipcRenderer.send('update-supplier', fornecedor),
     setarNomeFornecedor: (args) => ipcRenderer.on('set-nameSupplier', args),
+    abrirSite: (site) => ipcRenderer.send('url-site', site),
     novoProduto: (produto) => ipcRenderer.send('new-product', produto),
     buscarProduto: (proNome) => ipcRenderer.send('search-product', proNome),
     buscarProdutoCod: (proCod) => ipcRenderer.send('search-barcode', proCod),

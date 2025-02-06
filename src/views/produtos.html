@@ -63,7 +63,7 @@
             <!-- Preço -->
             <div class="col-md-8">
                 <label for="inputPrecoProduct" class="form-label">Preço</label>
-                <input class="form-control" type="text" id="inputPrecoProduct" spellcheck="false" required
+                <input class="form-control" type="number" id="inputPrecoProduct" spellcheck="false" required
                     maxlength="50">
             </div>
 
@@ -73,8 +73,7 @@
             <div class="mt-5">
                 <button type="submit" class="btn btn-success" id="btnCreate">Adicionar</button>
                 <button type="submit" class="btn btn-warning" id="btnUpdate">Editar</button>
-                <button type="button" class="btn btn-danger" id="btnDelete"
-                    onclick="excluirProduto()">Excluir</button>
+                <button type="button" class="btn btn-danger" id="btnDelete" onclick="excluirProduto()">Excluir</button>
                 <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
             </div>
         </form>

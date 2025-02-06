@@ -60,14 +60,14 @@
             <!-- Site -->
             <div class="col-md-8">
                 <label for="inputSiteSupplier" class="form-label">Site</label>
-                <input class="form-control" type="text" id="inputSiteSupplier" spellcheck="false" maxlength="50">
+                <input class="form-control" type="url" id="inputSiteSupplier" spellcheck="false" required maxlength="50" pattern="https://.*" title="O site deve começar com https://">
+                <button type="button" class="mt-2 btn btn-outline-secondary" onclick="acessarSite()">Acessar site</button>
             </div>
 
             <!-- CEP -->
             <div class="col-md-4">
                 <label for="inputCepSupplier" class="form-label">CEP</label>
-                <input class="form-control" type="text" id="inputCepSupplier" spellcheck="false" maxlength="9"
-                    placeholder="Digite o CEP">
+                <input class="form-control" type="tel" id="inputCepSupplier" spellcheck="false" maxlength="9">
             </div>
 
             <!-- Cidade -->
@@ -90,7 +90,7 @@
 
             <!-- Número do Endereço -->
             <div class="col-md-4">
-                <label for="inputNumberSupplier" class="form-label">Nº</label>
+                <label for="inputNumberSupplier" class="form-label">Número</label>
                 <input class="form-control" type="text" id="inputNumberSupplier" spellcheck="false" maxlength="5">
             </div>
 

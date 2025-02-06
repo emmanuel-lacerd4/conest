@@ -2,7 +2,7 @@
  * Processo principal
  */
 
-const { app, BrowserWindow, nativeTheme, Menu, shell, ipcMain, dialog } = require('electron/main')
+const { app, BrowserWindow, nativeTheme, Menu, shell, ipcMain, dialog, globalShortcut } = require('electron/main')
 const path = require('node:path')
 
 // Importação do módulo de conexão
@@ -26,15 +26,15 @@ let win
 function createWindow() {
     nativeTheme.themeSource = 'dark'
     win = new BrowserWindow({
-        width: 1010,
+        width: 1280,
         height: 720,
         resizable: false, // Impede redimensionamento
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
     })
-    // Menu personalizado (comentar para debugar)
-    // Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+    // Menu personalizado
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 
     win.loadFile('./src/views/index.html')
 
@@ -94,9 +94,9 @@ function clientWindow() {
     if (main) {
         client = new BrowserWindow({
             width: 1280,
-            height: 800,
-            resizable: false, // Impede redimensionamento
-            //autoHideMenuBar: true,
+            height: 720,
+            resizable: false, // Impede redimensionamento.
+            autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
@@ -104,7 +104,7 @@ function clientWindow() {
             }
         })
     }
-    //client.maximize()
+    client.maximize() // Tela cheia.
 
     client.loadFile('./src/views/clientes.html')
 }
@@ -118,8 +118,8 @@ function supplierWindow() {
         supplier = new BrowserWindow({
             width: 1280,
             height: 720,
-            resizable: false, // Impede redimensionamento
-            //autoHideMenuBar: true,
+            resizable: false, // Impede redimensionamento.
+            autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
@@ -127,7 +127,7 @@ function supplierWindow() {
             }
         })
     }
-    supplier.maximize()
+    supplier.maximize() // Tela cheia.
 
     supplier.loadFile('./src/views/fornecedores.html')
 }
@@ -141,8 +141,8 @@ function productWindow() {
         product = new BrowserWindow({
             width: 1280,
             height: 720,
-            resizable: false, // Impede redimensionamento
-            //autoHideMenuBar: true,
+            resizable: false, // Impede redimensionamento.
+            autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
@@ -150,7 +150,7 @@ function productWindow() {
             }
         })
     }
-    product.maximize()
+    product.maximize() // Tela cheia.
 
     product.loadFile('./src/views/produtos.html')
 }
@@ -164,8 +164,8 @@ function reportWindow() {
         report = new BrowserWindow({
             width: 1280,
             height: 720,
-            resizable: false, // Impede redimensionamento
-            //autoHideMenuBar: true,
+            resizable: false, // Impede redimensionamento.
+            autoHideMenuBar: true,
             parent: main,
             modal: true,
             webPreferences: {
@@ -173,12 +173,25 @@ function reportWindow() {
             }
         })
     }
-    report.maximize()
+    report.maximize() // Tela cheia.
 
     report.loadFile('./src/views/relatorios.html')
 }
 
 app.whenReady().then(() => {
+    //Registrar atalho global para devtools em qualquer janela ativa
+    globalShortcut.register('Ctrl+Shift+I', () => {
+        const tools = BrowserWindow.getFocusedWindow()
+        if (tools) {
+            tools.webContents.openDevTools()
+        }
+    })
+
+    // Desregistrar atalho globais antes de sair
+    app.on('will-quit', () => {
+        globalShortcut.unregisterAll()
+    })
+
     createWindow()
     // Melhor local para estabelecer a conexão com o banco de dados
     // Importar antes o módulo de conexão no início do código
@@ -209,10 +222,25 @@ app.on('window-all-closed', () => {
     }
 })
 
+// Reduzir logs não críticos (mensagens no console quando executar Devtools).
+app.commandLine.appendSwitch('log-level', '3')
+
 const template = [
     {
-        label: 'Arquivo',
+        label: 'Cadastro',
         submenu: [
+            {
+                label: 'Clientes',
+                click: () => clientWindow()
+            },
+            {
+                label: 'Fornecedores',
+                click: () => supplierWindow()
+            },
+            {
+                label: 'Produtos',
+                click: () => productWindow()
+            },
             {
                 type: 'separator'
             },
@@ -222,6 +250,9 @@ const template = [
                 click: () => app.quit()
             }
         ]
+    },
+    {
+        label: 'Relatórios'
     },
     {
         label: 'Zoom',
@@ -435,6 +466,13 @@ ipcMain.on('update-client', async (event, cliente) => {
 /***********************************************/
 /**************** Fornecedores ****************/
 /*********************************************/
+
+// Acessar site externo
+ipcMain.on('url-site', (event, site) => {
+    let url = site.url
+    //console.log(url)
+    shell.openExternal(url)
+})
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Recebimento dos dados de formulário fornecedores.

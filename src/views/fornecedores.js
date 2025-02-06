@@ -5,6 +5,18 @@
 
 const foco = document.getElementById('searchSupplier')
 
+// Acessar site >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+function acessarSite() {
+    let urlFornecedor = document.getElementById('inputSiteSupplier').value
+    //console.log(urlFornecedor)
+    const url = {
+        url: urlFornecedor
+    }
+    // Enviar ao main.js a URL do site.
+    api.abrirSite(url)
+}
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 // Mudar as propriedades do documento html ao iniciar a janela
 document.addEventListener('DOMContentLoaded', () => {
     btnUpdate.disabled = true
@@ -269,7 +281,7 @@ document.getElementById('inputCnpjSupplier').addEventListener('input', function 
     formatarCNPJ(this)
 })
 
-document.getElementById('inputPhoneSupplier').addEventListener('input', function() {
+document.getElementById('inputPhoneSupplier').addEventListener('input', function () {
     formatarTelefone(this)
 })
 

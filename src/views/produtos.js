@@ -214,7 +214,6 @@ function buscarProdutoCod() {
         foco.value = ""
         foco.blur()
         // Restaurar o padrão da tecla Enter.
-        // Restaurar o padrão da tecla Enter.
         restaurarEnter()
         // Reativar os inputs das caixas de textos.
         /*
