@@ -225,22 +225,22 @@ function buscarProdutoCod() {
     })
 }
 
-// Função para formatar preço em Reais (R$ XX.XXX,XX)
-function formatarPreco(input) {
-    let value = input.value.replace(/\D/g, '')
+// // Função para formatar preço em Reais (R$ XX.XXX,XX)
+// function formatarPreco(input) {
+//     let value = input.value.replace(/\D/g, '')
 
-    if (value === "") return
+//     if (value === "") return
 
-    value = (parseFloat(value) / 100).toFixed(2)
-    value = value.replace('.', ',')
-    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+//     value = (parseFloat(value) / 100).toFixed(2)
+//     value = value.replace('.', ',')
+//     value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 
-    input.value = value
-}
+//     input.value = value
+// }
 
-document.getElementById('inputPrecoProduct').addEventListener('input', function () {
-    formatarPreco(this)
-})
+// document.getElementById('inputPrecoProduct').addEventListener('input', function () {
+//     formatarPreco(this)
+// })
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function excluirProduto() {
