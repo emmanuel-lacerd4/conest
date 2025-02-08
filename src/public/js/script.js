@@ -96,41 +96,74 @@ function validarCPF(input) {
     }
 }
 
-// Função para validar o CNPJ
-function validarCNPJ(cnpj) {
-    cnpj = cnpj.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
+// Formatar CNPJ
+function formatarCNPJ(input) {
+    let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    if (value.length > 14) {
+        value = value.substring(0, 14) // Limita a 14 dígitos
+    }
+    value = value.replace(/^(\d{2})(\d)/, '$1.$2') // Primeiro ponto
+    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3') // Segundo ponto
+    value = value.replace(/\.(\d{3})(\d)/, '.$1/$2') // Barra
+    value = value.replace(/(\d{4})(\d)/, '$1-$2') // Hífen
+    input.value = value
+}
 
-    if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) {
-        return false; // CNPJ inválido (sequência de números iguais)
+// Validação de CNPJ
+function validarCNPJ(input) {
+    function calcularCNPJ(cnpj) {
+        cnpj = cnpj.replace(/[^\d]+/g, '') // Remove caracteres não numéricos
+
+        if (cnpj.length !== 14) {
+            return false
+        }
+
+        if (/^(\d)\1{13}$/.test(cnpj)) {
+            return false // Verifica se todos os dígitos são iguais
+        }
+
+        let tamanho = cnpj.length - 2
+        let numeros = cnpj.substring(0, tamanho)
+        let digitos = cnpj.substring(tamanho)
+        let soma = 0
+        let pos = tamanho - 7
+
+        for (let i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--
+            if (pos < 2) pos = 9
+        }
+        let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11)
+        if (resultado !== parseInt(digitos.charAt(0))) {
+            return false
+        }
+
+        tamanho = tamanho + 1
+        numeros = cnpj.substring(0, tamanho)
+        soma = 0
+        pos = tamanho - 7
+
+        for (let i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--
+            if (pos < 2) pos = 9
+        }
+        resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11)
+        if (resultado !== parseInt(digitos.charAt(1))) {
+            return false
+        }
+
+        return true
     }
 
-    let soma = 0;
-    let peso = 5;
-    for (let i = 0; i < 12; i++) {
-        soma += parseInt(cnpj[i]) * peso;
-        peso = (peso === 9) ? 2 : peso + 1;
-    }
+    const cnpj = input.value;
+    const campoCnpj = document.getElementById('inputCnpjSupplier');
 
-    let resto = soma % 11;
-    let digito1 = (resto < 2) ? 0 : 11 - resto;
-    if (parseInt(cnpj[12]) !== digito1) {
-        return false;
+    if (!calcularCNPJ(cnpj)) {
+        campoCnpj.style.borderColor = 'red' // Destaca o campo em vermelho
+        campoCnpj.setCustomValidity("CNPJ inválido!") // Define uma mensagem de erro customizada
+    } else {
+        campoCnpj.style.borderColor = 'green' // Destaca o campo em verde
+        campoCnpj.setCustomValidity("") // Limpa qualquer mensagem de erro
     }
-
-    soma = 0;
-    peso = 6;
-    for (let i = 0; i < 13; i++) {
-        soma += parseInt(cnpj[i]) * peso;
-        peso = (peso === 9) ? 2 : peso + 1;
-    }
-
-    resto = soma % 11;
-    let digito2 = (resto < 2) ? 0 : 11 - resto;
-    if (parseInt(cnpj[13]) !== digito2) {
-        return false;
-    }
-
-    return true;
 }
 
 // Formatar Celular

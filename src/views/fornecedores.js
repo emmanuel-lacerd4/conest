@@ -241,27 +241,27 @@ document.getElementById('inputCepSupplier').addEventListener('blur', function ()
     }
 });
 
-// Função para formatar CNPJ (XX.XXX.XXX/XXXX-XX)
+// Validação de CNPJ
+document.getElementById('inputCnpjSupplier').addEventListener('input', function () {
+    validarCNPJ(this) // Chama a função de validação enquanto o usuário digita
+})
+
+// Formatar CNPJ
 function formatarCNPJ(input) {
     let value = input.value.replace(/\D/g, '') // Remove caracteres não numéricos
-    if (value.length > 2) {
-        value = value.replace(/(\d{2})(\d)/, '$1.$2')
+    if (value.length > 14) {
+        value = value.substring(0, 14) // Limita a 14 dígitos
     }
-    if (value.length > 5) {
-        value = value.replace(/(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-    }
-    if (value.length > 8) {
-        value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4')
-    }
-    if (value.length > 12) {
-        value = value.replace(/(\d{2})\.(\d{3})\.(\d{3})\/(\d{4})(\d)/, '$1.$2.$3/$4-$5')
-    }
-    input.value = value;
+    value = value.replace(/^(\d{2})(\d)/, '$1.$2') // Adiciona o primeiro ponto
+    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3') // Adiciona o segundo ponto
+    value = value.replace(/\.(\d{3})(\d)/, '.$1/$2') // Adiciona a barra
+    value = value.replace(/(\d{4})(\d)/, '$1-$2') // Adiciona o hífen
+    input.value = value
 }
 
-// Aplicar a formatação de CNPJ ao digitar
+// Chamar a função de formatação do CNPJ no evento de input
 document.getElementById('inputCnpjSupplier').addEventListener('input', function () {
-    formatarCNPJ(this);  // Aplica a formatação ao campo de CNPJ
+    formatarCNPJ(this)
 })
 
 // Formatar Telefone (DDD + Número)

@@ -33,32 +33,38 @@
             </div>
 
             <div class="col-md-4">
-                <button type="button" class="btn btn-primary" id="btnRead" onclick="buscarProdutoCod()">Buscar
-                    Código</button>
+                <img src="../public/img/barcode.png" alt="barcode">
             </div>
 
-            <hr class="mt-4 border border-primary border -1">
+            <hr class="border border-primary border-1 opacity-75">
 
-            <!-- ID do produto (oculto) -->
+            <!-- Id do produto (pode ser usado como código interno)-->
             <div class="col-md-6" id="idProduct">
-                <input class="form-control" type="text" id="inputIdProduct" placeholder="id">
+                <label for="inputIdProduct" class="form-label">ID</label>
+                <input type="text" class="form-control" id="inputIdProduct">
+            </div>
+
+            <!-- Barcode -->
+            <div class="col-md-6">
+                <label for="inputCodProduct" class="form-label">Código de barras</label>
+                <input type="text" class="form-control" id="inputCodProduct">
             </div>
 
             <!-- Técnica para bloqueio dos inputs do form -->
             <!-- div class="bloqueio" -->
 
             <!-- Nome do produto -->
-            <div class="col-md-8">
-                <label for="inputNameProduct" class="form-label">Nome do Produto</label>
-                <input class="form-control" type="text" id="inputNameProduct" spellcheck="false" required
+            <div class="col-md-7">
+                <label for="inputNameProduct" class="form-label">Produto</label>
+                <input type="text" class="form-control" id="inputNameProduct" required spellcheck="false"
                     maxlength="50">
             </div>
 
-            <!-- Código de barras -->
-            <div class="col-md-4">
-                <label for="inputCodProduct" class="form-label">Código de Barras</label>
-                <input class="form-control" type="text" id="inputCodProduct" spellcheck="false" required maxlength="15">
+            <!-- Imagem do produto -->
+            <div class="col-md-5">
+                <img src="../public/img/camera.png" alt="imagem" id="imageProductPreview">
             </div>
+            <input type="file" id="imageProduct">
 
             <!-- Preço -->
             <div class="col-md-8">
@@ -67,14 +73,15 @@
                     maxlength="50">
             </div>
 
-            <!--/div --> <!-- fim do bloqueio -->
+            <!--/div -->
+            <!-- fim do bloqueio -->
 
             <!-- Botões -->
-            <div class="mt-5">
+            <div class="col-12">
+                <br><br><br>
                 <button type="submit" class="btn btn-success" id="btnCreate">Adicionar</button>
                 <button type="submit" class="btn btn-warning" id="btnUpdate">Editar</button>
-                <button type="button" class="btn btn-danger" id="btnDelete"
-                    onclick="excluirProduto()">Excluir</button>
+                <button type="button" class="btn btn-danger" id="btnDelete" onclick="excluirProduto()">Excluir</button>
                 <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
             </div>
         </form>

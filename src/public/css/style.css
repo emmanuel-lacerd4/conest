@@ -1,22 +1,22 @@
 /* input ID */
 #idClient {
-    display: none;
+    display: none; /* Oculta a visualização do ID para o usuário.*/
 }
 
 #idSupplier {
-    display: none;
+    display: none; /* Oculta a visualização do ID para o usuário.*/
 }
 
-#idProduct {
-    display: none;
-}
+/* #idProduct {
+    display: none;  Oculta a visualização do ID para o usuário.
+} */
 
 body {
     overflow: hidden;
     /* Desativa a rolagem */
 }
 
-/* botões */
+/* Botões */
 .button img {
     margin: 50px 15px 25px 15px;
     padding: 5px;
@@ -34,7 +34,7 @@ body {
     margin-left: 10px;
 }
 
-/* rodapé */
+/* Rodapé */
 footer {
     background-color: #007acc;
     width: 100%;
@@ -53,4 +53,16 @@ footer p {
 
 footer img {
     margin-right: 10px;
+}
+
+/* Imagem do Produto */
+#imageProductPreview {
+    border: 1px solid #dfdfdf;
+    border-radius: 5px;
+    width: 260px;
+    height: 260px;
+    padding: 5px;
+    position: fixed;
+    right: 45px;
+    bottom: 20px;
 }
