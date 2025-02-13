@@ -642,14 +642,12 @@ ipcMain.on('new-product', async (event, produto) => {
     try {
         // Criar um novo objeto usando a classe modelo.
         const novoProduto = new produtoModel({
+            barcodeProduto: produto.barcodePro,
             nomeProduto: produto.nomePro,
-            codProduto: produto.codPro,
             precoProduto: produto.precoPro
         })
-        // A linha abaixo usa a biblioteca mongoose para salvar.
         await novoProduto.save()
-
-        // Confirmação de cliente adicionado no banco de dados.
+        // Confirmação
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
@@ -657,7 +655,6 @@ ipcMain.on('new-product', async (event, produto) => {
             buttons: ['OK']
         }).then((result) => {
             if (result.response === 0) {
-                // Enviar uma resposta para o renderizador resetar o form.
                 event.reply('reset-form')
             }
         })
@@ -709,22 +706,22 @@ ipcMain.on('search-product', async (event, proNome) => {
 // Fim do CRUD Read Nome <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // CRUD Read Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ipcMain.on('search-barcode', async (event, proCod) => {
+ipcMain.on('search-barcode', async (event, proBar) => {
     // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
-    console.log(proCod)
+    console.log(proBar)
     // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome.
     // find() -> buscar no banco de dados (moongose).
     // RegExp -> filtro pelo nome do produto 'i' insensitive (maiúsculo ou minúsculo).
-    // Atenção: codProduto -> model | proCod -> renderizador.
+    // Atenção: barcodeProduto -> model | proBar -> renderizador.
     try {
-        const dadosProdutoCod = await produtoModel.find({
-            codProduto: new RegExp(proCod, 'i')
+        const dadosProdutoBar = await produtoModel.find({
+            barcodeProduto: new RegExp(proBar, 'i')
         })
-        console.log(dadosProdutoCod) // Testes dos passos 3 e 4.
+        console.log(dadosProdutoBar) // Testes dos passos 3 e 4.
         // Passo 5 - slide -> enviar os dados do produto para o renderizador (JSON.stringfy converte para JSON).
 
         // Melhoria na experiência do usuário (se não existir o produto cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo produto).
-        if (dadosProdutoCod.length === 0) {
+        if (dadosProdutoBar.length === 0) {
             dialog.showMessageBox({
                 type: 'warning',
                 title: 'Produtos',
@@ -742,7 +739,7 @@ ipcMain.on('search-barcode', async (event, proCod) => {
                 }
             })
         }
-        event.reply('product-data-barcode', JSON.stringify(dadosProdutoCod))
+        event.reply('product-data-barcode', JSON.stringify(dadosProdutoBar))
     } catch (error) {
         console.log(error)
     }
@@ -790,7 +787,7 @@ ipcMain.on('update-product', async (event, produto) => {
         const produtoEditado = await produtoModel.findByIdAndUpdate(
             produto.idPro, {
             nomeProduto: produto.nomePro,
-            codProduto: produto.codPro,
+            barcodeProduto: produto.barcodePro,
             precoProduto: produto.precoPro
         },
             {

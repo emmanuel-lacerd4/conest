@@ -1,5 +1,5 @@
 /**
- * Processo de renderização
+ * Processo de renderização da tela de Clientes
  * clientes.html
  */
 

@@ -1,5 +1,5 @@
 /**
- * Processo de Renderização: 
+ * Processo de renderização da tela de Fornecedores
  * fornecedores.html
  */
 
