@@ -74,11 +74,15 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
             const renderizado = JSON.parse(dados)
             arrayProduto = renderizado
             if (arrayProduto.length === 0) {
-                // Se não houver produtos, limpa o campo de busca e preenche o campo de nome do produto
+                // Se não houver produtos, limpa o campo de busca e preenche o campo correspondente
                 if (campo === 'nomeProduto') {
                     nomeProduto.value = valor // Preenche o campo de nome do produto com o valor da busca
                     document.getElementById('searchProduct').value = "" // Limpa o campo de busca
-                    foco.focus() // Coloca o foco no campo de busca
+                    nomeProduto.focus() // Coloca o foco no campo de nome do produto
+                } else if (campo === 'barcodeProduto') {
+                    barcodeProduto.value = valor // Preenche o campo de código de barras com o valor da busca
+                    document.getElementById('searchBarcode').value = "" // Limpa o campo de busca
+                    barcodeProduto.focus() // Coloca o foco no campo de código de barras
                 }
             } else {
                 // Se houver produtos, preenche os campos do formulário
@@ -112,8 +116,8 @@ function buscarProduto() {
 
 // CRUD Read - Código de Barras
 function buscarProdutoBar() {
-    let proBar = document.getElementById('searchBarcode').value
-    buscarProdutoGenerico('barcodeProduto', proBar, api.buscarProdutoBar, api.renderizarProdutoBar)
+    let proBar = document.getElementById('searchBarcode').value;
+    buscarProdutoGenerico('barcodeProduto', proBar, api.buscarProdutoBar, api.renderizarProdutoBar);
 }
 
 // CRUD Delete
