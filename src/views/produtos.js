@@ -116,8 +116,8 @@ function buscarProduto() {
 
 // CRUD Read - Código de Barras
 function buscarProdutoBar() {
-    let proBar = document.getElementById('searchBarcode').value;
-    buscarProdutoGenerico('barcodeProduto', proBar, api.buscarProdutoBar, api.renderizarProdutoBar);
+    let proBar = document.getElementById('searchBarcode').value
+    buscarProdutoGenerico('barcodeProduto', proBar, api.buscarProdutoBar, api.renderizarProdutoBar)
 }
 
 // CRUD Delete
