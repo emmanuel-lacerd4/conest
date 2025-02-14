@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function teclaEnter(event) {
     if (event.key === "Enter") {
         event.preventDefault()
-        buscarProdutoBar() // Busca pelo código de barras
+        if (event.target.id === 'searchBarcode') {
+            buscarProdutoBar() // Busca pelo código de barras
+        }
     }
 }
 
@@ -35,7 +37,11 @@ function teclaEnter(event) {
 document.getElementById('searchBarcode').addEventListener('keydown', teclaEnter)
 
 // Alterando a busca por nome para ser feita apenas ao clicar no botão de busca
-btnRead.addEventListener('click', buscarProduto)
+btnRead.addEventListener('click', (event) => {
+    event.preventDefault() // Evita o comportamento padrão do botão (submit)
+    event.stopPropagation() // Impede a propagação do evento
+    buscarProduto() // Busca pelo nome do produto
+}, { once: true }) // Garante que o evento seja executado apenas uma vez
 
 // Função para remover o manipulador do evento da tecla Enter
 function restaurarEnter() {
