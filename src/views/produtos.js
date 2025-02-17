@@ -3,20 +3,10 @@
  * produtos.html
  */
 
-// Captura dos elementos do DOM
 const foco = document.getElementById('searchProduct')
-const btnUpdate = document.getElementById('btnUpdate')
-const btnDelete = document.getElementById('btnDelete')
-const btnRead = document.getElementById('btnRead')
-const btnCreate = document.getElementById('btnCreate')
-const formProduto = document.getElementById('frmProduct')
-const idProduto = document.getElementById('inputIdProduct')
-const barcodeProduto = document.getElementById('inputBarcodeProduct')
-const nomeProduto = document.getElementById('inputNameProduct')
-const caminhoImagemProduto = document.getElementById('pathImageProduct')
-const precoProduto = document.getElementById('inputPrecoProduct')
+const btnRead = document.getElementById('btnRead') // Seleciona o botão de busca
 
-// Configuração inicial do formulário
+// Mudar as propriedades do documento html ao iniciar a janela.
 document.addEventListener('DOMContentLoaded', () => {
     btnUpdate.disabled = true
     btnDelete.disabled = true
@@ -27,29 +17,43 @@ document.addEventListener('DOMContentLoaded', () => {
 function teclaEnter(event) {
     if (event.key === "Enter") {
         event.preventDefault()
-        if (event.target.id === 'searchBarcode') {
-            buscarProdutoBar() // Busca pelo código de barras
-        }
+        buscarProdutoBar() // Busca pelo código de barras
     }
 }
 
-// Adicionando o evento da tecla Enter para o campo de código de barras
-document.getElementById('searchBarcode').addEventListener('keydown', teclaEnter)
+// Função para remover o manipulador do evento da tecla Enter
+function restaurarEnter() {
+    document.getElementById('frmProduct').removeEventListener('keydown', teclaEnter)
+}
+
+// Manipulando o evento (tecla Enter) para o Código de Barras.
+document.getElementById('frmProduct').addEventListener('keydown', teclaEnter)
+
+// Array usado nos métodos para manipulação da estrutura de dados
+let arrayProduto = []
+
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+let formProduto = document.getElementById('frmProduct')
+let idProduto = document.getElementById('inputIdProduct')
+let barcodeProduto = document.getElementById('inputBarcodeProduct')
+let nomeProduto = document.getElementById('inputNameProduct')
+let caminhoImagemProduto = document.getElementById('pathImageProduct')
+let precoProduto = document.getElementById('inputPrecoProduct')
+
+// Variável para controlar se a busca já está em andamento
+let isSearching = false
 
 // Alterando a busca por nome para ser feita apenas ao clicar no botão de busca
 btnRead.addEventListener('click', (event) => {
     event.preventDefault() // Evita o comportamento padrão do botão (submit)
     event.stopPropagation() // Impede a propagação do evento
-    buscarProduto() // Busca pelo nome do produto
-}, { once: true }) // Garante que o evento seja executado apenas uma vez
 
-// Função para remover o manipulador do evento da tecla Enter
-function restaurarEnter() {
-    formProduto.removeEventListener('keydown', teclaEnter)
-}
-
-// Array usado nos métodos para manipulação da estrutura de dados
-let arrayProduto = []
+    // Verifica se já está buscando para evitar duplicação
+    if (!isSearching) {
+        isSearching = true
+        buscarProduto()
+    }
+})
 
 // CRUD Create/Update
 formProduto.addEventListener('submit', async (event) => {
@@ -80,29 +84,27 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
             const renderizado = JSON.parse(dados)
             arrayProduto = renderizado
             if (arrayProduto.length === 0) {
-                // Se não houver produtos, limpa o campo de busca e preenche o campo correspondente
                 if (campo === 'nomeProduto') {
-                    nomeProduto.value = valor // Preenche o campo de nome do produto com o valor da busca
-                    document.getElementById('searchProduct').value = "" // Limpa o campo de busca
-                    nomeProduto.focus() // Coloca o foco no campo de nome do produto
+                    nomeProduto.value = valor
+                    document.getElementById('searchProduct').value = ""
+                    nomeProduto.focus()
                 } else if (campo === 'barcodeProduto') {
-                    barcodeProduto.value = valor // Preenche o campo de código de barras com o valor da busca
-                    document.getElementById('searchBarcode').value = "" // Limpa o campo de busca
-                    barcodeProduto.focus() // Coloca o foco no campo de código de barras
+                    barcodeProduto.value = valor
+                    document.getElementById('searchBarcode').value = ""
+                    barcodeProduto.focus()
                 }
             } else {
-                // Se houver produtos, preenche os campos do formulário
                 arrayProduto.forEach((c) => {
-                    nomeProduto.value = c.nomeProduto
-                    barcodeProduto.value = c.barcodeProduto
-                    precoProduto.value = c.precoProduto
-                    idProduto.value = c._id
+                    document.getElementById('inputBarcodeProduct').value = c.barcodeProduto
+                    document.getElementById('inputNameProduct').value = c.nomeProduto
+                    document.getElementById('inputPrecoProduct').value = c.precoProduto
+                    document.getElementById('inputIdProduct').value = c._id
                     foco.value = ""
                     foco.disabled = true
                     btnRead.disabled = true
                     btnCreate.disabled = true
-                    btnUpdate.disabled = false
-                    btnDelete.disabled = false
+                    document.getElementById('btnUpdate').disabled = false
+                    document.getElementById('btnDelete').disabled = false
                     restaurarEnter()
                     document.getElementById('searchBarcode').value = ""
                     document.getElementById('searchBarcode').disabled = true
@@ -110,11 +112,16 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
                     document.getElementById('searchProduct').disabled = true
                 })
             }
+            // Reseta a flag de busca após a conclusão
+            isSearching = false
         })
+    } else {
+        // Reseta a flag de busca se o valor estiver vazio
+        isSearching = false
     }
 }
 
-// CRUD Read
+// CRUD Read - Nome
 function buscarProduto() {
     let proNome = document.getElementById('searchProduct').value
     buscarProdutoGenerico('nomeProduto', proNome, api.buscarProduto, api.renderizarProduto)
@@ -128,30 +135,14 @@ function buscarProdutoBar() {
 
 // CRUD Delete
 function excluirProduto() {
-    if (idProduto.value) {
-        api.deletarProduto(idProduto.value)
-        resetForm()
-    }
+    api.deletarProduto(idProduto.value)
 }
 
 // Reset Form
-api.resetarFormulario(() => {
+api.resetarFormulario((args) => {
     resetForm()
 })
 
 function resetForm() {
-    idProduto.value = ""
-    barcodeProduto.value = ""
-    nomeProduto.value = ""
-    precoProduto.value = ""
-    caminhoImagemProduto.value = ""
-    foco.value = ""
-    foco.disabled = false
-    btnRead.disabled = false
-    btnCreate.disabled = false
-    btnUpdate.disabled = true
-    btnDelete.disabled = true
-    document.getElementById('searchBarcode').disabled = false
-    document.getElementById('searchProduct').disabled = false
-    foco.focus()
+    location.reload()
 }

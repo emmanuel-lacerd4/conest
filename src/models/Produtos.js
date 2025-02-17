@@ -22,5 +22,5 @@ const produtoSchema = new Schema({
 })
 
 // Exportar para o main.js
-// Para modificar o nome da coleção ("tabela"), basta modificar na linha abaixo o rótulo 'Fornecedores', sempre iniciando com a letra maiuscula
+// Para modificar o nome da coleção ("tabela"), basta modificar na linha abaixo o rótulo 'Produtos', sempre iniciando com a letra maiuscula
 module.exports = model('Produtos', produtoSchema)

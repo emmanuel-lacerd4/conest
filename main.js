@@ -285,24 +285,26 @@ const template = [
         ]
     }
 ]
-ipcMain.on('dialog-search', () => {
-    dialog.showMessageBox({
-        type: 'warning',
-        title: 'Atenção!',
-        message: 'Preencha um nome no campo de busca.',
-        buttons: ['OK']
-    })
-})
 /***********************************************/
 /****************** Clientes ******************/
 /*********************************************/
 
-// Aviso (pop-up) ao abrir a janela
+// Informação (pop-up) ao abrir a janela.
 ipcMain.on('notice-client', () => {
     dialog.showMessageBox({
         type: 'info',
         title: "Atenção!",
         message: "Pesquise um cliente antes de continuar.",
+        buttons: ['OK']
+    })
+})
+
+// Aviso para buscas em campo vazio.
+ipcMain.on('dialog-search', () => {
+    dialog.showMessageBox({
+        type: 'warning',
+        title: 'Atenção!',
+        message: 'Preencha um nome no campo de busca.',
         buttons: ['OK']
     })
 })
@@ -330,8 +332,7 @@ ipcMain.on('new-client', async (event, cliente) => {
         })
         // A linha abaixo usa a biblioteca moongoose para salvar
         await novoCliente.save()
-
-        // Confirmação de cliente adicionado no banco.
+        // Confirmação do cliente adicionado ao banco.
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
@@ -646,8 +647,9 @@ ipcMain.on('new-product', async (event, produto) => {
             nomeProduto: produto.nomePro,
             precoProduto: produto.precoPro
         })
+        // A linha abaixo usa a biblioteca moongoose para salvar
         await novoProduto.save()
-        // Confirmação
+        // Confirmação do produto adicionado ao banco.
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
@@ -655,6 +657,7 @@ ipcMain.on('new-product', async (event, produto) => {
             buttons: ['OK']
         }).then((result) => {
             if (result.response === 0) {
+                // Enviar uma resposta para o renderizador resetar o form.
                 event.reply('reset-form')
             }
         })
@@ -664,7 +667,7 @@ ipcMain.on('new-product', async (event, produto) => {
 })
 // Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read Nome >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read - Nome >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-product', async (event, proNome) => {
     // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
     console.log(proNome)
@@ -705,7 +708,7 @@ ipcMain.on('search-product', async (event, proNome) => {
 })
 // Fim do CRUD Read Nome <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read - Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-barcode', async (event, proBar) => {
     // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
     console.log(proBar)

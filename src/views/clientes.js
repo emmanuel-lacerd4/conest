@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aviso (pop-up)
     //api.avisoCliente()
 })
-
 // Função para manipular o evento da tecla Enter.
 function teclaEnter(event) {
     if (event.key === "Enter") {
