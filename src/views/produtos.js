@@ -29,7 +29,7 @@ function restaurarEnter() {
 // Manipulando o evento (tecla Enter) para o Código de Barras.
 document.getElementById('frmProduct').addEventListener('keydown', teclaEnter)
 
-// Array usado nos métodos para manipulação da estrutura de dados
+// Array usado nos métodos para manipulação da estrutura de dados.
 let arrayProduto = []
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -39,8 +39,12 @@ let barcodeProduto = document.getElementById('inputBarcodeProduct')
 let nomeProduto = document.getElementById('inputNameProduct')
 let caminhoImagemProduto = document.getElementById('pathImageProduct')
 let precoProduto = document.getElementById('inputPrecoProduct')
+let imagem = document.getElementById('imageProductPreview')
 
-// Variável para controlar se a busca já está em andamento
+// Variável usada para armazenar o caminho da imagem.
+let caminhoImagem
+
+// Variável para controlar se a busca já está em andamento.
 let isSearching = false
 
 // Alterando a busca por nome para ser feita apenas ao clicar no botão de busca
@@ -55,7 +59,14 @@ btnRead.addEventListener('click', (event) => {
     }
 })
 
-// CRUD Create/Update
+// CRUD Create/Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Solicitar ao main.js o uso do explorador de arquivos e armazenar o caminho da imagem selecionada na variável caminhoImagem.
+async function uploadImage() {
+    caminhoImagem = await api.selecionarArquivo()
+    console.log(caminhoImagem)
+    imagem.src = `file://${caminhoImagem}`
+}
+
 formProduto.addEventListener('submit', async (event) => {
     event.preventDefault()
     if (idProduto.value === "") {

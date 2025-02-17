@@ -635,6 +635,25 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 /*********************************************/
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Obter o caminho da imagem (executar o open dialog).
+ipcMain.handle('open-file-dialog', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        title: "Selecionar imagem",
+        properties: ['openFile'],
+        filters: [
+            {
+                name: 'Imagens',
+                extensions: ['png', 'jpg', 'jpeg']
+            }
+        ]
+    })
+    if (canceled === true || filePaths.length === 0) {
+        return null        
+    } else {
+        return filePaths[0] // Retorna o caminho do arquivo.
+    }
+})
+
 // Recebimento dos dados de formulário produtos.
 ipcMain.on('new-product', async (event, produto) => {
     // Teste de recebimento dos dados (Passo 2 - slide) Importante!
@@ -647,7 +666,7 @@ ipcMain.on('new-product', async (event, produto) => {
             nomeProduto: produto.nomePro,
             precoProduto: produto.precoPro
         })
-        // A linha abaixo usa a biblioteca moongoose para salvar
+        // A linha abaixo usa a biblioteca moongoose para salvar.
         await novoProduto.save()
         // Confirmação do produto adicionado ao banco.
         dialog.showMessageBox({
