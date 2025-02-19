@@ -21,6 +21,9 @@ const fornecedorModel = require('./src/models/Fornecedores.js')
 // Importação do Schema Produtos da camada model
 const produtoModel = require('./src/models/Produtos')
 
+// importar biblioteca nativa do JS para manipular arquivos.
+const fs = require('fs')
+
 // Janela principal
 let win
 function createWindow() {
@@ -332,11 +335,11 @@ ipcMain.on('new-client', async (event, cliente) => {
         })
         // A linha abaixo usa a biblioteca moongoose para salvar
         await novoCliente.save()
-        // Confirmação do cliente adicionado ao banco.
+        // Confirmação do cliente cadastrado ao banco.
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
-            message: "Cliente adicionado com sucesso!",
+            message: "Cliente cadastrado com sucesso!",
             buttons: ['OK']
         }).then((result) => {
             if (result.response === 0) {
@@ -500,11 +503,11 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
         // A linha abaixo usa a biblioteca mongoose para salvar
         await novoFornecedor.save()
 
-        // Confirmação de fornecedor adicionado no banco de dados
+        // Confirmação de fornecedor cadastrado no Banco de Dados.
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
-            message: "Fornecedor adicionado com sucesso!",
+            message: "Fornecedor cadastrado com sucesso!",
             buttons: ['OK']
         }).then((result) => {
             if (result.response === 0) {
@@ -647,36 +650,51 @@ ipcMain.handle('open-file-dialog', async () => {
             }
         ]
     })
+
     if (canceled === true || filePaths.length === 0) {
-        return null        
+        return null
     } else {
         return filePaths[0] // Retorna o caminho do arquivo.
     }
+
 })
 
-// Recebimento dos dados de formulário produtos.
 ipcMain.on('new-product', async (event, produto) => {
-    // Teste de recebimento dos dados (Passo 2 - slide) Importante!
-    console.log(produto)
-    // Passo 3 - slide (cadastrar os dados no banco de dados).
+    // Teste de recebimento dos dados do produto
+    console.log("Dados recebidos para cadastro:", produto) // Verifique os dados recebidos
     try {
-        // Criar um novo objeto usando a classe modelo.
+        // Criar a pasta uploads se não existir
+        const uploadDir = path.join(__dirname, 'uploads')
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir)
+        }
+
+        // Gerar um nome único para o arquivo (para não sobrescrever)
+        const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
+        const uploads = path.join(uploadDir, fileName)
+
+        // Copiar o arquivo de imagem para pasta uploads
+        fs.copyFileSync(produto.caminhoImagemPro, uploads)
+
+        // Cadastrar o produto no Banco de Dados
         const novoProduto = new produtoModel({
             barcodeProduto: produto.barcodePro,
             nomeProduto: produto.nomePro,
+            caminhoImagemProduto: uploads, // Salvando o caminho correto no Banco de Dados
             precoProduto: produto.precoPro
         })
-        // A linha abaixo usa a biblioteca moongoose para salvar.
         await novoProduto.save()
-        // Confirmação do produto adicionado ao banco.
+
+        console.log("Produto cadastrado com sucesso:", novoProduto) // Verifique o produto salvo
+
+        // Confirmação
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
-            message: "Produto adicionado com sucesso!",
+            message: "Produto cadastrado com sucesso!",
             buttons: ['OK']
         }).then((result) => {
             if (result.response === 0) {
-                // Enviar uma resposta para o renderizador resetar o form.
                 event.reply('reset-form')
             }
         })
@@ -719,6 +737,9 @@ ipcMain.on('search-product', async (event, proNome) => {
                     event.reply('reset-form')
                 }
             })
+        } else {
+            // Adicione este console.log para verificar os dados retornados
+            console.log("Dados do produto encontrado:", dadosProduto)
         }
         event.reply('product-data', JSON.stringify(dadosProduto))
     } catch (error) {
@@ -803,30 +824,32 @@ ipcMain.on('delete-product', async (event, idProduto) => {
 
 // CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('update-product', async (event, produto) => {
-    //teste de recebimento dos dados do produto (passo 2)
-    console.log(produto)
+    // Teste de recebimento dos dados do produto
+    console.log("Dados recebidos para edição:", produto) // Verifique os dados recebidos
     try {
         const produtoEditado = await produtoModel.findByIdAndUpdate(
             produto.idPro, {
             nomeProduto: produto.nomePro,
             barcodeProduto: produto.barcodePro,
             precoProduto: produto.precoPro
-        },
-            {
-                new: true
+        }, {
+            new: true
+        })
+        console.log("Produto editado com sucesso:", produtoEditado) // Verifique o produto editado
+
+        // Confirmação
+        dialog.showMessageBox({
+            type: 'info',
+            title: "Aviso",
+            message: "Dados alterados com sucesso!",
+            buttons: ['OK']
+        }).then((result) => {
+            if (result.response === 0) {
+                event.reply('reset-form')
             }
-        )
+        })
     } catch (error) {
         console.log(error)
     }
-    dialog.showMessageBox(product, {
-        type: 'info',
-        message: 'Dados do produto alterados com sucesso.',
-        buttons: ['OK']
-    }).then((result) => {
-        if (result.response === 0) {
-            event.reply('reset-form')
-        }
-    })
 })
 // Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

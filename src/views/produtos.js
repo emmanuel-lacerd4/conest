@@ -4,16 +4,16 @@
  */
 
 const foco = document.getElementById('searchProduct')
-const btnRead = document.getElementById('btnRead') // Seleciona o botão de busca
+const btnRead = document.getElementById('btnRead') // Seleciona o botão de busca.
 
-// Mudar as propriedades do documento html ao iniciar a janela.
+// Configuração inicial do formulário.
 document.addEventListener('DOMContentLoaded', () => {
     btnUpdate.disabled = true
     btnDelete.disabled = true
     foco.focus()
 })
 
-// Função para manipular o evento da tecla Enter
+// Função para manipular o evento da tecla Enter.
 function teclaEnter(event) {
     if (event.key === "Enter") {
         event.preventDefault()
@@ -26,13 +26,13 @@ function restaurarEnter() {
     document.getElementById('frmProduct').removeEventListener('keydown', teclaEnter)
 }
 
-// Manipulando o evento (tecla Enter) para o Código de Barras.
+// Manipulando o evento (tecla Enter).
 document.getElementById('frmProduct').addEventListener('keydown', teclaEnter)
 
 // Array usado nos métodos para manipulação da estrutura de dados.
 let arrayProduto = []
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Captura dos inputs do formulário
 let formProduto = document.getElementById('frmProduct')
 let idProduto = document.getElementById('inputIdProduct')
 let barcodeProduto = document.getElementById('inputBarcodeProduct')
@@ -43,6 +43,41 @@ let imagem = document.getElementById('imageProductPreview')
 
 // Variável usada para armazenar o caminho da imagem.
 let caminhoImagem
+
+// CRUD Create/Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Solicitar ao main.js o uso do explorador de arquivos e armazenar o caminho da imagem selecionada na variável caminhoImagem.
+async function uploadImage() {
+    caminhoImagem = await api.selecionarArquivo()
+    console.log(caminhoImagem)
+    imagem.src = `file://${caminhoImagem}`
+}
+
+formProduto.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    // Teste de recebimento dos inputs do formulário (passo 1)
+    console.log(idProduto.value, barcodeProduto.value, nomeProduto.value, caminhoImagem, precoProduto.value)
+    // Criar um objeto
+    if (idProduto.value === "" || idProduto.value === undefined) { // Verifica se o ID está vazio ou undefined
+        const produto = {
+            barcodePro: barcodeProduto.value,
+            nomePro: nomeProduto.value,
+            caminhoImagemPro: caminhoImagem,
+            precoPro: precoProduto.value
+        }
+        console.log("Cadastrando novo produto:", produto) // Verifique se o objeto está sendo montado corretamente
+        api.novoProduto(produto) // Chama a função para cadastrar um novo produto
+    } else {
+        const produto = {
+            idPro: idProduto.value,
+            barcodePro: barcodeProduto.value,
+            nomePro: nomeProduto.value,
+            caminhoImagemPro: caminhoImagem,
+            precoPro: precoProduto.value
+        }
+        console.log("Editando produto existente:", produto) // Verifique se o objeto está sendo montado corretamente
+        api.editarProduto(produto) // Chama a função para editar um produto existente
+    }
+})
 
 // Variável para controlar se a busca já está em andamento.
 let isSearching = false
@@ -56,34 +91,6 @@ btnRead.addEventListener('click', (event) => {
     if (!isSearching) {
         isSearching = true
         buscarProduto()
-    }
-})
-
-// CRUD Create/Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Solicitar ao main.js o uso do explorador de arquivos e armazenar o caminho da imagem selecionada na variável caminhoImagem.
-async function uploadImage() {
-    caminhoImagem = await api.selecionarArquivo()
-    console.log(caminhoImagem)
-    imagem.src = `file://${caminhoImagem}`
-}
-
-formProduto.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    if (idProduto.value === "") {
-        const produto = {
-            barcodePro: barcodeProduto.value,
-            nomePro: nomeProduto.value,
-            precoPro: precoProduto.value
-        }
-        api.novoProduto(produto)
-    } else {
-        const produto = {
-            idPro: idProduto.value,
-            barcodePro: barcodeProduto.value,
-            nomePro: nomeProduto.value,
-            precoPro: precoProduto.value
-        }
-        api.editarProduto(produto)
     }
 })
 
@@ -109,7 +116,7 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
                     document.getElementById('inputBarcodeProduct').value = c.barcodeProduto
                     document.getElementById('inputNameProduct').value = c.nomeProduto
                     document.getElementById('inputPrecoProduct').value = c.precoProduto
-                    document.getElementById('inputIdProduct').value = c._id
+                    document.getElementById('inputIdProduct').value = c._id // Preenche o ID do produto
                     foco.value = ""
                     foco.disabled = true
                     btnRead.disabled = true
@@ -123,11 +130,9 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
                     document.getElementById('searchProduct').disabled = true
                 })
             }
-            // Reseta a flag de busca após a conclusão
             isSearching = false
         })
     } else {
-        // Reseta a flag de busca se o valor estiver vazio
         isSearching = false
     }
 }
@@ -135,12 +140,28 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
 // CRUD Read - Nome
 function buscarProduto() {
     let proNome = document.getElementById('searchProduct').value
+
+    // Validação para campo vazio
+    if (proNome.trim() === "") {
+        // Envia uma mensagem ao main.js para exibir a caixa de diálogo
+        window.api.validarBusca()
+        return // Interrompe a execução da função
+    }
+
     buscarProdutoGenerico('nomeProduto', proNome, api.buscarProduto, api.renderizarProduto)
 }
 
 // CRUD Read - Código de Barras
 function buscarProdutoBar() {
     let proBar = document.getElementById('searchBarcode').value
+
+    // Validação para campo vazio
+    if (proBar.trim() === "") {
+        // Envia uma mensagem ao main.js para exibir a caixa de diálogo
+        window.api.validarBusca()
+        return // Interrompe a execução da função
+    }
+
     buscarProdutoGenerico('barcodeProduto', proBar, api.buscarProdutoBar, api.renderizarProdutoBar)
 }
 
@@ -155,5 +176,6 @@ api.resetarFormulario((args) => {
 })
 
 function resetForm() {
+    // Recarregar a página.
     location.reload()
 }
