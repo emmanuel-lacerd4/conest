@@ -667,24 +667,27 @@ ipcMain.on('new-product', async (event, produto) => {
     let caminhoImagemSalvo = ""
 
     try {
-        // Correção de BUG (validação de imagem)
+        // Correção de BUG (validação de imagem).
         if (produto.caminhoImagemPro) {
 
-            //=========================================== ()
-            // Criar a pasta uploads se não existir
+            //============================================= (imagens #1)
+            // Criar a pasta uploads se não existir.
+            //__dirname (caminho absoluto).
             const uploadDir = path.join(__dirname, 'uploads')
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir)
             }
 
+            //============================================= (imagens #2)
             // Gerar um nome único para o arquivo (para não sobrescrever)
             const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
             const uploads = path.join(uploadDir, fileName)
 
-            // Copiar o arquivo de imagem para pasta uploads
+            //============================================= (imagens #3)
+            //Copiar o arquivo de imagem para pasta uploads
             fs.copyFileSync(produto.caminhoImagemPro, uploads)
 
-            //================================================= (imagens #4)
+            //============================================= (imagens #4)
             // Alterar a variável caminhoImagemSalvo para uploads
             caminhoImagemSalvo = uploads
         }
