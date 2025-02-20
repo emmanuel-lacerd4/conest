@@ -14,17 +14,17 @@
 <body>
     <div class="container">
         <h1>Produtos</h1>
-        <form class="row g-3 mt-2" id="frmProduct">
+        <form id="frmProduct" class="mt-2 row g-3">
             <!-- Buscar Produtos por Nome -->
             <div class="col-md-6">
                 <input type="text" class="form-control" id="searchProduct" maxlength="30" spellcheck="false">
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <button type="button" class="btn btn-primary" id="btnRead">Buscar Nome</button>
             </div>
 
-            <hr class="border border-primary border-1 opacity-75">
+            <hr class="mt-4 border border-primary border -1">
 
             <!-- Buscar Produtos por Código -->
             <div class="col-md-6">
@@ -40,7 +40,7 @@
             <!-- ID do produto (pode ser usado como código interno)-->
             <div class="col-md-6" id="inputIdProduct">
                 <label for="inputIdProduct" class="form-label">ID</label>
-                <input type="text" class="form-control" id="inputIdProduct">
+                <input type="text" class="form-control" id="inputIdProduct" readonly> <!-- Campo de ID bloqueado -->
             </div>
 
             <!-- Barcode -->

@@ -54,18 +54,20 @@ async function uploadImage() {
 
 formProduto.addEventListener('submit', async (event) => {
     event.preventDefault()
-    // Teste de recebimento dos inputs do formulário (passo 1)
+    // Teste de recebimento dos inputs do formulário (passo 1).
     console.log(idProduto.value, barcodeProduto.value, nomeProduto.value, caminhoImagem, precoProduto.value)
-    // Criar um objeto
-    if (idProduto.value === "" || idProduto.value === undefined) { // Verifica se o ID está vazio ou undefined
+    // Criar um objeto.
+    // caminhoImagemPro: caminhoImagem ? caminhoImagem: ""
+    // ? : (operador ternário (if else)) correção de BUG se não existir caminho da imagem (se nenhuma imagem selecionada) enviar string vazia ""
+        if (idProduto.value === "" || idProduto.value === undefined) { // Verifica se o ID está vazio ou undefined
         const produto = {
             barcodePro: barcodeProduto.value,
             nomePro: nomeProduto.value,
-            caminhoImagemPro: caminhoImagem,
+            caminhoImagemPro: caminhoImagem ? caminhoImagem: "",
             precoPro: precoProduto.value
         }
-        console.log("Cadastrando novo produto:", produto) // Verifique se o objeto está sendo montado corretamente
-        api.novoProduto(produto) // Chama a função para cadastrar um novo produto
+        console.log("Cadastrando novo produto:", produto) // Verifique se o objeto está sendo montado corretamente.
+        api.novoProduto(produto) // Chama a função para cadastrar um novo produto.
     } else {
         const produto = {
             idPro: idProduto.value,
@@ -113,10 +115,14 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
                 }
             } else {
                 arrayProduto.forEach((c) => {
-                    document.getElementById('inputBarcodeProduct').value = c.barcodeProduto
-                    document.getElementById('inputNameProduct').value = c.nomeProduto
-                    document.getElementById('inputPrecoProduct').value = c.precoProduto
-                    document.getElementById('inputIdProduct').value = c._id // Preenche o ID do produto
+                    // Preenche os campos do formulário
+                    document.getElementById('inputBarcodeProduct').value = c.barcodeProduto || ""
+                    document.getElementById('inputNameProduct').value = c.nomeProduto || ""
+                    document.getElementById('inputPrecoProduct').value = c.precoProduto || ""
+                    document.getElementById('inputIdProduct').value = c._id || "" // Preenche o ID do produto
+                    console.log("ID do produto encontrado:", c._id) // Adicione este console.log para depuração
+
+                    // Desabilita campos e botões
                     foco.value = ""
                     foco.disabled = true
                     btnRead.disabled = true

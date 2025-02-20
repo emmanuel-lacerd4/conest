@@ -660,27 +660,39 @@ ipcMain.handle('open-file-dialog', async () => {
 })
 
 ipcMain.on('new-product', async (event, produto) => {
-    // Teste de recebimento dos dados do produto
-    console.log("Dados recebidos para cadastro:", produto) // Verifique os dados recebidos
+    // Teste de recebimento dos dados do produto.
+    console.log(produto) // Teste do passo 2 (recebimento do produto).
+
+    // Resolução de BUG (quando a imagem não for selecionada).
+    let caminhoImagemSalvo = ""
+
     try {
-        // Criar a pasta uploads se não existir
-        const uploadDir = path.join(__dirname, 'uploads')
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir)
+        // Correção de BUG (validação de imagem)
+        if (produto.caminhoImagemPro) {
+
+            //=========================================== ()
+            // Criar a pasta uploads se não existir
+            const uploadDir = path.join(__dirname, 'uploads')
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir)
+            }
+
+            // Gerar um nome único para o arquivo (para não sobrescrever)
+            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
+            const uploads = path.join(uploadDir, fileName)
+
+            // Copiar o arquivo de imagem para pasta uploads
+            fs.copyFileSync(produto.caminhoImagemPro, uploads)
+
+            //================================================= (imagens #4)
+            // Alterar a variável caminhoImagemSalvo para uploads
+            caminhoImagemSalvo = uploads
         }
-
-        // Gerar um nome único para o arquivo (para não sobrescrever)
-        const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
-        const uploads = path.join(uploadDir, fileName)
-
-        // Copiar o arquivo de imagem para pasta uploads
-        fs.copyFileSync(produto.caminhoImagemPro, uploads)
-
         // Cadastrar o produto no Banco de Dados
         const novoProduto = new produtoModel({
             barcodeProduto: produto.barcodePro,
             nomeProduto: produto.nomePro,
-            caminhoImagemProduto: uploads, // Salvando o caminho correto no Banco de Dados
+            caminhoImagemProduto: caminhoImagemSalvo,
             precoProduto: produto.precoPro
         })
         await novoProduto.save()
