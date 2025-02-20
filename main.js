@@ -841,15 +841,41 @@ ipcMain.on('delete-product', async (event, idProduto) => {
 ipcMain.on('update-product', async (event, produto) => {
     // Teste de recebimento dos dados do produto
     console.log("Dados recebidos para edição:", produto) // Verifique os dados recebidos
+
     try {
+        // Verificar se uma nova imagem foi selecionada
+        let caminhoImagemSalvo = produto.caminhoImagemPro || "" // Mantém o caminho atual se não houver nova imagem
+
+        if (produto.caminhoImagemPro && produto.caminhoImagemPro !== "") {
+            // Criar a pasta uploads se não existir
+            const uploadDir = path.join(__dirname, 'uploads')
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir)
+            }
+
+            // Gerar um nome único para o arquivo (para não sobrescrever)
+            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
+            const uploads = path.join(uploadDir, fileName)
+
+            // Copiar o arquivo de imagem para a pasta uploads
+            fs.copyFileSync(produto.caminhoImagemPro, uploads)
+
+            // Atualizar o caminho da imagem para o novo arquivo
+            caminhoImagemSalvo = uploads
+        }
+
+        // Atualizar o produto no banco de dados
         const produtoEditado = await produtoModel.findByIdAndUpdate(
             produto.idPro, {
-            nomeProduto: produto.nomePro,
-            barcodeProduto: produto.barcodePro,
-            precoProduto: produto.precoPro
-        }, {
-            new: true
-        })
+                nomeProduto: produto.nomePro,
+                barcodeProduto: produto.barcodePro,
+                caminhoImagemProduto: caminhoImagemSalvo, // Incluir o caminho da imagem
+                precoProduto: produto.precoPro
+            }, {
+                new: true // Retorna o documento atualizado
+            }
+        )
+
         console.log("Produto editado com sucesso:", produtoEditado) // Verifique o produto editado
 
         // Confirmação

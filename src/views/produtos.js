@@ -7,7 +7,6 @@ const foco = document.getElementById('searchProduct')
 const btnRead = document.getElementById('btnRead')
 
 // Configuração inicial do formulário
-
 document.addEventListener('DOMContentLoaded', () => {
     btnUpdate.disabled = true
     btnDelete.disabled = true
@@ -34,24 +33,32 @@ let nomeProduto = document.getElementById('inputNameProduct')
 let precoProduto = document.getElementById('inputPrecoProduct')
 let imagem = document.getElementById('imageProductPreview')
 
-let caminhoImagem
+let caminhoImagem = "" // Inicializa a variável para armazenar o caminho da imagem
 
+// Função para fazer upload da imagem
 async function uploadImage() {
     caminhoImagem = await api.selecionarArquivo()
-    console.log(caminhoImagem)
-    imagem.src = `file://${caminhoImagem}`
+    console.log("Caminho da imagem selecionada:", caminhoImagem)
+    imagem.src = `file://${caminhoImagem}` // Atualiza a visualização da imagem no formulário
 }
 
+// Evento de submit do formulário
 formProduto.addEventListener('submit', async (event) => {
     event.preventDefault()
 
-    console.log(idProduto.value, barcodeProduto.value, nomeProduto.value, caminhoImagem, precoProduto.value)
+    console.log("Dados do produto:", {
+        id: idProduto.value,
+        barcode: barcodeProduto.value,
+        nome: nomeProduto.value,
+        imagem: caminhoImagem,
+        preco: precoProduto.value
+    })
 
     const produto = {
         idPro: idProduto.value || undefined,
         barcodePro: barcodeProduto.value,
         nomePro: nomeProduto.value,
-        caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
+        caminhoImagemPro: caminhoImagem || "", // Usa o caminho da imagem selecionada ou uma string vazia
         precoPro: precoProduto.value
     }
 
@@ -76,6 +83,7 @@ btnRead.addEventListener('click', (event) => {
     }
 })
 
+// Função genérica para buscar produtos
 function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
     if (valor !== "") {
         apiBusca(valor)
@@ -100,6 +108,16 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
                     document.getElementById('inputBarcodeProduct').value = c.barcodeProduto || ""
                     document.getElementById('inputNameProduct').value = c.nomeProduto || ""
                     document.getElementById('inputPrecoProduct').value = c.precoProduto || ""
+
+                    // Atualiza a imagem do produto
+                    if (c.caminhoImagemProduto) {
+                        imagem.src = `file://${c.caminhoImagemProduto}`
+                        caminhoImagem = c.caminhoImagemProduto // Atualiza o caminho da imagem para edição
+                    } else {
+                        imagem.src = "../public/img/camera.png" // Imagem padrão caso não haja imagem cadastrada
+                        caminhoImagem = "" // Reseta o caminho da imagem
+                    }
+
                     console.log("ID do produto encontrado:", c._id)
 
                     foco.value = ""
@@ -122,6 +140,7 @@ function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
     }
 }
 
+// Função para buscar produto por nome
 function buscarProduto() {
     let proNome = document.getElementById('searchProduct').value.trim()
 
@@ -133,6 +152,7 @@ function buscarProduto() {
     buscarProdutoGenerico('nomeProduto', proNome, api.buscarProduto, api.renderizarProduto)
 }
 
+// Função para buscar produto por código de barras
 function buscarProdutoBar() {
     let proBar = document.getElementById('searchBarcode').value.trim()
 
@@ -144,10 +164,12 @@ function buscarProdutoBar() {
     buscarProdutoGenerico('barcodeProduto', proBar, api.buscarProdutoBar, api.renderizarProdutoBar)
 }
 
+// Função para excluir produto
 function excluirProduto() {
     api.deletarProduto(idProduto.value)
 }
 
+// Função para resetar o formulário
 api.resetarFormulario(() => {
     resetForm()
 })
