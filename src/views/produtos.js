@@ -42,6 +42,20 @@ async function uploadImage() {
     imagem.src = `file://${caminhoImagem}` // Atualiza a visualização da imagem no formulário
 }
 
+// Função para formatar o campo de preço com duas casas decimais
+function formatarPreco(event) {
+    const input = event.target
+    let valor = parseFloat(input.value)
+
+    // Garantir que o valor tenha duas casas decimais
+    if (!isNaN(valor)) {
+        input.value = valor.toFixed(2)
+    }
+}
+
+// Adiciona o evento de formatação ao campo de preço
+document.getElementById('inputPrecoProduct').addEventListener('blur', formatarPreco)
+
 // Evento de submit do formulário
 formProduto.addEventListener('submit', async (event) => {
     event.preventDefault()

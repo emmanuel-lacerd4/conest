@@ -68,3 +68,14 @@ footer img {
     display: block;
     object-fit: contain; /* object-fit: cover; */
 }
+
+/* Remover as setas de incremento/decremento do input number */
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.no-spinner {
+    -moz-appearance: textfield; /* Firefox */
+}
