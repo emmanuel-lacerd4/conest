@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
 
 <head>
@@ -12,16 +11,52 @@
 </head>
 
 <body>
-    <div class="container button">
-        <img src="../public/img/client.png" alt="clientes" title="Clientes" onclick="clientes()">
-        <img src="../public/img/supplier.png" alt="fornecedores" title="Fornecedores" onclick="fornecedores()">
-        <img src="../public/img/product.png" alt="produtos" title="Produtos" onclick="produtos()">
-        <img src="../public/img/report.png" alt="relatórios" title="Relatórios" onclick="relatorios()">
+    <div class="container text-center mt-5">
+        <div class="row g-4">
+            <!-- Botão Clientes -->
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm" onclick="clientes()">
+                    <img src="../public/img/client.png" class="card-img-top p-3" alt="Clientes">
+                    <div class="card-body">
+                        <h5 class="card-title">Clientes</h5>
+                    </div>
+                </div>
+            </div>
+            <!-- Botão Fornecedores -->
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm" onclick="fornecedores()">
+                    <img src="../public/img/supplier.png" class="card-img-top p-3" alt="Fornecedores">
+                    <div class="card-body">
+                        <h5 class="card-title">Fornecedores</h5>
+                    </div>
+                </div>
+            </div>
+            <!-- Botão Produtos -->
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm" onclick="produtos()">
+                    <img src="../public/img/product.png" class="card-img-top p-3" alt="Produtos">
+                    <div class="card-body">
+                        <h5 class="card-title">Produtos</h5>
+                    </div>
+                </div>
+            </div>
+            <!-- Botão Relatórios -->
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm" onclick="relatorios()">
+                    <img src="../public/img/report.png" class="card-img-top p-3" alt="Relatórios">
+                    <div class="card-body">
+                        <h5 class="card-title">Relatórios</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <footer>
-        <p id="dataAtual"></p>
-        <img src="../public/img/dboff.png" alt="Icone do Banco de Dados" id="iconDB">
+    <!-- Rodapé -->
+    <footer class="bg-primary text-white text-center p-2 fixed-bottom">
+        <p class="m-0">© 2023 CONEST - Sistema de Gestão</p>
+        <img src="../public/img/dboff.png" alt="Status do Banco de Dados" id="iconDB" class="ms-2" width="24"
+            height="24">
     </footer>
 
     <script src="../public/js/bootstrap.min.js"></script>

@@ -66,8 +66,8 @@ function aboutWindow() {
     const main = BrowserWindow.getFocusedWindow()
     if (main) {
         about = new BrowserWindow({
-            width: 360,
-            height: 215,
+            width: 854,  // Largura
+            height: 480,  // Altura
             autoHideMenuBar: true,
             resizable: false, // Impede redimensionamento
             minimizable: false,
@@ -867,13 +867,13 @@ ipcMain.on('update-product', async (event, produto) => {
         // Atualizar o produto no banco de dados
         const produtoEditado = await produtoModel.findByIdAndUpdate(
             produto.idPro, {
-                nomeProduto: produto.nomePro,
-                barcodeProduto: produto.barcodePro,
-                caminhoImagemProduto: caminhoImagemSalvo, // Incluir o caminho da imagem
-                precoProduto: produto.precoPro
-            }, {
-                new: true // Retorna o documento atualizado
-            }
+            nomeProduto: produto.nomePro,
+            barcodeProduto: produto.barcodePro,
+            caminhoImagemProduto: caminhoImagemSalvo, // Incluir o caminho da imagem
+            precoProduto: produto.precoPro
+        }, {
+            new: true // Retorna o documento atualizado
+        }
         )
 
         console.log("Produto editado com sucesso:", produtoEditado) // Verifique o produto editado

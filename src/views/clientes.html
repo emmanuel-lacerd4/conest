@@ -12,57 +12,60 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>Clientes</h1>
-        <form id="frmClient" class="mt-2 row g-3">
-
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center">Clientes</h1>
+        <form id="frmClient" class="row g-3" onsubmit="return validarFormularioCliente()">
             <!-- Buscar clientes -->
-            <div class="col-md-6">
-                <input type="text" class="form-control" id="searchClient" maxlength="30" spellcheck="false">
+            <div class="col-md-8">
+                <input type="text" class="form-control" id="searchClient" placeholder="Buscar cliente..." maxlength="30"
+                    spellcheck="false">
             </div>
-
             <div class="col-md-4">
-                <button type="button" class="btn btn-primary" id="btnRead" onclick="buscarCliente()">Buscar</button>
+                <button type="button" class="btn btn-primary w-100" id="btnRead"
+                    onclick="buscarCliente()">Buscar</button>
             </div>
 
-            <hr class="mt-4 border border-primary border -1">
+            <hr class="my-4">
 
-            <!-- Id do cliente (oculto) -->
-            <div class="col-md-4" id="idClient">
-                <input class="form-control" type="text" id="inputIdClient" placeholder="id">
+            <!-- ID do cliente (oculto) -->
+            <div class="col-md-4 d-none" id="idClient">
+                <input class="form-control" type="text" id="inputIdClient" placeholder="ID" readonly>
             </div>
-
-            <!-- Técnica para bloqueio dos inputs do form -->
-            <!-- div class="bloqueio" -->
 
             <!-- Nome -->
             <div class="col-md-8">
-                <label for="inputNameClient" class="form-label">Nome Completo</label>
+                <label for="inputNameClient" class="form-label">Nome Completo <span class="text-danger">*</span></label>
                 <input class="form-control" type="text" id="inputNameClient" spellcheck="false" required maxlength="50">
             </div>
 
             <!-- CPF -->
             <div class="col-md-4">
-                <label for="inputCpfClient" class="form-label">CPF</label>
-                <input class="form-control" type="text" id="inputCpfClient" spellcheck="false" required maxlength="14">
+                <label for="inputCpfClient" class="form-label">CPF <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" id="inputCpfClient" spellcheck="false" required maxlength="14"
+                    oninput="formatarCPF(this)" onblur="validarCPF(this)">
+                <small id="cpfError" class="text-danger d-none">CPF inválido.</small>
             </div>
 
             <!-- Celular -->
             <div class="col-md-4">
-                <label for="inputPhoneClient" class="form-label">DDD e Celular</label>
-                <input class="form-control" type="tel" id="inputPhoneClient" spellcheck="false" required maxlength="15">
+                <label for="inputPhoneClient" class="form-label">DDD e Celular <span
+                        class="text-danger">*</span></label>
+                <input class="form-control" type="tel" id="inputPhoneClient" spellcheck="false" required maxlength="15"
+                    oninput="formatarTelefone(this)">
             </div>
 
             <!-- E-mail -->
             <div class="col-md-8">
-                <label for="inputEmailClient" class="form-label">E-mail</label>
-                <input class="form-control" type="email" id="inputEmailClient" spellcheck="false" required maxlength="50">
+                <label for="inputEmailClient" class="form-label">E-mail <span class="text-danger">*</span></label>
+                <input class="form-control" type="email" id="inputEmailClient" spellcheck="false" required
+                    maxlength="50">
             </div>
 
             <!-- CEP -->
             <div class="col-md-4">
                 <label for="inputCepClient" class="form-label">CEP</label>
-                <input class="form-control" type="tel" id="inputCepClient" spellcheck="false" maxlength="9">
+                <input class="form-control" type="tel" id="inputCepClient" spellcheck="false" maxlength="9"
+                    oninput="formatarCEP(this)" onblur="buscarCep(this.value.replace(/\D/g, ''))">
             </div>
 
             <!-- Cidade -->
@@ -101,19 +104,18 @@
                 <input class="form-control" type="text" id="inputNeighborhoodClient" spellcheck="false" maxlength="50">
             </div>
 
-            <!--/div --> <!-- fim do bloqueio -->
-
             <!-- Botões -->
-            <div class="mt-5">
-                <button type="submit" class="btn btn-success" id="btnCreate">Adicionar</button>
-                <button type="submit" class="btn btn-warning" id="btnUpdate">Editar</button>
-                <button type="button" class="btn btn-danger" id="btnDelete" onclick="excluirCliente()">Excluir</button>
-                <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
+            <div class="col-12 mt-4 text-center">
+                <button type="submit" class="btn btn-success me-2" id="btnCreate">Adicionar</button>
+                <button type="submit" class="btn btn-warning me-2" id="btnUpdate">Editar</button>
+                <button type="button" class="btn btn-danger me-2" id="btnDelete"
+                    onclick="excluirCliente()">Excluir</button>
+                <button type="reset" class="btn btn-secondary" id="btnReset" onclick="resetForm()"></button>
             </div>
         </form>
     </div>
+
     <script src="../public/js/bootstrap.min.js"></script>
-    <script src="../public/js/script.js"></script>
     <script src="clientes.js"></script>
 </body>
 

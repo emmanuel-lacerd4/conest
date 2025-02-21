@@ -252,13 +252,50 @@ function formatarCelular(input) {
 
 // Chamar a função de formatação do celular no evento de input
 document.getElementById('inputPhoneClient').addEventListener('input', function () {
-    formatarCelular(this); // Chama a função de formatação do celular
+    formatarCelular(this) // Chama a função de formatação do celular
 })
 
-// Validação de CPF
-document.getElementById('inputCpfClient').addEventListener('input', function () {
-    validarCPF(this) // Chama a função de validação enquanto o usuário digita
-})
+// Função para validar CPF
+function validarCPF(campo) {
+    const cpf = campo.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    const cpfError = document.getElementById('cpfError')
+
+    if (cpf.length !== 11 || !validarDigitosCPF(cpf)) {
+        cpfError.classList.remove('d-none');
+        campo.setCustomValidity('CPF inválido.')
+    } else {
+        cpfError.classList.add('d-none')
+        campo.setCustomValidity('')
+    }
+}
+
+// Função para validar dígitos do CPF
+function validarDigitosCPF(cpf) {
+    if (/^(\d)\1{10}$/.test(cpf)) return false; // CPF com todos os dígitos iguais é inválido
+
+    let soma = 0
+    for (let i = 0; i < 9; i++) {
+        soma += parseInt(cpf.charAt(i)) * (10 - i)
+    }
+    let resto = (soma * 10) % 11
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.charAt(9))) return false
+
+    soma = 0
+    for (let i = 0; i < 10; i++) {
+        soma += parseInt(cpf.charAt(i)) * (11 - i)
+    }
+    resto = (soma * 10) % 11
+    if (resto === 10 || resto === 11) resto = 0
+    if (resto !== parseInt(cpf.charAt(10))) return false
+
+    return true
+}
+
+// Adicionar evento de validação ao campo de CPF
+document.getElementById('inputCpfClient').addEventListener('blur', function () {
+    validarCPF(this)
+});
 
 // Formatar CPF
 function formatarCPF(input) {
@@ -271,7 +308,7 @@ function formatarCPF(input) {
 
 // Chamar a função de formatação do CPF no evento de input
 document.getElementById('inputCpfClient').addEventListener('input', function () {
-    formatarCPF(this); // Chama a função de formatação do CPF
+    formatarCPF(this) // Chama a função de formatação do CPF
 })
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
 
 <head>
@@ -13,61 +12,64 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>Fornecedores</h1>
-        <form id="frmSupplier" class="mt-2 row g-3">
-
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center">Fornecedores</h1>
+        <form id="frmSupplier" class="row g-3" onsubmit="return validarFormularioFornecedor()">
             <!-- Buscar fornecedores -->
-            <div class="col-md-6">
-                <input type="text" class="form-control" id="searchSupplier" maxlength="30" spellcheck="false">
+            <div class="col-md-8">
+                <input type="text" class="form-control" id="searchSupplier" placeholder="Buscar fornecedor..."
+                    maxlength="30" spellcheck="false">
             </div>
-
             <div class="col-md-4">
-                <button type="button" class="btn btn-primary" id="btnRead" onclick="buscarFornecedor()">Buscar</button>
+                <button type="button" class="btn btn-primary w-100" id="btnRead"
+                    onclick="buscarFornecedor()">Buscar</button>
             </div>
 
-            <hr class="mt-4 border border-primary border -1">
+            <hr class="my-4">
 
             <!-- ID do fornecedor (oculto) -->
-            <div class="col-md-6" id="idSupplier">
-                <input class="form-control" type="text" id="inputIdSupplier" placeholder="id">
+            <div class="col-md-6 d-none" id="idSupplier">
+                <input class="form-control" type="text" id="inputIdSupplier" placeholder="ID" readonly>
             </div>
 
-            <!-- Técnica para bloqueio dos inputs do form -->
-            <!-- div class="bloqueio" -->
-
-            <!-- Razão social -->
+            <!-- Razão Social -->
             <div class="col-md-8">
-                <label for="inputNameSupplier" class="form-label">Razão Social</label>
+                <label for="inputNameSupplier" class="form-label">Razão Social <span
+                        class="text-danger">*</span></label>
                 <input class="form-control" type="text" id="inputNameSupplier" spellcheck="false" required
                     maxlength="50">
             </div>
 
             <!-- CNPJ -->
             <div class="col-md-4">
-                <label for="inputCnpjSupplier" class="form-label">CNPJ</label>
+                <label for="inputCnpjSupplier" class="form-label">CNPJ <span class="text-danger">*</span></label>
                 <input class="form-control" type="text" id="inputCnpjSupplier" spellcheck="false" required
-                    maxlength="18">
+                    maxlength="18" oninput="formatarCNPJ(this)" onblur="validarCNPJ(this)">
+                <small id="cnpjError" class="text-danger d-none">CNPJ inválido.</small>
             </div>
 
             <!-- Celular -->
             <div class="col-md-4">
-                <label for="inputPhoneSupplier" class="form-label">DDD e Celular</label>
+                <label for="inputPhoneSupplier" class="form-label">DDD e Celular <span
+                        class="text-danger">*</span></label>
                 <input class="form-control" type="tel" id="inputPhoneSupplier" spellcheck="false" required
-                    maxlength="15">
+                    maxlength="15" oninput="formatarTelefone(this)">
             </div>
 
             <!-- Site -->
             <div class="col-md-8">
-                <label for="inputSiteSupplier" class="form-label">Site</label>
-                <input class="form-control" type="url" id="inputSiteSupplier" spellcheck="false" required maxlength="50" pattern="https://.*" title="O site deve começar com https://">
-                <button type="button" class="mt-2 btn btn-outline-secondary" onclick="acessarSite()">Acessar site</button>
+                <label for="inputSiteSupplier" class="form-label">Site <span class="text-danger">*</span></label>
+                <input class="form-control" type="url" id="inputSiteSupplier" spellcheck="false" required maxlength="50"
+                    pattern="https://.*" title="O site deve começar com https://">
+                <button type="button" class="mt-2 btn btn-outline-secondary" onclick="acessarSite()">Acessar
+                    site</button>
             </div>
 
             <!-- CEP -->
             <div class="col-md-4">
                 <label for="inputCepSupplier" class="form-label">CEP</label>
-                <input class="form-control" type="tel" id="inputCepSupplier" spellcheck="false" maxlength="9">
+                <input class="form-control" type="tel" id="inputCepSupplier" spellcheck="false" maxlength="9"
+                    oninput="formatarCEP(this)" onblur="buscarCep(this.value.replace(/\D/g, ''))">
             </div>
 
             <!-- Cidade -->
@@ -106,21 +108,19 @@
                 <input class="form-control" type="text" id="inputNeighborhoodSupplier" spellcheck="false"
                     maxlength="50">
             </div>
-            <!--/div --> <!-- fim do bloqueio -->
 
             <!-- Botões -->
-            <div class="mt-5">
-                <button type="submit" class="btn btn-success" id="btnCreate">Adicionar</button>
-                <button type="submit" class="btn btn-warning" id="btnUpdate">Editar</button>
-                <button type="button" class="btn btn-danger" id="btnDelete"
+            <div class="col-12 mt-4 text-center">
+                <button type="submit" class="btn btn-success me-2" id="btnCreate">Adicionar</button>
+                <button type="submit" class="btn btn-warning me-2" id="btnUpdate">Editar</button>
+                <button type="button" class="btn btn-danger me-2" id="btnDelete"
                     onclick="excluirFornecedor()">Excluir</button>
-                <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
+                <button type="reset" class="btn btn-secondary" id="btnReset" onclick="resetForm()"></button>
             </div>
         </form>
     </div>
 
     <script src="../public/js/bootstrap.min.js"></script>
-    <script src="../public/js/script.js"></script>
     <script src="fornecedores.js"></script>
 </body>
 
