@@ -1,28 +1,44 @@
-/* input ID */
-#idClient, #idSupplier {
-    display: none; /* Oculta a visualização do ID para o usuário */
-}
-
+/* Estilos globais */
 body {
     overflow: hidden; /* Desativa a rolagem */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte mais moderna */
+    background-color: #f8f9fa; /* Fundo claro e profissional */
 }
 
-/* Botões */
+/* Oculta IDs que não devem ser exibidos */
+#idClient, #idSupplier {
+    display: none;
+}
+
+/* Estilos para botões */
 .button img {
-    margin: 50px 15px 25px 15px;
-    padding: 5px;
-    border: 1px solid #e8e8e8;
+    margin: 1rem; /* Usando unidades relativas */
+    padding: 0.5rem;
+    border: 1px solid #dee2e6; /* Cor mais suave */
+    border-radius: 0.25rem; /* Bordas arredondadas */
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Efeito hover suave */
 }
 
-/* Botão reset */
+.button img:hover {
+    transform: scale(1.05); /* Efeito de zoom no hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Botão de reset */
 #btnReset {
     width: 50px;
     height: 50px;
     background-image: url('../img/clear.png');
+    background-size: cover; /* Garante que a imagem cubra o botão */
     border: none;
     cursor: pointer;
     margin-left: 10px;
+    transition: opacity 0.2s ease; /* Efeito hover suave */
+}
+
+#btnReset:hover {
+    opacity: 0.8; /* Efeito de transparência no hover */
 }
 
 /* Rodapé */
@@ -35,32 +51,39 @@ footer {
     justify-content: space-between;
     position: fixed;
     bottom: 0;
+    padding: 0 1rem; /* Espaçamento interno */
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
 }
 
 footer p {
     color: #fff;
-    margin: 0 0 0 10px;
+    margin: 0;
+    font-size: 0.9rem; /* Tamanho de fonte menor */
 }
 
 footer img {
     margin-right: 10px;
+    width: 24px; /* Tamanho fixo para ícones */
+    height: 24px;
 }
 
 /* Imagem do produto */
 #imageProductPreview {
-    border: 1px solid #dfdfdf;
-    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem; /* Bordas mais arredondadas */
     width: 260px;
     height: 260px;
-    padding: 5px;
+    padding: 0.5rem;
     position: fixed;
-    right: 45px;
-    bottom: 20px;
+    right: 1rem; /* Usando unidades relativas */
+    bottom: 1rem;
     display: block;
     object-fit: contain;
+    background-color: #fff; /* Fundo branco para a imagem */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
 }
 
-/* Remover as setas de incremento/decremento do input number */
+/* Remover setas de incremento/decremento do input number */
 .no-spinner::-webkit-inner-spin-button,
 .no-spinner::-webkit-outer-spin-button {
     -webkit-appearance: none;
