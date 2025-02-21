@@ -1,19 +1,10 @@
 /* input ID */
-#idClient {
-    display: none; /* Oculta a visualização do ID para o usuário.*/
+#idClient, #idSupplier {
+    display: none; /* Oculta a visualização do ID para o usuário */
 }
-
-#idSupplier {
-    display: none; /* Oculta a visualização do ID para o usuário.*/
-}
-
-/* #idProduct {
-    display: none;  Oculta a visualização do ID para o usuário.
-} */
 
 body {
-    overflow: hidden;
-    /* Desativa a rolagem */
+    overflow: hidden; /* Desativa a rolagem */
 }
 
 /* Botões */
@@ -48,7 +39,7 @@ footer {
 
 footer p {
     color: #fff;
-    margin: 0px 0px 0px 10px;
+    margin: 0 0 0 10px;
 }
 
 footer img {
@@ -66,7 +57,7 @@ footer img {
     right: 45px;
     bottom: 20px;
     display: block;
-    object-fit: contain; /* object-fit: cover; */
+    object-fit: contain;
 }
 
 /* Remover as setas de incremento/decremento do input number */
@@ -78,4 +69,6 @@ footer img {
 
 .no-spinner {
     -moz-appearance: textfield; /* Firefox */
+    -webkit-appearance: textfield; /* Chrome, Safari */
+    appearance: textfield; /* Padrão */
 }
