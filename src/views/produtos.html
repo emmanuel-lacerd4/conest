@@ -55,14 +55,17 @@
                     maxlength="50">
             </div>
 
-            <!-- Imagem do produto -->
-            <div class="col-md-5">
-                <img src="../public/img/camera.png" alt="Imagem do produto" id="imageProductPreview" class="img-fluid">
-            </div>
-
-            <!-- Upload de imagem -->
-            <div class="col-12">
-                <input type="button" class="btn btn-secondary" value="Upload de imagem" onclick="uploadImage()">
+            <!-- Imagem do produto e upload -->
+            <div class="col-md-5 image-upload-container">
+                <!-- Ícone da câmera -->
+                <div class="d-flex justify-content-end">
+                    <img src="../public/img/camera.png" alt="Imagem do produto" id="imageProductPreview"
+                        class="img-fluid">
+                </div>
+                <!-- Botão de upload -->
+                <div class="d-flex justify-content-end">
+                    <input type="button" class="upload-button" value="Upload de imagem" onclick="uploadImage()">
+                </div>
             </div>
 
             <!-- Preço -->

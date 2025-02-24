@@ -276,3 +276,58 @@ h1 {
     background-color: #5a6268;
     border-color: #5a6268;
 }
+
+/* ===== NOVOS ESTILOS ADICIONADOS ===== */
+
+/* Estilos para o container da imagem e upload */
+.image-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Alinha o container à direita */
+    margin-top: 1rem;
+    /* Espaçamento superior */
+}
+
+/* Estilo para o ícone da câmera */
+#imageProductPreview {
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    width: 200px;
+    /* Tamanho fixo */
+    height: 200px;
+    /* Tamanho fixo */
+    object-fit: contain;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    /* Espaçamento entre o ícone e o botão */
+}
+
+/* Estilo para o botão de upload */
+.upload-button {
+    width: 200px;
+    /* Largura fixa para combinar com o ícone */
+    padding: 0.75rem 1rem;
+    /* Padding maior para melhor toque */
+    font-size: 1.1rem;
+    /* Fonte um pouco maior */
+    border-radius: 0.5rem;
+    background-color: #6c757d;
+    /* Cor do botão secundário */
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    /* Centraliza o texto no botão */
+    margin-left: auto;
+    /* Centraliza o botão em relação ao ícone */
+    margin-right: auto;
+    /* Centraliza o botão em relação ao ícone */
+}
+
+.upload-button:hover {
+    background-color: #5a6268;
+    /* Cor ao passar o mouse */
+}
