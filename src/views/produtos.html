@@ -14,55 +14,46 @@
     <div class="container mt-4">
         <h1 class="mb-4 text-center">Produtos</h1>
         <form id="frmProduct" class="row g-3">
-            <!-- Buscar produtos por nome -->
+            <!-- Busca do produto por Código de Barras -->
             <div class="col-md-8">
-                <input type="text" class="form-control" id="searchProduct" placeholder="Buscar produto por nome..."
+                <input type="text" class="form-control" id="searchProduct" placeholder="Buscar produto por código..."
                     maxlength="30" spellcheck="false">
+                <br>
             </div>
             <div class="col-md-4">
-                <button type="button" class="btn btn-primary w-100" id="btnRead">Buscar Nome</button>
+                <img src="../public/img/barcode.png" alt="barcode" class="img-fluid">
             </div>
 
-            <hr class="my-4">
+            <hr class="border border-primary border-1 opacity-75">
 
-            <!-- Buscar produtos por código -->
-            <div class="col-md-8">
-                <input type="text" class="form-control" id="searchBarcode" placeholder="Buscar produto por código..."
-                    maxlength="30" spellcheck="false">
-            </div>
-            <div class="col-md-4">
-                <img src="../public/img/barcode.png" alt="Código de barras" class="img-fluid">
-            </div>
-
-            <hr class="my-4">
-
-            <!-- ID do produto -->
+            <!-- ID do produto (pode ser usado como código interno) -->
             <div class="col-md-6">
                 <label for="inputIdProduct" class="form-label">ID</label>
                 <input type="text" class="form-control" id="inputIdProduct" readonly>
             </div>
 
-            <!-- Código de barras -->
+            <!-- Barcode -->
             <div class="col-md-6">
-                <label for="inputBarcodeProduct" class="form-label">Código de barras</label>
+                <label for="inputBarcodeProduct" class="form-label">Código de Barras <span
+                        class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="inputBarcodeProduct">
             </div>
 
-            <!-- Nome do produto -->
+            <!-- Nome do Produto -->
             <div class="col-md-7">
                 <label for="inputNameProduct" class="form-label">Produto <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="inputNameProduct" required spellcheck="false"
                     maxlength="50">
             </div>
 
-            <!-- Imagem do produto e upload -->
+            <!-- Imagem do Produto -->
             <div class="col-md-5 image-upload-container">
-                <!-- Ícone da câmera -->
                 <div class="d-flex justify-content-end">
-                    <img src="../public/img/camera.png" alt="Imagem do produto" id="imageProductPreview"
+                    <img src="../public/img/camera.png" alt="Imagem" id="imageProductPreview"
                         class="img-fluid">
                 </div>
-                <!-- Botão de upload -->
+
+                <!-- Upload de Imagem -->
                 <div class="d-flex justify-content-end">
                     <input type="button" class="upload-button" value="Upload de imagem" onclick="uploadImage()">
                 </div>

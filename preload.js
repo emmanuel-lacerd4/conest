@@ -26,14 +26,14 @@ contextBridge.exposeInMainWorld('api', {
     setarNomeFornecedor: (args) => ipcRenderer.on('set-nameSupplier', args),
     abrirSite: (urlsite) => ipcRenderer.send('url-site', urlsite),
     novoProduto: (produto) => ipcRenderer.send('new-product', produto),
-    buscarProduto: (proNome) => ipcRenderer.send('search-product', proNome),
-    buscarProdutoBar: (proBar) => ipcRenderer.send('search-barcode', proBar),
+    buscarProduto: (barcode) => ipcRenderer.send('search-product', barcode),
+    buscarProdutoNome: (proNome) => ipcRenderer.send('search-name', proNome),
     renderizarProduto: (dadosProduto) => ipcRenderer.on('product-data', dadosProduto),
-    renderizarProdutoBar: (dadosProdutoBar) => ipcRenderer.on('product-data-barcode', dadosProdutoBar),
+    renderizarProdutoNome: (dadosProdutoNome) => ipcRenderer.on('product-data-name', dadosProdutoNome),
     deletarProduto: (idProduto) => ipcRenderer.send('delete-product', idProduto),
     editarProduto: (produto) => ipcRenderer.send('update-product', produto),
     setarNomeProduto: (args) => ipcRenderer.on('set-nameProduct', args),
-    setarBarcodeProduto: (args) => ipcRenderer.on('set-barcodeProduct', args),
+    setarBarcode: (args) => ipcRenderer.on('set-barcode', args),
     validarBusca: () => ipcRenderer.send('dialog-search'),
     selecionarArquivo: () => ipcRenderer.invoke('open-file-dialog')
 })

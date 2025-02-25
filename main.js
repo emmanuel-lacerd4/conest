@@ -289,8 +289,22 @@ const template = [
     }
 ]
 /***********************************************/
-/****************** Clientes ******************/
-/*********************************************/
+/****************** Validações *****************/
+/***********************************************/
+
+// Aviso para buscas em campo vazio.
+ipcMain.on('dialog-search', () => {
+    dialog.showMessageBox({
+        type: 'warning',
+        title: 'Atenção!',
+        message: 'Preencha o campo de busca.',
+        buttons: ['OK']
+    })
+})
+
+/***********************************************/
+/****************** Clientes *******************/
+/***********************************************/
 
 // Informação (pop-up) ao abrir a janela.
 ipcMain.on('notice-client', () => {
@@ -298,16 +312,6 @@ ipcMain.on('notice-client', () => {
         type: 'info',
         title: "Atenção!",
         message: "Pesquise um cliente antes de continuar.",
-        buttons: ['OK']
-    })
-})
-
-// Aviso para buscas em campo vazio.
-ipcMain.on('dialog-search', () => {
-    dialog.showMessageBox({
-        type: 'warning',
-        title: 'Atenção!',
-        message: 'Preencha um nome no campo de busca.',
         buttons: ['OK']
     })
 })
@@ -660,7 +664,7 @@ ipcMain.handle('open-file-dialog', async () => {
 })
 
 ipcMain.on('new-product', async (event, produto) => {
-    // Teste de recebimento dos dados do produto.
+    // Teste de recebimento dos dados produto.
     console.log(produto) // Teste do passo 2 (recebimento do produto).
 
     // Resolução de BUG (quando a imagem não for selecionada).
@@ -679,33 +683,31 @@ ipcMain.on('new-product', async (event, produto) => {
             }
 
             //============================================= (imagens #2)
-            // Gerar um nome único para o arquivo (para não sobrescrever)
+            // Gerar um nome único para o arquivo (para não sobrescrever).
             const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
             const uploads = path.join(uploadDir, fileName)
 
             //============================================= (imagens #3)
-            //Copiar o arquivo de imagem para pasta uploads
+            //Copiar o arquivo de imagem para pasta uploads.
             fs.copyFileSync(produto.caminhoImagemPro, uploads)
 
             //============================================= (imagens #4)
-            // Alterar a variável caminhoImagemSalvo para uploads
+            // Alterar a variável caminhoImagemSalvo para uploads.
             caminhoImagemSalvo = uploads
         }
-        // Cadastrar o produto no Banco de Dados
+        // Cadastrar o produto no Banco de Dados.
         const novoProduto = new produtoModel({
             barcodeProduto: produto.barcodePro,
             nomeProduto: produto.nomePro,
             caminhoImagemProduto: caminhoImagemSalvo,
             precoProduto: produto.precoPro
         })
+        // Adicionar o produto no Banco de Dados.
         await novoProduto.save()
 
-        console.log("Produto cadastrado com sucesso:", novoProduto) // Verifique o produto salvo
-
-        // Confirmação
+        // Confirmação.
         dialog.showMessageBox({
             type: 'info',
-            title: "Aviso",
             message: "Produto cadastrado com sucesso!",
             buttons: ['OK']
         }).then((result) => {
@@ -719,22 +721,16 @@ ipcMain.on('new-product', async (event, produto) => {
 })
 // Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read - Nome >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ipcMain.on('search-product', async (event, proNome) => {
-    // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
-    console.log(proNome)
-    // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome.
-    // find() -> buscar no banco de dados (moongose).
-    // RegExp -> filtro pelo nome do produto 'i' insensitive (maiúsculo ou minúsculo).
-    // Atenção: nomeProduto -> model | proNome -> renderizador.
+// Inicio do CRUD READ - Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('search-product', async (event, barcode) => {
+    console.log(barcode) // Teste do passo 2.
     try {
+        // Passos 3 e 4 (fluxo do slide).
         const dadosProduto = await produtoModel.find({
-            nomeProduto: new RegExp(proNome, 'i')
+            barcodeProduto: barcode
         })
-        console.log(dadosProduto) // Testes dos passos 3 e 4.
-        // Passo 5 - slide -> enviar os dados do produto para o renderizador (JSON.stringfy converte para JSON).
-
-        // Melhoria na experiência do usuário (se não existir o produto cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo produto).
+        console.log(dadosProduto) // Testes do passo 4.
+        // Validação (se não existir produto cadastro).
         if (dadosProduto.length === 0) {
             dialog.showMessageBox({
                 type: 'warning',
@@ -745,40 +741,33 @@ ipcMain.on('search-product', async (event, proNome) => {
             }).then((result) => {
                 console.log(result)
                 if (result.response === 0) {
-                    // Enviar ao renderizador um pedido para setar o nome do produto (trazendo do campo de busca) e liberar o botão adicionar.
-                    event.reply('set-nameProduct')
+                    // Enviar ao renderizador um pedido para setar o código de barras.
+                    event.reply('set-barcode')
                 } else {
                     // Enviar ao renderizador um pedido para limpar os campos do formulário.
                     event.reply('reset-form')
                 }
             })
-        } else {
-            // Adicione este console.log para verificar os dados retornados
-            console.log("Dados do produto encontrado:", dadosProduto)
         }
+        // Passo 5: fluxo (envio dos dados do produto ao renderizador).
         event.reply('product-data', JSON.stringify(dadosProduto))
+
     } catch (error) {
         console.log(error)
     }
 })
-// Fim do CRUD Read Nome <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD READ - Código de Barras <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // CRUD Read - Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-barcode', async (event, proBar) => {
-    // Teste de recebimento do nome do produto a ser pesquisado(passo 2).
-    console.log(proBar)
-    // Passos 3 e 4 - pesquisar no banco de dados o produto pelo nome.
-    // find() -> buscar no banco de dados (moongose).
-    // RegExp -> filtro pelo nome do produto 'i' insensitive (maiúsculo ou minúsculo).
-    // Atenção: barcodeProduto -> model | proBar -> renderizador.
+    console.log(proBar) // Teste do passo 2.
     try {
+        // Passo 3 e 4 (fluxo do slide).
         const dadosProdutoBar = await produtoModel.find({
-            barcodeProduto: new RegExp(proBar, 'i')
+            barcodeProduto: proBar
         })
-        console.log(dadosProdutoBar) // Testes dos passos 3 e 4.
-        // Passo 5 - slide -> enviar os dados do produto para o renderizador (JSON.stringfy converte para JSON).
-
-        // Melhoria na experiência do usuário (se não existir o produto cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo produto).
+        console.log(dadosProdutoBar) // Teste passo 4.
+        // Validação (se não existir produto cadastrado).
         if (dadosProdutoBar.length === 0) {
             dialog.showMessageBox({
                 type: 'warning',
@@ -789,14 +778,15 @@ ipcMain.on('search-barcode', async (event, proBar) => {
             }).then((result) => {
                 console.log(result)
                 if (result.response === 0) {
-                    // Enviar ao renderizador um pedido para setar o nome do produto (trazendo do campo de busca) e liberar o botão adicionar.
-                    event.reply('set-barcodeProduct')
+                    // Enviar ao renderizador um pedido para setar o código de barras.
+                    event.reply('set-barcode')
                 } else {
                     // Enviar ao renderizador um pedido para limpar os campos do formulário.
                     event.reply('reset-form')
                 }
             })
         }
+        // Passo 5: fluxo (envio dos dados produto ao renderizador)
         event.reply('product-data-barcode', JSON.stringify(dadosProdutoBar))
     } catch (error) {
         console.log(error)

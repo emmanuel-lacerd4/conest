@@ -4,25 +4,31 @@
  */
 
 const foco = document.getElementById('searchProduct')
-const btnRead = document.getElementById('btnRead')
 
-// Configuração inicial do formulário
+// Configuração inicial do formulário.
 document.addEventListener('DOMContentLoaded', () => {
     btnUpdate.disabled = true
     btnDelete.disabled = true
     foco.focus()
 })
 
-// Função para manipular o evento da tecla Enter
+// Função para manipular o evento da tecla Enter.
 function teclaEnter(event) {
     if (event.key === "Enter") {
         event.preventDefault()
-        buscarProdutoBar()
+        buscarProduto()
     }
 }
 
+// Função para remover o manipulador do evento da tecla Enter.
+function restaurarEnter() {
+    document.getElementById('frmProduct').removeEventListener('keydown', teclaEnter)
+}
+
+// Manipulando o evento (tecla Enter).
 document.getElementById('frmProduct').addEventListener('keydown', teclaEnter)
 
+// Array usado nos métodos para manipulação da estrutura de dados
 let arrayProduto = []
 
 // Captura dos inputs do formulário
@@ -30,16 +36,22 @@ let formProduto = document.getElementById('frmProduct')
 let idProduto = document.getElementById('inputIdProduct')
 let barcodeProduto = document.getElementById('inputBarcodeProduct')
 let nomeProduto = document.getElementById('inputNameProduct')
-let precoProduto = document.getElementById('inputPrecoProduct')
 let imagem = document.getElementById('imageProductPreview')
+let precoProduto = document.getElementById('inputPrecoProduct')
 
-let caminhoImagem = "" // Inicializa a variável para armazenar o caminho da imagem
+// Variável usada para armazenar o caminho da imagem.
+let caminhoImagem
 
-// Função para fazer upload da imagem
+// Inicio do CRUD CREATE/UPDATE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Solicitar ao main o uso do explorador de arquivos e armazenar o caminho da imagem selecionada na variável caminhoImagem.
 async function uploadImage() {
     caminhoImagem = await api.selecionarArquivo()
-    console.log("Caminho da imagem selecionada:", caminhoImagem)
-    imagem.src = `file://${caminhoImagem}` // Atualiza a visualização da imagem no formulário
+    console.log(caminhoImagem)
+    // Correção de BUG seleção de imagem.
+    if (caminhoImagem) {
+        imagem.src = `file://${caminhoImagem}`
+    }
+    btnCreate.focus() // Correção de BUG (tecla Enter).
 }
 
 // Função para formatar o campo de preço com duas casas decimais
@@ -56,46 +68,35 @@ function formatarPreco(event) {
 // Adiciona o evento de formatação ao campo de preço
 document.getElementById('inputPrecoProduct').addEventListener('blur', formatarPreco)
 
-// Evento de submit do formulário
 formProduto.addEventListener('submit', async (event) => {
     event.preventDefault()
+    //teste de recebimento dos inputs do formulário (passo 1)
+    console.log(idProduto.value, barcodeProduto.value, nomeProduto.value, caminhoImagem.value, precoProduto.value)
+    // criar um objeto
+    // caminhoImagemPro: caminhoImagem ? caminhoImagem : "" 
+    // ? : (operador ternário (if else)) correção de BUG se não existir caminho da imagem (se nenhuma imagem selecionada) enviar uma string vazia ""
 
-    console.log("Dados do produto:", {
-        id: idProduto.value,
-        barcode: barcodeProduto.value,
-        nome: nomeProduto.value,
-        imagem: caminhoImagem,
-        preco: precoProduto.value
-    })
-
-    const produto = {
-        idPro: idProduto.value || undefined,
-        barcodePro: barcodeProduto.value,
-        nomePro: nomeProduto.value,
-        caminhoImagemPro: caminhoImagem || "", // Usa o caminho da imagem selecionada ou uma string vazia
-        precoPro: precoProduto.value
-    }
-
-    if (!produto.idPro) {
-        console.log("Cadastrando novo produto:", produto)
+    if (idProduto.value === "") {
+        const produto = {
+            barcodePro: barcodeProduto.value,
+            nomePro: nomeProduto.value,
+            caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
+            precoPro: precoProduto.value
+        }
         api.novoProduto(produto)
     } else {
-        console.log("Editando produto existente:", produto)
+        const produto = {
+            idPro: idProduto.value,
+            barcodePro: barcodeProduto.value,
+            nomePro: nomeProduto.value,
+            caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
+            precoPro: precoProduto.value
+        }
         api.editarProduto(produto)
     }
+
 })
-
-let isSearching = false
-
-btnRead.addEventListener('click', (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-
-    if (!isSearching) {
-        isSearching = true
-        buscarProduto()
-    }
-})
+// Fim do CRUD CREATE/UPDATE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // Função genérica para buscar produtos
 function buscarProdutoGenerico(campo, valor, apiBusca, apiRenderiza) {
@@ -166,28 +167,77 @@ function buscarProduto() {
     buscarProdutoGenerico('nomeProduto', proNome, api.buscarProduto, api.renderizarProduto)
 }
 
-// Função para buscar produto por código de barras
-function buscarProdutoBar() {
-    let proBar = document.getElementById('searchBarcode').value.trim()
+// Inicio do CRUD READ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+function buscarProduto() {
+    let barcode = document.getElementById('searchProduct').value
+    console.log(barcode) // teste passo 1 fluxo (slides)
+    //validação
+    if (barcode === "") {
+        api.validarBusca()
+        foco.focus()
+    } else {
+        api.buscarProduto(barcode) //Passo 2 fluxo (slides)
+        // recebimento dos dados do produto
+        api.renderizarProduto((event, dadosProduto) => {
+            //teste do passo 5
+            console.log(dadosProduto)
+            //Passo 6 renderização dos dados do produto
+            const produtoRenderizado = JSON.parse(dadosProduto)
+            arrayProduto = produtoRenderizado
+            // percorrer o vetor de produtos extrair os dados e setar(preencher) os campos do formulário e a imagem
+            arrayProduto.forEach((p) => {
+                document.getElementById('inputIdProduct').value = p._id
+                document.getElementById('inputBarcodeProduct').value = p.barcodeProduto
+                document.getElementById('inputNameProduct').value = p.nomeProduto
+                document.getElementById('').value = p.
+                document.getElementById('').value = p.
+                //######################### Renderizar imagem
+                //validação(imagem não é campo obrigatório)
+                //se existir imagem cadastrada
+                if (p.caminhoImagemProduto) {
+                    imagem.src = p.caminhoImagemProduto
+                }
+                //limpar o campo de busca, remover o foco e desativar a busca
+                foco.value = ""
+                foco.disabled = true
+                //liberar os botões editar e excluir e bloquer o botão adicionar
+                document.getElementById('btnUpdate').disabled = false
+                document.getElementById('btnDelete').disabled = false
+                document.getElementById('btnCreate').disabled = true
+                //restaurar a tecla Enter
+                restaurarEnter()
+            })
 
-    if (proBar === "") {
-        window.api.validarBusca()
-        return
+        })
     }
-
-    buscarProdutoGenerico('barcodeProduto', proBar, api.buscarProdutoBar, api.renderizarProdutoBar)
 }
+
+// Setar o campo do código de barras (produto não cadastrado).
+api.setarBarcode(() => {
+    // Setar o barcode do produto.
+    let campoBarcode = document.getElementById('searchBarcode').value
+    document.getElementById('inputBarcodeProduct').value = campoBarcode
+    // Limpar o campo de busca e remover o foco.
+    foco.value = ""
+    document.getElementById('inputNameProduct').focus()
+    // Restaurar a tecla enter (associar ao botão adicionar).
+    restaurarEnter()
+})
+
+// Fim do CRUD READ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // Função para excluir produto
 function excluirProduto() {
     api.deletarProduto(idProduto.value)
 }
 
-// Função para resetar o formulário
-api.resetarFormulario(() => {
+// Reset Form >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+api.resetarFormulario((args) => {
     resetForm()
 })
 
 function resetForm() {
+    //recarregar a página
     location.reload()
 }
+// Fim - reset form <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
