@@ -9,40 +9,35 @@ const mongoose = require('mongoose')
 const url = 'mongodb+srv://admin:123senac@conest.0lqvd.mongodb.net/conestdb'
 
 // Status de Conexão (Icone de Conexão)
-let isConnected = false
+let conectado = false
 
-// Só estabelecer uma conexão se não estiver conectado
-const dbConnect = async () => {
-    if(isConnected === false) {
-        await conectar()
-    }
-}
-
-// Conectar
 const conectar = async () => {
-    if(isConnected === false) {
+    // Só estabelecer uma conexão se não estiver conectado.
+    if (!conectado) {
         try {
+            // A linha abaixo abre a conexão com o MongoDB.
             await mongoose.connect(url)
-            isConnected = true // Sinalizar que o banco está conectado
+            conectado = true // Sinalizar que o banco está conectado
             console.log("MongoDB conectado")
-        }catch (error) {
-            console.log(`Problema detectado: ${error}`)
+        } catch (error) {
+            console.log(`Erro ao conectar ao MongoDB: ${error}`)
         }
     }
 }
 
 // Desconectar
 const desconectar = async () => {
-    if(isConnected === true) {
+    if (conectado) {
         try {
+            // A linha abaixo encerra a conexão com o MongoDB.
             await mongoose.disconnect(url)
-            isConnected = false //Sinalizar que o banco está conectado
+            conectado = false // Sinalizar que o banco não está conectado.
             console.log("MongoDB desconectado")
-        }catch (error) {
-            console.log(`Problema detectado: ${error}`)
+        } catch (error) {
+            console.log(`Erro ao desconectar do MongoDB: ${error}`)
         }
     }
 }
 
-// Exportar para o main.js as funções desejadas
-module.exports = {dbConnect, desconectar}
+// Exportar para o main.js as funções desejadas.
+module.exports = { conectar, desconectar }

@@ -6,11 +6,7 @@ const { app, BrowserWindow, nativeTheme, Menu, shell, ipcMain, dialog, globalSho
 const path = require('node:path')
 
 // Importação do módulo de conexão
-const { dbConnect, desconectar } = require('./database.js')
-
-// Status de conexão com o banco de dados. No MongoDB é mais eficiente manter uma única conexão aberta durante todo o tempo de vida do aplicativo e usá-la quando necessário. Fechar e reabrir constantemente a conexão aumenta a sobrecarga e reduz o desempenho do servidor.
-// A variável abaixo é usada para garantir que o banco de dados inicie desconectado (evitar abrir outra instância)
-let dbcon = null
+const { conectar, desconectar } = require('./database.js')
 
 // Importação do Schema Clientes da camada model
 const clienteModel = require('./src/models/Clientes.js')
@@ -200,16 +196,18 @@ app.whenReady().then(() => {
     // Importar antes o módulo de conexão no início do código
     // No MongoDB é mais eficiente manter uma única conexão aberta durante todo o tempo de vida do aplicativo e usá-la quando necessário. Fechar e reabrir constantemente a conexão aumenta a sobrecarga e reduz o desempenho do servidor.
     // Conexão com o banco ao iniciar a aplicação
-    ipcMain.on('db-connect', async (event, message) => {
+    ipcMain.on('db-connect', async (event) => {
         // A linha abaixo estabelece a conexão com o banco de dados
-        dbcon = await dbConnect()
-        // Enviar ao renderizador uma mensagem para trocar o ícone status do banco de dados
-        event.reply('db-message', "conectado")
+        await conectar()
+        // Enviar ao renderizador uma mensagem para trocar o ícone status do banco de dados (delay de 0.5s para sincronizar).
+        setTimeout(() => {
+            event.reply('db-message', "conectado")
+        }, 500) // 1000ms = 1s
     })
 
     // Desconectar do banco de dados ao encerrar a aplicação
     app.on('before-quit', async () => {
-        await desconectar(dbcon)
+        await desconectar()
     })
 
     app.on('activate', () => {
@@ -641,7 +639,7 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 /****************** Produtos ******************/
 /*********************************************/
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Inicio do CRUD CREATE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Obter o caminho da imagem (executar o open dialog).
 ipcMain.handle('open-file-dialog', async () => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -650,7 +648,7 @@ ipcMain.handle('open-file-dialog', async () => {
         filters: [
             {
                 name: 'Imagens',
-                extensions: ['png', 'jpg', 'jpeg']
+                extensions: ['png', 'jpg', 'jpeg', 'jfif']
             }
         ]
     })
@@ -674,7 +672,7 @@ ipcMain.on('new-product', async (event, produto) => {
         // Correção de BUG (validação de imagem).
         if (produto.caminhoImagemPro) {
 
-            //============================================= (imagens #1)
+            //============================================= (Imagens #1)
             // Criar a pasta uploads se não existir.
             //__dirname (caminho absoluto).
             const uploadDir = path.join(__dirname, 'uploads')
@@ -682,16 +680,16 @@ ipcMain.on('new-product', async (event, produto) => {
                 fs.mkdirSync(uploadDir)
             }
 
-            //============================================= (imagens #2)
+            //============================================= (Imagens #2)
             // Gerar um nome único para o arquivo (para não sobrescrever).
             const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
             const uploads = path.join(uploadDir, fileName)
 
-            //============================================= (imagens #3)
+            //============================================= (Imagens #3)
             //Copiar o arquivo de imagem para pasta uploads.
             fs.copyFileSync(produto.caminhoImagemPro, uploads)
 
-            //============================================= (imagens #4)
+            //============================================= (Imagens #4)
             // Alterar a variável caminhoImagemSalvo para uploads.
             caminhoImagemSalvo = uploads
         }
@@ -719,7 +717,7 @@ ipcMain.on('new-product', async (event, produto) => {
         console.log(error)
     }
 })
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD CREATE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // Inicio do CRUD READ - Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-product', async (event, barcode) => {
@@ -758,45 +756,9 @@ ipcMain.on('search-product', async (event, barcode) => {
 })
 // Fim do CRUD READ - Código de Barras <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read - Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ipcMain.on('search-barcode', async (event, proBar) => {
-    console.log(proBar) // Teste do passo 2.
-    try {
-        // Passo 3 e 4 (fluxo do slide).
-        const dadosProdutoBar = await produtoModel.find({
-            barcodeProduto: proBar
-        })
-        console.log(dadosProdutoBar) // Teste passo 4.
-        // Validação (se não existir produto cadastrado).
-        if (dadosProdutoBar.length === 0) {
-            dialog.showMessageBox({
-                type: 'warning',
-                title: 'Produtos',
-                message: 'Produto não cadastrado.\nDeseja cadastrar este produto?',
-                defaultId: 0,
-                buttons: ['Sim', 'Não']
-            }).then((result) => {
-                console.log(result)
-                if (result.response === 0) {
-                    // Enviar ao renderizador um pedido para setar o código de barras.
-                    event.reply('set-barcode')
-                } else {
-                    // Enviar ao renderizador um pedido para limpar os campos do formulário.
-                    event.reply('reset-form')
-                }
-            })
-        }
-        // Passo 5: fluxo (envio dos dados produto ao renderizador)
-        event.reply('product-data-barcode', JSON.stringify(dadosProdutoBar))
-    } catch (error) {
-        console.log(error)
-    }
-})
-// Fim do CRUD Read Código de Barras <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Inicio do CRUD DELETE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('delete-product', async (event, idProduto) => {
-    // Teste de recebimento do id do produto (passo 2 - slide).
+    // Teste de recebimento do ID do produto (passo 2 - slide).
     console.log(idProduto)
     // Confirmação antes de excluir o produto (IMPORTANTE!).
     // product é a variável ref a janela de produtos.
@@ -809,13 +771,13 @@ ipcMain.on('delete-product', async (event, idProduto) => {
     // Apoio a lógica.
     console.log(response)
     if (response === 1) {
-        // Passo 3 slide
+        // Passo 3 slide.
         try {
             const produtoExcluido = await produtoModel.findByIdAndDelete(idProduto)
             dialog.showMessageBox({
                 type: 'info',
                 title: 'Aviso',
-                message: 'Produto excluído com sucesso',
+                message: 'Produto excluído com sucesso!',
                 buttons: ['OK']
             })
             event.reply('reset-form')
@@ -825,7 +787,7 @@ ipcMain.on('delete-product', async (event, idProduto) => {
     }
 
 })
-// Fim do CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('update-product', async (event, produto) => {
