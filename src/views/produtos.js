@@ -38,11 +38,12 @@ let barcodeProduto = document.getElementById('inputBarcodeProduct')
 let nomeProduto = document.getElementById('inputNameProduct')
 let caminhoImagemProduto = document.getElementById('pathImageProduct')
 let imagem = document.getElementById('imageProductPreview')
+let precoProduto = document.getElementById('inputPrecoProduct')
 
 //variável usada para armazenar o caminho da imagem
 let caminhoImagem
 
-// // CRUD Create/Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Create/Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // solicitar ao main o uso do explorador de arquivos e armazenar o caminho da imagem selecionada na variável caminhoImagem
 async function uploadImage() {
     caminhoImagem = await api.selecionarArquivo()
@@ -61,12 +62,27 @@ formProduto.addEventListener('submit', async (event) => {
     // criar um objeto
     // caminhoImagemPro: caminhoImagem ? caminhoImagem : "" 
     // ? : (operador ternário (if else)) correção de BUG se não existir caminho da imagem (se nenhuma imagem selecionada) enviar uma string vazia ""
-    const produto = {
-        barcodePro: barcodeProduto.value,
-        nomePro: nomeProduto.value,
-        caminhoImagemPro: caminhoImagem ? caminhoImagem : ""
-    }
-    api.novoProduto(produto)
+
+    // Estratégia usada para diferenciar adicionar/editar (se existir idProduto )
+
+    if (idProduto.value === "") {
+        const produto = {
+            barcodePro: barcodeProduto.value,
+            nomePro: nomeProduto.value,
+            caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
+            precoPro: precoProduto.value
+        }
+        api.novoProduto(produto)
+    } else {
+        const produto = {
+            idPro: idProduto.value,
+            barcodePro: barcodeProduto.value,
+            nomePro: nomeProduto.value,
+            caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
+            precoPro: precoProduto.value
+        }        
+        api.editarProduto(produto)
+    }    
 })
 // Fim CRUD Create/Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -93,6 +109,7 @@ function buscarProduto() {
                 document.getElementById('inputIdProduct').value = p._id
                 document.getElementById('inputBarcodeProduct').value = p.barcodeProduto
                 document.getElementById('inputNameProduct').value = p.nomeProduto
+                document.getElementById('inputPrecoProduct').value = p.precoProduto
                 //######################### Renderizar imagem
                 //validação(imagem não é campo obrigatório)
                 //se existir imagem cadastrada
@@ -128,15 +145,14 @@ api.setarBarcode(() => {
 
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// Inicio do CRUD DELETE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Função para excluir produto
+// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function excluirProduto() {
-    console.log(idProduto.value) // Passo 1 (fluxo-slide).
-    api.deletarProduto(idProduto.value) // Passo 2 (fluxo-slide).
+    console.log(idProduto.value) //Passo 1 (fluxo-slide)
+    api.deletarProduto(idProduto.value) //Passo 2 (fluxo-slide)
 }
+// Fim CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// Fim do CRUD DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // Reset Form >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 api.resetarFormulario((args) => {

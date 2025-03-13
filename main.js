@@ -635,12 +635,12 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 })
 // Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-/***********************************************/
-/****************** Produtos ******************/
-/*********************************************/
+/********************************************/
+/**************** Produtos  *****************/
+/********************************************/
 
-// Inicio do CRUD CREATE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Obter o caminho da imagem (executar o open dialog).
+// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Obter o caminho da imagem (executar o open dialog)
 ipcMain.handle('open-file-dialog', async () => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
         title: "Selecionar imagem",
@@ -656,57 +656,59 @@ ipcMain.handle('open-file-dialog', async () => {
     if (canceled === true || filePaths.length === 0) {
         return null
     } else {
-        return filePaths[0] // Retorna o caminho do arquivo.
+        return filePaths[0] //retorna o caminho do arquivo
     }
 
 })
 
 ipcMain.on('new-product', async (event, produto) => {
-    // Teste de recebimento dos dados produto.
-    console.log(produto) // Teste do passo 2 (recebimento do produto).
+    // teste de recebimento dos dados do produto
+    console.log(produto) // teste do passo 2 (recebimento do produto)
 
-    // Resolução de BUG (quando a imagem não for selecionada).
+    //Resolução de BUG (quando a imagem não for selecionada)
     let caminhoImagemSalvo = ""
 
     try {
-        // Correção de BUG (validação de imagem).
+        // Correção de BUG (validação de imagem)
         if (produto.caminhoImagemPro) {
-
-            //============================================= (Imagens #1)
-            // Criar a pasta uploads se não existir.
-            //__dirname (caminho absoluto).
+            //===================================== (imagens #1)
+            // Criar a pasta uploads se não existir
+            //__dirname (caminho absoluto)
             const uploadDir = path.join(__dirname, 'uploads')
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir)
             }
 
-            //============================================= (Imagens #2)
-            // Gerar um nome único para o arquivo (para não sobrescrever).
+            //===================================== (imagens #2)
+            // Gerar um nome único para o arquivo (para não sobrescrever)
             const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
+            //console.log(fileName) // apoio a lógica
             const uploads = path.join(uploadDir, fileName)
 
-            //============================================= (Imagens #3)
-            //Copiar o arquivo de imagem para pasta uploads.
+            //===================================== (imagens #3)
+            //Copiar o arquivo de imagem para pasta uploads
             fs.copyFileSync(produto.caminhoImagemPro, uploads)
 
-            //============================================= (Imagens #4)
-            // Alterar a variável caminhoImagemSalvo para uploads.
+            //===================================== (imagens #4)
+            //alterar a variável caminhoImagemSalvo para uploads
             caminhoImagemSalvo = uploads
+
         }
-        // Cadastrar o produto no Banco de Dados.
+        // Cadastrar o produto no banco de dados
         const novoProduto = new produtoModel({
             barcodeProduto: produto.barcodePro,
             nomeProduto: produto.nomePro,
             caminhoImagemProduto: caminhoImagemSalvo,
             precoProduto: produto.precoPro
         })
-        // Adicionar o produto no Banco de Dados.
+
+        // adicionar o produto no banco de dados
         await novoProduto.save()
 
-        // Confirmação.
+        // confirmação
         dialog.showMessageBox({
             type: 'info',
-            message: "Produto cadastrado com sucesso!",
+            message: 'Produto cadastrado com sucesso.',
             buttons: ['OK']
         }).then((result) => {
             if (result.response === 0) {
@@ -717,18 +719,20 @@ ipcMain.on('new-product', async (event, produto) => {
         console.log(error)
     }
 })
-// Fim do CRUD CREATE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// Inicio do CRUD READ - Código de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Fim CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-product', async (event, barcode) => {
-    console.log(barcode) // Teste do passo 2.
+    console.log(barcode) // teste do passo 2
     try {
-        // Passos 3 e 4 (fluxo do slide).
+        // Passos 3 e 4 (fluxo do slide)
         const dadosProduto = await produtoModel.find({
             barcodeProduto: barcode
         })
-        console.log(dadosProduto) // Testes do passo 4.
-        // Validação (se não existir produto cadastro).
+        console.log(dadosProduto) //teste Passo 4
+        //validação (se não existir produto cadastrado)
         if (dadosProduto.length === 0) {
             dialog.showMessageBox({
                 type: 'warning',
@@ -739,45 +743,99 @@ ipcMain.on('search-product', async (event, barcode) => {
             }).then((result) => {
                 console.log(result)
                 if (result.response === 0) {
-                    // Enviar ao renderizador um pedido para setar o código de barras.
+                    //enviar ao renderizador um pedido para setar o código de barras
                     event.reply('set-barcode')
                 } else {
-                    // Enviar ao renderizador um pedido para limpar os campos do formulário.
+                    //enviar ao renderizador um pedido para limpar os campos do formulário
                     event.reply('reset-form')
                 }
             })
         }
-        // Passo 5: fluxo (envio dos dados do produto ao renderizador).
+        // Passo 5: fluxo (envio dos dados do produto ao renderizador)
         event.reply('product-data', JSON.stringify(dadosProduto))
 
     } catch (error) {
         console.log(error)
     }
 })
-// Fim do CRUD READ - Código de Barras <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// Inicio do CRUD DELETE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ipcMain.on('update-product', async (event, produto) => {
+    console.log(produto) //teste do fluxo (passo2) - slide
+
+    // Correção de BUG (caminho da imagem)
+    // estratégia: se o usuário não trocou a imagem, editar apenas os campos nome do produto e código de barras do produto
+    if (produto.caminhoImagemPro === "") {
+        try {
+            const produtoEditado = await produtoModel.findByIdAndUpdate(
+                produto.idPro, {
+                    barcodeProduto: produto.barcodePro,
+                    nomeProduto: produto.nomePro                  
+            },
+                {
+                    new: true
+                }
+            )
+        } catch (error) {
+            console.log(error)
+        }
+    } else {
+        try {
+            const produtoEditado = await produtoModel.findByIdAndUpdate(
+                produto.idPro, {
+                    barcodeProduto: produto.barcodePro,
+                    nomeProduto: produto.nomePro,
+                    caminhoImagemProduto: produto.caminhoImagemPro
+            },
+                {
+                    new: true
+                }
+            )
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    
+    // confirmação
+    dialog.showMessageBox(product, {
+        type: 'info',
+        message: 'Dados do produto alterados com sucesso.',
+        buttons: ['OK']
+    }).then((result) => {
+        if (result.response === 0) {
+            event.reply('reset-form')
+        }
+    })
+})
+// Fim CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('delete-product', async (event, idProduto) => {
-    // Teste de recebimento do ID do produto (passo 2 - slide).
+    //teste de recebimento do ID do produto (passo 2)
     console.log(idProduto)
-    // Confirmação antes de excluir o produto (IMPORTANTE!).
-    // product é a variável ref a janela de produtos.
+    //confirmação de exclusão
+    // confirmação antes de excluir o produto (IMPORTANTE!)
+    // product é a variável ref a janela de produtos
     const { response } = await dialog.showMessageBox(product, {
         type: 'warning',
         buttons: ['Cancelar', 'Excluir'], //[0,1]
         title: 'Atenção!',
         message: 'Tem certeza que deseja excluir este produto?'
     })
-    // Apoio a lógica.
+    // apoio a lógica
     console.log(response)
     if (response === 1) {
-        // Passo 3 slide.
+        //Passo 3 slide
         try {
             const produtoExcluido = await produtoModel.findByIdAndDelete(idProduto)
             dialog.showMessageBox({
                 type: 'info',
                 title: 'Aviso',
-                message: 'Produto excluído com sucesso!',
+                message: 'Produto excluído com sucesso',
                 buttons: ['OK']
             })
             event.reply('reset-form')
@@ -785,64 +843,5 @@ ipcMain.on('delete-product', async (event, idProduto) => {
             console.log(error)
         }
     }
-
 })
-// Fim do CRUD DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-// CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-ipcMain.on('update-product', async (event, produto) => {
-    // Teste de recebimento dos dados do produto
-    console.log("Dados recebidos para edição:", produto) // Verifique os dados recebidos
-
-    try {
-        // Verificar se uma nova imagem foi selecionada
-        let caminhoImagemSalvo = produto.caminhoImagemPro || "" // Mantém o caminho atual se não houver nova imagem
-
-        if (produto.caminhoImagemPro && produto.caminhoImagemPro !== "") {
-            // Criar a pasta uploads se não existir
-            const uploadDir = path.join(__dirname, 'uploads')
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir)
-            }
-
-            // Gerar um nome único para o arquivo (para não sobrescrever)
-            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
-            const uploads = path.join(uploadDir, fileName)
-
-            // Copiar o arquivo de imagem para a pasta uploads
-            fs.copyFileSync(produto.caminhoImagemPro, uploads)
-
-            // Atualizar o caminho da imagem para o novo arquivo
-            caminhoImagemSalvo = uploads
-        }
-
-        // Atualizar o produto no banco de dados
-        const produtoEditado = await produtoModel.findByIdAndUpdate(
-            produto.idPro, {
-            nomeProduto: produto.nomePro,
-            barcodeProduto: produto.barcodePro,
-            caminhoImagemProduto: caminhoImagemSalvo, // Incluir o caminho da imagem
-            precoProduto: produto.precoPro
-        }, {
-            new: true // Retorna o documento atualizado
-        }
-        )
-
-        console.log("Produto editado com sucesso:", produtoEditado) // Verifique o produto editado
-
-        // Confirmação
-        dialog.showMessageBox({
-            type: 'info',
-            title: "Aviso",
-            message: "Dados alterados com sucesso!",
-            buttons: ['OK']
-        }).then((result) => {
-            if (result.response === 0) {
-                event.reply('reset-form')
-            }
-        })
-    } catch (error) {
-        console.log(error)
-    }
-})
-// Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
