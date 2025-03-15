@@ -11,7 +11,9 @@ const fornecedorSchema = new Schema({
         type: String
     },
     cnpjFornecedor: {
-        type: String
+        type: String,
+        unique: true,
+        index: true
     },
     foneFornecedor: {
         type: String

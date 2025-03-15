@@ -331,3 +331,8 @@ h1 {
     background-color: #5a6268;
     /* Cor ao passar o mouse */
 }
+
+/* Adicionando a classe para o estilo de erro */
+.input-error {
+    border: 2px solid red !important
+}

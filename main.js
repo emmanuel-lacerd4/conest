@@ -350,7 +350,22 @@ ipcMain.on('new-client', async (event, cliente) => {
             }
         })
     } catch (error) {
-        console.log(error)
+        // Tratamento personalizado em caso de erro
+        // 1100 código referente ao erro de campos duplicados no Banco de Dados
+        if (error.code = 11000) {
+            dialog.showMessageBox({
+                type: 'error',
+                title: "Atenção!",
+                message: "O CPF já está cadastrado.\nVerifique se digitou corretamente.",
+                buttons: ['OK']
+            }).then((result) => {
+                if (result.response === 0) {
+                    //event.reply('reset-form')
+                }
+            })
+        } else {
+            console.log(error)
+        }
     }
 })
 // Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -518,7 +533,22 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
             }
         })
     } catch (error) {
-        console.log(error)
+        // Tratamento personalizado em caso de erro
+        // 1100 código referente ao erro de campos duplicados no Banco de Dados
+        if (error.code = 11000) {
+            dialog.showMessageBox({
+                type: 'error',
+                title: "Atenção!",
+                message: "CNPJ já está cadastrado.\nVerifique se digitou corretamente.",
+                buttons: ['OK']
+            }).then((result) => {
+                if (result.response === 0) {
+                    //event.reply('reset-form')
+                }
+            })
+        } else {
+            console.log(error)
+        }
     }
 })
 // Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -708,6 +738,7 @@ ipcMain.on('new-product', async (event, produto) => {
         // confirmação
         dialog.showMessageBox({
             type: 'info',
+            title: 'Aviso',
             message: 'Produto cadastrado com sucesso.',
             buttons: ['OK']
         }).then((result) => {
@@ -716,7 +747,22 @@ ipcMain.on('new-product', async (event, produto) => {
             }
         })
     } catch (error) {
-        console.log(error)
+        // Tratamento personalizado em caso de erro
+        // 1100 código referente ao erro de campos duplicados no Banco de Dados
+        if (error.code = 11000) {
+            dialog.showMessageBox({
+                type: 'error',
+                title: "Atenção!",
+                message: "O Código de Barras já está cadastrado.\nVerifique se escaneou o código corretamente.",
+                buttons: ['OK']
+            }).then((result) => {
+                if (result.response === 0) {
+                    //event.reply('reset-form')
+                }
+            })
+        } else {
+            console.log(error)
+        }
     }
 })
 
@@ -771,8 +817,8 @@ ipcMain.on('update-product', async (event, produto) => {
         try {
             const produtoEditado = await produtoModel.findByIdAndUpdate(
                 produto.idPro, {
-                    barcodeProduto: produto.barcodePro,
-                    nomeProduto: produto.nomePro                  
+                barcodeProduto: produto.barcodePro,
+                nomeProduto: produto.nomePro
             },
                 {
                     new: true
@@ -785,9 +831,9 @@ ipcMain.on('update-product', async (event, produto) => {
         try {
             const produtoEditado = await produtoModel.findByIdAndUpdate(
                 produto.idPro, {
-                    barcodeProduto: produto.barcodePro,
-                    nomeProduto: produto.nomePro,
-                    caminhoImagemProduto: produto.caminhoImagemPro
+                barcodeProduto: produto.barcodePro,
+                nomeProduto: produto.nomePro,
+                caminhoImagemProduto: produto.caminhoImagemPro
             },
                 {
                     new: true
@@ -798,7 +844,7 @@ ipcMain.on('update-product', async (event, produto) => {
         }
     }
 
-    
+
     // confirmação
     dialog.showMessageBox(product, {
         type: 'info',

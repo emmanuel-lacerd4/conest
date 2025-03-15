@@ -50,7 +50,7 @@ async function uploadImage() {
     console.log(caminhoImagem)
     //correção BUG seleção de imagem
     if (caminhoImagem) {
-        imagem.src = `file://${caminhoImagem}`        
+        imagem.src = `file://${caminhoImagem}`
     }
     btnCreate.focus() //correção de BUG (teclaEnter)
 }
@@ -58,7 +58,7 @@ async function uploadImage() {
 formProduto.addEventListener('submit', async (event) => {
     event.preventDefault()
     //teste de recebimento dos inputs do formulário (passo 1)
-    console.log(barcodeProduto.value, nomeProduto.value, caminhoImagem)
+    console.log(barcodeProduto.value, nomeProduto.value, caminhoImagem, precoProduto.value)
     // criar um objeto
     // caminhoImagemPro: caminhoImagem ? caminhoImagem : "" 
     // ? : (operador ternário (if else)) correção de BUG se não existir caminho da imagem (se nenhuma imagem selecionada) enviar uma string vazia ""
@@ -80,9 +80,9 @@ formProduto.addEventListener('submit', async (event) => {
             nomePro: nomeProduto.value,
             caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
             precoPro: precoProduto.value
-        }        
+        }
         api.editarProduto(produto)
-    }    
+    }
 })
 // Fim CRUD Create/Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -126,7 +126,6 @@ function buscarProduto() {
                 //restaurar a tecla Enter
                 restaurarEnter()
             })
-
         })
     }
 }
