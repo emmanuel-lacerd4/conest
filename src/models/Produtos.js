@@ -18,10 +18,14 @@ const produtoSchema = new Schema({
     caminhoImagemProduto: {
         type: String
     },
+    dataCadastro: {
+        type: Date,
+        default: Date.now
+    },
     precoProduto: {
         type: String
     }
-})
+}, { versionKey: false })
 
 // Exportar para o main.js
 // Para modificar o nome da coleção ("tabela"), basta modificar na linha abaixo o rótulo 'Produtos', sempre iniciando com a letra maiuscula

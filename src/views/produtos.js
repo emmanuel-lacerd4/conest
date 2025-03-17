@@ -142,6 +142,14 @@ api.setarBarcode(() => {
     restaurarEnter()
 })
 
+// Adicione este trecho logo após a função setarBarcode ou no final do CRUD Read:
+
+api.clearBarcode(() => {
+    let campoBarcode = document.getElementById('inputBarcodeProduct')
+    campoBarcode.value = "" // Limpa o campo
+    campoBarcode.focus() // Coloca o foco no campo
+    campoBarcode.style.borderColor = "red" // Define a borda vermelha
+})
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

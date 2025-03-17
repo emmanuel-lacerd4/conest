@@ -42,7 +42,7 @@ const clienteSchema = new Schema({
     bairroCliente: {
         type: String
     }
-})
+}, { versionKey: false })
 
 // exportar para o main
 // Para modificar o nome da coleção ("tabela"), basta modificar na linha abaixo o rótulo 'Clientes', sempre iniciando com letra maiúscula

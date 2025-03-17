@@ -218,6 +218,15 @@ function buscarFornecedor() {
         */
     })
 }
+
+// Adicione este trecho no final do arquivo ou após alguma função relacionada ao CRUD:
+
+api.clearCnpj(() => {
+    let campoCnpj = document.getElementById('inputCnpjSupplier')
+    campoCnpj.value = ""
+    campoCnpj.focus()
+    campoCnpj.style.borderColor = "red"
+})
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // Função para buscar o CEP

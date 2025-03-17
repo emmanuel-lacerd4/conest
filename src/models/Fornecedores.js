@@ -42,7 +42,7 @@ const fornecedorSchema = new Schema({
     bairroFornecedor: {
         type: String
     }
-})
+}, { versionKey: false })
 
 // Exportar para o main.js
 // Para modificar o nome da coleção ("tabela"), basta modificar na linha abaixo o rótulo 'Fornecedores', sempre iniciando com a letra maiuscula

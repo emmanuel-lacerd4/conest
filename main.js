@@ -317,11 +317,8 @@ ipcMain.on('notice-client', () => {
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Recebimento dos dados de formulário clientes.
 ipcMain.on('new-client', async (event, cliente) => {
-    // Teste de recebimento dos dados (Passo 2 - slide) Importante!
     console.log(cliente)
-    // Passo 3 - slide (cadastrar os dados no banco de dados).
     try {
-        // Criar um novo objeto usando a classe modelo.
         const novoCliente = new clienteModel({
             nomeCliente: cliente.nomeCli,
             cpfCliente: cliente.cpfCli,
@@ -335,9 +332,7 @@ ipcMain.on('new-client', async (event, cliente) => {
             complementoCliente: cliente.complementoCli,
             bairroCliente: cliente.bairroCli
         })
-        // A linha abaixo usa a biblioteca moongoose para salvar
         await novoCliente.save()
-        // Confirmação do cliente cadastrado ao banco.
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
@@ -345,13 +340,10 @@ ipcMain.on('new-client', async (event, cliente) => {
             buttons: ['OK']
         }).then((result) => {
             if (result.response === 0) {
-                // Enviar uma resposta para o renderizador resetar o form.
                 event.reply('reset-form')
             }
         })
     } catch (error) {
-        // Tratamento personalizado em caso de erro
-        // 1100 código referente ao erro de campos duplicados no Banco de Dados
         if (error.code = 11000) {
             dialog.showMessageBox({
                 type: 'error',
@@ -360,7 +352,7 @@ ipcMain.on('new-client', async (event, cliente) => {
                 buttons: ['OK']
             }).then((result) => {
                 if (result.response === 0) {
-                    //event.reply('reset-form')
+                    event.reply('clear-cpf') // Novo evento para limpar e focar o CPF
                 }
             })
         } else {
@@ -498,12 +490,8 @@ ipcMain.on('url-site', (event, site) => {
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Recebimento dos dados de formulário fornecedores.
 ipcMain.on('new-supplier', async (event, fornecedor) => {
-    // Teste de recebimento dos dados (Passo 2 - slide) Importante!
     console.log(fornecedor)
-
-    // Passo 3 - slide (cadastrar os dados no banco de dados)
     try {
-        // Criar um novo objeto usando a classe modelo
         const novoFornecedor = new fornecedorModel({
             nomeFornecedor: fornecedor.nomeFor,
             cnpjFornecedor: fornecedor.cnpjFor,
@@ -517,10 +505,7 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
             complementoFornecedor: fornecedor.complementoFor,
             bairroFornecedor: fornecedor.bairroFor
         })
-        // A linha abaixo usa a biblioteca mongoose para salvar
         await novoFornecedor.save()
-
-        // Confirmação de fornecedor cadastrado no Banco de Dados.
         dialog.showMessageBox({
             type: 'info',
             title: "Aviso",
@@ -528,13 +513,10 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
             buttons: ['OK']
         }).then((result) => {
             if (result.response === 0) {
-                // Enviar uma resposta para o renderizador resetar o form.
                 event.reply('reset-form')
             }
         })
     } catch (error) {
-        // Tratamento personalizado em caso de erro
-        // 1100 código referente ao erro de campos duplicados no Banco de Dados
         if (error.code = 11000) {
             dialog.showMessageBox({
                 type: 'error',
@@ -543,7 +525,7 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
                 buttons: ['OK']
             }).then((result) => {
                 if (result.response === 0) {
-                    //event.reply('reset-form')
+                    event.reply('clear-cnpj') // Novo evento para limpar e focar o CNPJ
                 }
             })
         } else {
@@ -691,51 +673,31 @@ ipcMain.handle('open-file-dialog', async () => {
 
 })
 
+// No trecho do CRUD Create dos Produtos, substitua o bloco de tratamento de erro existente por este:
+
 ipcMain.on('new-product', async (event, produto) => {
-    // teste de recebimento dos dados do produto
     console.log(produto) // teste do passo 2 (recebimento do produto)
 
-    //Resolução de BUG (quando a imagem não for selecionada)
     let caminhoImagemSalvo = ""
 
     try {
-        // Correção de BUG (validação de imagem)
         if (produto.caminhoImagemPro) {
-            //===================================== (imagens #1)
-            // Criar a pasta uploads se não existir
-            //__dirname (caminho absoluto)
             const uploadDir = path.join(__dirname, 'uploads')
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir)
             }
-
-            //===================================== (imagens #2)
-            // Gerar um nome único para o arquivo (para não sobrescrever)
             const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
-            //console.log(fileName) // apoio a lógica
             const uploads = path.join(uploadDir, fileName)
-
-            //===================================== (imagens #3)
-            //Copiar o arquivo de imagem para pasta uploads
             fs.copyFileSync(produto.caminhoImagemPro, uploads)
-
-            //===================================== (imagens #4)
-            //alterar a variável caminhoImagemSalvo para uploads
             caminhoImagemSalvo = uploads
-
         }
-        // Cadastrar o produto no banco de dados
         const novoProduto = new produtoModel({
             barcodeProduto: produto.barcodePro,
             nomeProduto: produto.nomePro,
             caminhoImagemProduto: caminhoImagemSalvo,
             precoProduto: produto.precoPro
         })
-
-        // adicionar o produto no banco de dados
         await novoProduto.save()
-
-        // confirmação
         dialog.showMessageBox({
             type: 'info',
             title: 'Aviso',
@@ -747,8 +709,6 @@ ipcMain.on('new-product', async (event, produto) => {
             }
         })
     } catch (error) {
-        // Tratamento personalizado em caso de erro
-        // 1100 código referente ao erro de campos duplicados no Banco de Dados
         if (error.code = 11000) {
             dialog.showMessageBox({
                 type: 'error',
@@ -757,7 +717,7 @@ ipcMain.on('new-product', async (event, produto) => {
                 buttons: ['OK']
             }).then((result) => {
                 if (result.response === 0) {
-                    //event.reply('reset-form')
+                    event.reply('clear-barcode') // Envia evento para limpar e focar o campo
                 }
             })
         } else {

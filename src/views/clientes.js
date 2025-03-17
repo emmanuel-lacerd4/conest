@@ -178,6 +178,15 @@ function buscarCliente() {
             */
     })
 }
+
+// Adicione este trecho no final do arquivo ou após alguma função relacionada ao CRUD:
+
+api.clearCpf(() => {
+    let campoCpf = document.getElementById('inputCpfClient')
+    campoCpf.value = ""
+    campoCpf.focus()
+    campoCpf.style.borderColor = "red"
+})
 // Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // Função para buscar o CEP

@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('api', {
     editarCliente: (cliente) => ipcRenderer.send('update-client', cliente),
     setarNomeCliente: (args) => ipcRenderer.on('set-nameClient', args),
     avisoCliente: () => ipcRenderer.send('notice-client'),
+    clearCpf: (args) => ipcRenderer.on('clear-cpf', args),
     novoFornecedor: (fornecedor) => ipcRenderer.send('new-supplier', fornecedor),
     buscarFornecedor: (forNome) => ipcRenderer.send('search-supplier', forNome),
     renderizarFornecedor: (dadosFornecedor) => ipcRenderer.on('supplier-data', dadosFornecedor),
@@ -25,6 +26,7 @@ contextBridge.exposeInMainWorld('api', {
     editarFornecedor: (fornecedor) => ipcRenderer.send('update-supplier', fornecedor),
     setarNomeFornecedor: (args) => ipcRenderer.on('set-nameSupplier', args),
     abrirSite: (urlsite) => ipcRenderer.send('url-site', urlsite),
+    clearCnpj: (args) => ipcRenderer.on('clear-cnpj', args),
     novoProduto: (produto) => ipcRenderer.send('new-product', produto),
     buscarProduto: (barcode) => ipcRenderer.send('search-product', barcode),
     buscarProdutoNome: (proNome) => ipcRenderer.send('search-name', proNome),
@@ -35,5 +37,6 @@ contextBridge.exposeInMainWorld('api', {
     setarNomeProduto: (args) => ipcRenderer.on('set-nameProduct', args),
     setarBarcode: (args) => ipcRenderer.on('set-barcode', args),
     validarBusca: () => ipcRenderer.send('dialog-search'),
-    selecionarArquivo: () => ipcRenderer.invoke('open-file-dialog')
+    selecionarArquivo: () => ipcRenderer.invoke('open-file-dialog'),
+    clearBarcode: (args) => ipcRenderer.on('clear-barcode', args)
 })
