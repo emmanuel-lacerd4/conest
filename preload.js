@@ -1,6 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-// Estabelecer a conexão com o banco (envio de pedido para o main abrir a conexão com o banco de dados)
 ipcRenderer.send('db-connect')
 
 contextBridge.exposeInMainWorld('api', {

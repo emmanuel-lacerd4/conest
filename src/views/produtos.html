@@ -14,8 +14,14 @@
     <div class="container mt-4">
         <h1 class="mb-4 text-center">Produtos</h1>
         <form id="frmProduct" class="row g-3">
+            <!-- Busca do produto por Nome -->
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="searchProductName" placeholder="Buscar produto por nome..."
+                    maxlength="50" spellcheck="false">
+                <br>
+            </div>
             <!-- Busca do produto por Código de Barras -->
-            <div class="col-md-8">
+            <div class="col-md-4">
                 <input type="text" class="form-control" id="searchProduct" placeholder="Buscar produto por código..."
                     maxlength="30" spellcheck="false">
                 <br>
@@ -37,7 +43,6 @@
                 <label for="inputBarcodeProduct" class="form-label">Código de Barras <span
                         class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="inputBarcodeProduct">
-                <small id="barcodeError" class="text-danger d-none">Código de Barras INVÁLIDO!</small>
             </div>
 
             <!-- Nome do Produto -->

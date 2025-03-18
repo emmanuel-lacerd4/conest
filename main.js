@@ -652,7 +652,6 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 /********************************************/
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Obter o caminho da imagem (executar o open dialog)
 ipcMain.handle('open-file-dialog', async () => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
         title: "Selecionar imagem",
@@ -668,15 +667,12 @@ ipcMain.handle('open-file-dialog', async () => {
     if (canceled === true || filePaths.length === 0) {
         return null
     } else {
-        return filePaths[0] //retorna o caminho do arquivo
+        return filePaths[0]
     }
-
 })
 
-// No trecho do CRUD Create dos Produtos, substitua o bloco de tratamento de erro existente por este:
-
 ipcMain.on('new-product', async (event, produto) => {
-    console.log(produto) // teste do passo 2 (recebimento do produto)
+    console.log(produto)
 
     let caminhoImagemSalvo = ""
 
@@ -717,7 +713,7 @@ ipcMain.on('new-product', async (event, produto) => {
                 buttons: ['OK']
             }).then((result) => {
                 if (result.response === 0) {
-                    event.reply('clear-barcode') // Envia evento para limpar e focar o campo
+                    event.reply('clear-barcode')
                 }
             })
         } else {
@@ -728,17 +724,14 @@ ipcMain.on('new-product', async (event, produto) => {
 
 // Fim CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-
 // CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-product', async (event, barcode) => {
-    console.log(barcode) // teste do passo 2
+    console.log(barcode)
     try {
-        // Passos 3 e 4 (fluxo do slide)
         const dadosProduto = await produtoModel.find({
             barcodeProduto: barcode
         })
-        console.log(dadosProduto) //teste Passo 4
-        //validação (se não existir produto cadastrado)
+        console.log(dadosProduto)
         if (dadosProduto.length === 0) {
             dialog.showMessageBox({
                 type: 'warning',
@@ -747,38 +740,60 @@ ipcMain.on('search-product', async (event, barcode) => {
                 defaultId: 0,
                 buttons: ['Sim', 'Não']
             }).then((result) => {
-                console.log(result)
                 if (result.response === 0) {
-                    //enviar ao renderizador um pedido para setar o código de barras
                     event.reply('set-barcode')
                 } else {
-                    //enviar ao renderizador um pedido para limpar os campos do formulário
                     event.reply('reset-form')
                 }
             })
         }
-        // Passo 5: fluxo (envio dos dados do produto ao renderizador)
         event.reply('product-data', JSON.stringify(dadosProduto))
-
     } catch (error) {
         console.log(error)
     }
 })
-// Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+ipcMain.on('search-name', async (event, proNome) => {
+    console.log(proNome)
+    try {
+        const dadosProduto = await produtoModel.find({
+            nomeProduto: new RegExp(proNome, 'i')
+        })
+        console.log(dadosProduto)
+        if (dadosProduto.length === 0) {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: 'Produtos',
+                message: 'Produto não cadastrado.\nDeseja cadastrar este produto?',
+                defaultId: 0,
+                buttons: ['Sim', 'Não']
+            }).then((result) => {
+                if (result.response === 0) {
+                    event.reply('set-nameProduct')
+                } else {
+                    event.reply('reset-form')
+                }
+            })
+        }
+        event.reply('product-data-name', JSON.stringify(dadosProduto))
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+// Fim CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('update-product', async (event, produto) => {
-    console.log(produto) //teste do fluxo (passo2) - slide
+    console.log(produto)
 
-    // Correção de BUG (caminho da imagem)
-    // estratégia: se o usuário não trocou a imagem, editar apenas os campos nome do produto e código de barras do produto
     if (produto.caminhoImagemPro === "") {
         try {
             const produtoEditado = await produtoModel.findByIdAndUpdate(
                 produto.idPro, {
                 barcodeProduto: produto.barcodePro,
-                nomeProduto: produto.nomePro
+                nomeProduto: produto.nomePro,
+                precoProduto: produto.precoPro
             },
                 {
                     new: true
@@ -793,7 +808,8 @@ ipcMain.on('update-product', async (event, produto) => {
                 produto.idPro, {
                 barcodeProduto: produto.barcodePro,
                 nomeProduto: produto.nomePro,
-                caminhoImagemProduto: produto.caminhoImagemPro
+                caminhoImagemProduto: produto.caminhoImagemPro,
+                precoProduto: produto.precoPro
             },
                 {
                     new: true
@@ -804,8 +820,6 @@ ipcMain.on('update-product', async (event, produto) => {
         }
     }
 
-
-    // confirmação
     dialog.showMessageBox(product, {
         type: 'info',
         message: 'Dados do produto alterados com sucesso.',
@@ -816,26 +830,20 @@ ipcMain.on('update-product', async (event, produto) => {
         }
     })
 })
-// Fim CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+// Fim CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('delete-product', async (event, idProduto) => {
-    //teste de recebimento do ID do produto (passo 2)
     console.log(idProduto)
-    //confirmação de exclusão
-    // confirmação antes de excluir o produto (IMPORTANTE!)
-    // product é a variável ref a janela de produtos
     const { response } = await dialog.showMessageBox(product, {
         type: 'warning',
-        buttons: ['Cancelar', 'Excluir'], //[0,1]
+        buttons: ['Cancelar', 'Excluir'],
         title: 'Atenção!',
         message: 'Tem certeza que deseja excluir este produto?'
     })
-    // apoio a lógica
     console.log(response)
     if (response === 1) {
-        //Passo 3 slide
         try {
             const produtoExcluido = await produtoModel.findByIdAndDelete(idProduto)
             dialog.showMessageBox({
