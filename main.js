@@ -454,9 +454,27 @@ ipcMain.on('delete-client', async (event, idCliente) => {
 
 // CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('update-client', async (event, cliente) => {
-    // Teste de recebimento dos dados do cliente (passo 2).
-    console.log(cliente)
+    console.log("Dados recebidos para atualização (cliente):", cliente)
     try {
+        // Verificar se o CPF já existe em outro registro, exceto no cliente sendo editado
+        const clienteExistente = await clienteModel.findOne({
+            cpfCliente: cliente.cpfCli,
+            _id: { $ne: cliente.idCli } // Exclui o cliente atual da busca
+        })
+        if (clienteExistente) {
+            dialog.showMessageBox(client, {
+                type: 'error',
+                title: "Atenção!",
+                message: "O CPF informado já está cadastrado para outro cliente.\nVerifique se digitou corretamente.",
+                buttons: ['OK']
+            }).then((result) => {
+                if (result.response === 0) {
+                    event.reply('clear-cpf')
+                }
+            })
+            return
+        }
+        // Se não houver duplicidade, prosseguir com a atualização
         const clienteEditado = await clienteModel.findByIdAndUpdate(
             cliente.idCli, {
             nomeCliente: cliente.nomeCli,
@@ -471,22 +489,27 @@ ipcMain.on('update-client', async (event, cliente) => {
             complementoCliente: cliente.complementoCli,
             bairroCliente: cliente.bairroCli
         },
-            {
-                new: true
-            }
+            { new: true }
         )
+        console.log("Cliente atualizado:", clienteEditado)
+        dialog.showMessageBox(client, {
+            type: 'info',
+            message: 'Dados do cliente alterados com sucesso!',
+            buttons: ['OK']
+        }).then((result) => {
+            if (result.response === 0) {
+                event.reply('reset-form')
+            }
+        })
     } catch (error) {
-        console.log(error)
+        console.log("Erro ao atualizar cliente:", error)
+        dialog.showMessageBox(client, {
+            type: 'error',
+            title: "Erro",
+            message: "Erro ao atualizar cliente: " + error.message,
+            buttons: ['OK']
+        })
     }
-    dialog.showMessageBox(client, {
-        type: 'info',
-        message: 'Dados do cliente alterados com sucesso!',
-        buttons: ['OK']
-    }).then((result) => {
-        if (result.response === 0) {
-            event.reply('reset-form')
-        }
-    })
 })
 // Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
