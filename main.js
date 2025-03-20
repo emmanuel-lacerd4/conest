@@ -650,6 +650,202 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 // Fim CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /********************************************/
+/**************** Produtos  *****************/
+/********************************************/
+
+// CRUD Create
+ipcMain.handle('open-file-dialog', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        title: "Selecionar imagem",
+        properties: ['openFile'],
+        filters: [
+            {
+                name: 'Imagens',
+                extensions: ['png', 'jpg', 'jpeg', 'jfif']
+            }
+        ]
+    })
+
+    if (canceled === true || filePaths.length === 0) {
+        return null
+    } else {
+        return filePaths[0]
+    }
+})
+
+ipcMain.on('new-product', async (event, produto) => {
+    console.log("Dados recebidos do frontend (produto):", produto)
+    let caminhoImagemSalvo = ""
+
+    try {
+        if (produto.caminhoImagemPro) {
+            const uploadDir = path.join(__dirname, 'uploads')
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir)
+            }
+            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
+            const uploads = path.join(uploadDir, fileName)
+            fs.copyFileSync(produto.caminhoImagemPro, uploads)
+            caminhoImagemSalvo = uploads
+        }
+        const novoProduto = new produtoModel({
+            barcodeProduto: produto.barcodePro,
+            nomeProduto: produto.nomePro,
+            caminhoImagemProduto: caminhoImagemSalvo,
+            precoProduto: produto.precoPro,
+            fornecedorProduto: produto.fornecedorPro,
+            quantidadeProduto: produto.quantidadePro,
+            unidadeProduto: produto.unidadePro,
+            valorUnitarioProduto: produto.valorUnitarioPro
+        })
+        console.log("Novo produto a ser salvo:", novoProduto)
+        await novoProduto.save()
+        dialog.showMessageBox({
+            type: 'info',
+            title: 'Aviso',
+            message: 'Produto cadastrado com sucesso.',
+            buttons: ['OK']
+        }).then((result) => {
+            if (result.response === 0) {
+                event.reply('reset-form')
+            }
+        })
+    } catch (error) {
+        console.log("Erro completo ao cadastrar produto:", error)
+        if (error.code === 11000) {
+            dialog.showMessageBox({
+                type: 'error',
+                title: "Atenção!",
+                message: "O Código de Barras já está cadastrado.\nVerifique se escaneou o código corretamente.",
+                buttons: ['OK']
+            }).then((result) => {
+                if (result.response === 0) {
+                    event.reply('clear-barcode')
+                }
+            })
+        } else {
+            console.log("Outro erro ao cadastrar produto:", error.message)
+            dialog.showMessageBox({
+                type: 'error',
+                title: "Erro",
+                message: "Erro ao cadastrar produto: " + error.message,
+                buttons: ['OK']
+            })
+        }
+    }
+})
+
+// CRUD Read
+ipcMain.on('search-product', async (event, barcode) => {
+    console.log("Recebido pedido de busca por código de barras:", barcode)
+    try {
+        const dadosProduto = await produtoModel.find({
+            barcodeProduto: barcode
+        })
+        console.log("Resultado da busca por código de barras:", dadosProduto)
+        event.reply('product-data', JSON.stringify(dadosProduto))
+    } catch (error) {
+        console.log("Erro ao buscar produto por código de barras:", error)
+        event.reply('product-data', JSON.stringify([])) // Retorna array vazio em caso de erro
+    }
+})
+
+ipcMain.on('search-name', async (event, proNome) => {
+    console.log("Recebido pedido de busca por nome:", proNome)
+    try {
+        const dadosProduto = await produtoModel.find({
+            nomeProduto: new RegExp(proNome, 'i')
+        })
+        console.log("Resultado da busca por nome:", dadosProduto)
+        event.reply('product-data-name', JSON.stringify(dadosProduto))
+    } catch (error) {
+        console.log("Erro ao buscar produto por nome:", error)
+        event.reply('product-data-name', JSON.stringify([])) // Retorna array vazio em caso de erro
+    }
+})
+
+// CRUD Update
+ipcMain.on('update-product', async (event, produto) => {
+    console.log("Dados recebidos para atualização (produto):", produto)
+
+    if (produto.caminhoImagemPro === "") {
+        try {
+            const produtoEditado = await produtoModel.findByIdAndUpdate(
+                produto.idPro, {
+                barcodeProduto: produto.barcodePro,
+                nomeProduto: produto.nomePro,
+                precoProduto: produto.precoPro,
+                fornecedorProduto: produto.fornecedorPro,
+                quantidadeProduto: produto.quantidadePro,
+                unidadeProduto: produto.unidadePro,
+                valorUnitarioProduto: produto.valorUnitarioPro
+            },
+                { new: true }
+            )
+            console.log("Produto atualizado (sem nova imagem):", produtoEditado)
+        } catch (error) {
+            console.log("Erro ao atualizar produto (sem nova imagem):", error)
+        }
+    } else {
+        try {
+            const produtoEditado = await produtoModel.findByIdAndUpdate(
+                produto.idPro, {
+                barcodeProduto: produto.barcodePro,
+                nomeProduto: produto.nomePro,
+                caminhoImagemProduto: produto.caminhoImagemPro,
+                precoProduto: produto.precoPro,
+                fornecedorProduto: produto.fornecedorPro,
+                quantidadeProduto: produto.quantidadePro,
+                unidadeProduto: produto.unidadePro,
+                valorUnitarioProduto: produto.valorUnitarioPro
+            },
+                { new: true }
+            )
+            console.log("Produto atualizado (com nova imagem):", produtoEditado)
+        } catch (error) {
+            console.log("Erro ao atualizar produto (com nova imagem):", error)
+        }
+    }
+
+    dialog.showMessageBox(product, {
+        type: 'info',
+        message: 'Dados do produto alterados com sucesso.',
+        buttons: ['OK']
+    }).then((result) => {
+        if (result.response === 0) {
+            event.reply('reset-form')
+        }
+    })
+})
+
+// CRUD Delete
+ipcMain.on('delete-product', async (event, idProduto) => {
+    console.log("ID do produto a ser deletado:", idProduto)
+    const { response } = await dialog.showMessageBox(product, {
+        type: 'warning',
+        buttons: ['Cancelar', 'Excluir'],
+        title: 'Atenção!',
+        message: 'Tem certeza que deseja excluir este produto?'
+    })
+    console.log("Resposta do usuário:", response)
+    if (response === 1) {
+        try {
+            const produtoExcluido = await produtoModel.findByIdAndDelete(idProduto)
+            console.log("Produto excluído:", produtoExcluido)
+            dialog.showMessageBox({
+                type: 'info',
+                title: 'Aviso',
+                message: 'Produto excluído com sucesso',
+                buttons: ['OK']
+            })
+            event.reply('reset-form')
+        } catch (error) {
+            console.log("Erro ao excluir produto:", error)
+        }
+    }
+})
+
+/********************************************/
 /**************** Relatórios ****************/
 /********************************************/
 

@@ -2,6 +2,7 @@
  * Processo de renderização da tela de Produtos
  * produtos.html
  */
+
 const foco = document.getElementById('searchProduct')
 const focoNome = document.getElementById('searchProductName')
 
@@ -46,16 +47,12 @@ let nomeProduto = document.getElementById('inputNameProduct')
 let caminhoImagemProduto = document.getElementById('pathImageProduct')
 let imagem = document.getElementById('imageProductPreview')
 let precoProduto = document.getElementById('inputPrecoProduct')
-let fornecedorProduto = document.getElementById('inputFornecedorProduct') // Novo campo
-let quantidadeProduto = document.getElementById('inputQuantidadeProduct') // Novo campo
-let unidadeProduto = document.getElementById('inputUnidadeProduct')     // Novo campo
-let valorUnitarioProduto = document.getElementById('inputValorUnitarioProduct') // Novo campo
 
 let caminhoImagem
 
 async function uploadImage() {
     caminhoImagem = await window.api.selecionarArquivo()
-    console.log(caminhoImagem)
+    console.log("Caminho da imagem selecionada: ", caminhoImagem)
     if (caminhoImagem) {
         imagem.src = `file://${caminhoImagem}`
     }
@@ -64,17 +61,13 @@ async function uploadImage() {
 
 formProduto.addEventListener('submit', async (event) => {
     event.preventDefault()
-    console.log(barcodeProduto.value, nomeProduto.value, caminhoImagem, precoProduto.value, fornecedorProduto.value, quantidadeProduto.value, unidadeProduto.value, valorUnitarioProduto.value)
+    console.log("Dados do formulário: ", barcodeProduto.value, nomeProduto.value, caminhoImagem, precoProduto.value)
     if (idProduto.value === "") {
         const produto = {
             barcodePro: barcodeProduto.value,
             nomePro: nomeProduto.value,
             caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
-            precoPro: precoProduto.value,
-            fornecedorPro: fornecedorProduto.value,         // Novo campo
-            quantidadePro: quantidadeProduto.value,         // Novo campo
-            unidadePro: unidadeProduto.value,               // Novo campo
-            valorUnitarioPro: valorUnitarioProduto.value    // Novo campo
+            precoPro: precoProduto.value
         }
         window.api.novoProduto(produto)
     } else {
@@ -83,61 +76,26 @@ formProduto.addEventListener('submit', async (event) => {
             barcodePro: barcodeProduto.value,
             nomePro: nomeProduto.value,
             caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
-            precoPro: precoProduto.value,
-            fornecedorPro: fornecedorProduto.value,         // Novo campo
-            quantidadePro: quantidadeProduto.value,         // Novo campo
-            unidadePro: unidadeProduto.value,               // Novo campo
-            valorUnitarioPro: valorUnitarioProduto.value    // Novo campo
+            precoPro: precoProduto.value
         }
         window.api.editarProduto(produto)
     }
 })
 
 function buscarProduto() {
-    let barcode = foco.value
-    console.log(barcode)
+    let barcode = foco.value.trim()
+    console.log("Buscando por código de barras:", barcode)
     if (barcode === "") {
         window.api.validarBusca()
         foco.focus()
     } else {
         window.api.buscarProduto(barcode)
         window.api.renderizarProduto((event, dadosProduto) => {
-            console.log(dadosProduto)
-            const produtoRenderizado = JSON.parse(dadosProduto)
-            arrayProduto = produtoRenderizado
-            arrayProduto.forEach((p) => {
-                idProduto.value = p._id
-                barcodeProduto.value = p.barcodeProduto
-                nomeProduto.value = p.nomeProduto
-                precoProduto.value = p.precoProduto
-                fornecedorProduto.value = p.fornecedorProduto        // Novo campo
-                quantidadeProduto.value = p.quantidadeProduto        // Novo campo
-                unidadeProduto.value = p.unidadeProduto              // Novo campo
-                valorUnitarioProduto.value = p.valorUnitarioProduto  // Novo campo
-                if (p.caminhoImagemProduto) {
-                    imagem.src = p.caminhoImagemProduto
-                }
-                foco.value = ""
-                foco.disabled = true
-                btnUpdate.disabled = false
-                btnDelete.disabled = false
-                btnCreate.disabled = true
-                restaurarEnter()
-            })
-        })
-    }
-}
-
-function buscarProdutoPorNome() {
-    let nome = focoNome.value.trim()
-    console.log(nome)
-    if (nome === "") {
-        window.api.validarBusca()
-        focoNome.focus()
-    } else {
-        window.api.buscarProdutoNome(nome)
-        window.api.renderizarProdutoNome((event, dadosProduto) => {
-            console.log(dadosProduto)
+            console.log("Dados recebidos do backend (barcode):", dadosProduto)
+            if (!dadosProduto) {
+                console.log("Nenhum dado recebido para código de barras:", barcode)
+                return
+            }
             const produtoRenderizado = JSON.parse(dadosProduto)
             arrayProduto = produtoRenderizado
             if (arrayProduto.length > 0) {
@@ -146,10 +104,46 @@ function buscarProdutoPorNome() {
                     barcodeProduto.value = p.barcodeProduto
                     nomeProduto.value = p.nomeProduto
                     precoProduto.value = p.precoProduto
-                    fornecedorProduto.value = p.fornecedorProduto        // Novo campo
-                    quantidadeProduto.value = p.quantidadeProduto        // Novo campo
-                    unidadeProduto.value = p.unidadeProduto              // Novo campo
-                    valorUnitarioProduto.value = p.valorUnitarioProduto  // Novo campo
+                    if (p.caminhoImagemProduto) {
+                        imagem.src = p.caminhoImagemProduto
+                    }
+                    foco.value = ""
+                    foco.disabled = true
+                    focoNome.disabled = true
+                    btnUpdate.disabled = false
+                    btnDelete.disabled = false
+                    btnCreate.disabled = true
+                    restaurarEnter()
+                })
+            } else {
+                console.log("Nenhum produto encontrado para o código de barras:", barcode)
+            }
+        })
+    }
+}
+
+function buscarProdutoPorNome() {
+    let nome = focoNome.value.trim()
+    console.log("Buscando por nome:", nome)
+    if (nome === "") {
+        window.api.validarBusca()
+        focoNome.focus()
+    } else {
+        window.api.buscarProdutoNome(nome)
+        window.api.renderizarProdutoNome((event, dadosProduto) => {
+            console.log("Dados recebidos do backend (nome):", dadosProduto)
+            if (!dadosProduto) {
+                console.log("Nenhum dado recebido para nome:", nome)
+                return
+            }
+            const produtoRenderizado = JSON.parse(dadosProduto)
+            arrayProduto = produtoRenderizado
+            if (arrayProduto.length > 0) {
+                arrayProduto.forEach((p) => {
+                    idProduto.value = p._id
+                    barcodeProduto.value = p.barcodeProduto
+                    nomeProduto.value = p.nomeProduto
+                    precoProduto.value = p.precoProduto
                     if (p.caminhoImagemProduto) {
                         imagem.src = p.caminhoImagemProduto
                     }
@@ -162,6 +156,8 @@ function buscarProdutoPorNome() {
                     restaurarEnter()
                     restaurarEnterNome()
                 })
+            } else {
+                console.log("Nenhum produto encontrado para o nome:", nome)
             }
         })
     }
@@ -190,7 +186,7 @@ window.api.setarNomeProduto(() => {
 })
 
 function excluirProduto() {
-    console.log(idProduto.value)
+    console.log("Excluindo produto com ID: ", idProduto.value)
     window.api.deletarProduto(idProduto.value)
 }
 
