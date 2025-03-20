@@ -12,7 +12,8 @@ body {
 
 /* Oculta IDs que não devem ser exibidos */
 #idClient,
-#idSupplier {
+#idSupplier,
+#inputIdProduct {
     display: none;
 }
 

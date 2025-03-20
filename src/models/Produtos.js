@@ -29,14 +29,14 @@ const produtoSchema = new Schema({
         type: String
     },
     quantidadeProduto: { // Novo campo: quantidade
-        type: Number,
+        type: String,
         default: 0
     },
     unidadeProduto: {   // Novo campo: unidade (ex.: un, kg, litro)
         type: String
     },
     valorUnitarioProduto: { // Novo campo: valor unitário
-        type: Number,
+        type: String,
         default: 0
     }
 }, { versionKey: false })

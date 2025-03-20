@@ -637,8 +637,27 @@ ipcMain.on('delete-supplier', async (event, idFornecedor) => {
 
 // CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('update-supplier', async (event, fornecedor) => {
-    console.log(fornecedor)
+    console.log("Dados recebidos para atualização (fornecedor):", fornecedor)
     try {
+        // Verificar se o CNPJ já existe em outro registro, exceto no fornecedor sendo editado
+        const fornecedorExistente = await fornecedorModel.findOne({
+            cnpjFornecedor: fornecedor.cnpjFor,
+            _id: { $ne: fornecedor.idFor } // Exclui o fornecedor atual da busca
+        })
+        if (fornecedorExistente) {
+            dialog.showMessageBox(supplier, {
+                type: 'error',
+                title: "Atenção!",
+                message: "O CNPJ informado já está cadastrado para outro fornecedor.\nVerifique se digitou corretamente.",
+                buttons: ['OK']
+            }).then((result) => {
+                if (result.response === 0) {
+                    event.reply('clear-cnpj')
+                }
+            })
+            return
+        }
+        // Se não houver duplicidade, prosseguir com a atualização
         const fornecedorEditado = await fornecedorModel.findByIdAndUpdate(
             fornecedor.idFor, {
             nomeFornecedor: fornecedor.nomeFor,
@@ -653,10 +672,9 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
             complementoFornecedor: fornecedor.complementoFor,
             bairroFornecedor: fornecedor.bairroFor
         },
-            {
-                new: true
-            }
+            { new: true }
         )
+        console.log("Fornecedor atualizado:", fornecedorEditado)
         dialog.showMessageBox(supplier, {
             type: 'info',
             message: 'Dados do fornecedor alterados com sucesso!',
@@ -667,10 +685,16 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
             }
         })
     } catch (error) {
-        console.log(error)
+        console.log("Erro ao atualizar fornecedor:", error)
+        dialog.showMessageBox(supplier, {
+            type: 'error',
+            title: "Erro",
+            message: "Erro ao atualizar fornecedor: " + error.message,
+            buttons: ['OK']
+        })
     }
 })
-// Fim CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /********************************************/
 /**************** Produtos  *****************/
@@ -790,10 +814,30 @@ ipcMain.on('search-name', async (event, proNome) => {
 // CRUD Update
 ipcMain.on('update-product', async (event, produto) => {
     console.log("Dados recebidos para atualização (produto):", produto)
+    try {
+        // Verificar se o código de barras já existe em outro registro, exceto no produto sendo editado
+        const produtoExistente = await produtoModel.findOne({
+            barcodeProduto: produto.barcodePro,
+            _id: { $ne: produto.idPro } // Exclui o produto atual da busca
+        })
+        if (produtoExistente) {
+            dialog.showMessageBox(product, {
+                type: 'error',
+                title: "Atenção!",
+                message: "O Código de Barras informado já está cadastrado para outro produto.\nVerifique se digitou corretamente.",
+                buttons: ['OK']
+            }).then((result) => {
+                if (result.response === 0) {
+                    event.reply('clear-barcode')
+                }
+            })
+            return
+        }
 
-    if (produto.caminhoImagemPro === "") {
-        try {
-            const produtoEditado = await produtoModel.findByIdAndUpdate(
+        // Se não houver duplicidade, prosseguir com a atualização
+        let produtoEditado
+        if (produto.caminhoImagemPro === "") {
+            produtoEditado = await produtoModel.findByIdAndUpdate(
                 produto.idPro, {
                 barcodeProduto: produto.barcodePro,
                 nomeProduto: produto.nomePro,
@@ -806,12 +850,8 @@ ipcMain.on('update-product', async (event, produto) => {
                 { new: true }
             )
             console.log("Produto atualizado (sem nova imagem):", produtoEditado)
-        } catch (error) {
-            console.log("Erro ao atualizar produto (sem nova imagem):", error)
-        }
-    } else {
-        try {
-            const produtoEditado = await produtoModel.findByIdAndUpdate(
+        } else {
+            produtoEditado = await produtoModel.findByIdAndUpdate(
                 produto.idPro, {
                 barcodeProduto: produto.barcodePro,
                 nomeProduto: produto.nomePro,
@@ -825,20 +865,26 @@ ipcMain.on('update-product', async (event, produto) => {
                 { new: true }
             )
             console.log("Produto atualizado (com nova imagem):", produtoEditado)
-        } catch (error) {
-            console.log("Erro ao atualizar produto (com nova imagem):", error)
         }
-    }
 
-    dialog.showMessageBox(product, {
-        type: 'info',
-        message: 'Dados do produto alterados com sucesso.',
-        buttons: ['OK']
-    }).then((result) => {
-        if (result.response === 0) {
-            event.reply('reset-form')
-        }
-    })
+        dialog.showMessageBox(product, {
+            type: 'info',
+            message: 'Dados do produto alterados com sucesso.',
+            buttons: ['OK']
+        }).then((result) => {
+            if (result.response === 0) {
+                event.reply('reset-form')
+            }
+        })
+    } catch (error) {
+        console.log("Erro ao atualizar produto:", error)
+        dialog.showMessageBox(product, {
+            type: 'error',
+            title: "Erro",
+            message: "Erro ao atualizar produto: " + error.message,
+            buttons: ['OK']
+        })
+    }
 })
 
 // CRUD Delete
