@@ -361,7 +361,7 @@ ipcMain.on('new-client', async (event, cliente) => {
             }
         })
     } catch (error) {
-        if (error.code = 11000) {
+        if (error.code === 11000) {
             dialog.showMessageBox({
                 type: 'error',
                 title: "Atenção!",
