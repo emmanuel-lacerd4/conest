@@ -32,7 +32,7 @@
 
             <hr class="border border-primary border-1 opacity-75">
 
-            <!-- ID do produto (pode ser usado como código interno) -->
+            <!-- ID do produto -->
             <div class="col-md-6">
                 <label for="inputIdProduct" class="form-label">ID</label>
                 <input type="text" class="form-control" id="inputIdProduct" readonly>
@@ -57,18 +57,41 @@
                 <div class="d-flex justify-content-end">
                     <img src="../public/img/camera.png" alt="Imagem" id="imageProductPreview" class="img-fluid">
                 </div>
-
-                <!-- Upload de Imagem -->
                 <div class="d-flex justify-content-end">
                     <input type="button" class="upload-button" value="Upload de imagem" onclick="uploadImage()">
                 </div>
             </div>
 
             <!-- Preço -->
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <label for="inputPrecoProduct" class="form-label">Preço <span class="text-danger">*</span></label>
                 <input class="form-control no-spinner" type="number" id="inputPrecoProduct" spellcheck="false" required
                     step="0.01">
+            </div>
+
+            <!-- Fornecedor -->
+            <div class="col-md-6">
+                <label for="inputFornecedorProduct" class="form-label">Fornecedor</label>
+                <input type="text" class="form-control" id="inputFornecedorProduct" spellcheck="false" maxlength="50">
+            </div>
+
+            <!-- Quantidade -->
+            <div class="col-md-4">
+                <label for="inputQuantidadeProduct" class="form-label">Quantidade</label>
+                <input type="number" class="form-control" id="inputQuantidadeProduct" min="0" step="1">
+            </div>
+
+            <!-- Unidade -->
+            <div class="col-md-4">
+                <label for="inputUnidadeProduct" class="form-label">Unidade</label>
+                <input type="text" class="form-control" id="inputUnidadeProduct" placeholder="ex.: un, kg, litro"
+                    maxlength="10">
+            </div>
+
+            <!-- Valor Unitário -->
+            <div class="col-md-4">
+                <label for="inputValorUnitarioProduct" class="form-label">Valor Unitário</label>
+                <input type="number" class="form-control" id="inputValorUnitarioProduct" step="0.01" min="0">
             </div>
 
             <!-- Botões -->

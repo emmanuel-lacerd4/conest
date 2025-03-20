@@ -24,6 +24,20 @@ const produtoSchema = new Schema({
     },
     precoProduto: {
         type: String
+    },
+    fornecedorProduto: { // Novo campo: fornecedor
+        type: String
+    },
+    quantidadeProduto: { // Novo campo: quantidade
+        type: Number,
+        default: 0
+    },
+    unidadeProduto: {   // Novo campo: unidade (ex.: un, kg, litro)
+        type: String
+    },
+    valorUnitarioProduto: { // Novo campo: valor unitário
+        type: Number,
+        default: 0
     }
 }, { versionKey: false })
 

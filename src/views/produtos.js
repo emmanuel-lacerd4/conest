@@ -2,7 +2,6 @@
  * Processo de renderização da tela de Produtos
  * produtos.html
  */
-
 const foco = document.getElementById('searchProduct')
 const focoNome = document.getElementById('searchProductName')
 
@@ -47,6 +46,10 @@ let nomeProduto = document.getElementById('inputNameProduct')
 let caminhoImagemProduto = document.getElementById('pathImageProduct')
 let imagem = document.getElementById('imageProductPreview')
 let precoProduto = document.getElementById('inputPrecoProduct')
+let fornecedorProduto = document.getElementById('inputFornecedorProduct') // Novo campo
+let quantidadeProduto = document.getElementById('inputQuantidadeProduct') // Novo campo
+let unidadeProduto = document.getElementById('inputUnidadeProduct')     // Novo campo
+let valorUnitarioProduto = document.getElementById('inputValorUnitarioProduct') // Novo campo
 
 let caminhoImagem
 
@@ -61,13 +64,17 @@ async function uploadImage() {
 
 formProduto.addEventListener('submit', async (event) => {
     event.preventDefault()
-    console.log(barcodeProduto.value, nomeProduto.value, caminhoImagem, precoProduto.value)
+    console.log(barcodeProduto.value, nomeProduto.value, caminhoImagem, precoProduto.value, fornecedorProduto.value, quantidadeProduto.value, unidadeProduto.value, valorUnitarioProduto.value)
     if (idProduto.value === "") {
         const produto = {
             barcodePro: barcodeProduto.value,
             nomePro: nomeProduto.value,
             caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
-            precoPro: precoProduto.value
+            precoPro: precoProduto.value,
+            fornecedorPro: fornecedorProduto.value,         // Novo campo
+            quantidadePro: quantidadeProduto.value,         // Novo campo
+            unidadePro: unidadeProduto.value,               // Novo campo
+            valorUnitarioPro: valorUnitarioProduto.value    // Novo campo
         }
         window.api.novoProduto(produto)
     } else {
@@ -76,7 +83,11 @@ formProduto.addEventListener('submit', async (event) => {
             barcodePro: barcodeProduto.value,
             nomePro: nomeProduto.value,
             caminhoImagemPro: caminhoImagem ? caminhoImagem : "",
-            precoPro: precoProduto.value
+            precoPro: precoProduto.value,
+            fornecedorPro: fornecedorProduto.value,         // Novo campo
+            quantidadePro: quantidadeProduto.value,         // Novo campo
+            unidadePro: unidadeProduto.value,               // Novo campo
+            valorUnitarioPro: valorUnitarioProduto.value    // Novo campo
         }
         window.api.editarProduto(produto)
     }
@@ -99,6 +110,10 @@ function buscarProduto() {
                 barcodeProduto.value = p.barcodeProduto
                 nomeProduto.value = p.nomeProduto
                 precoProduto.value = p.precoProduto
+                fornecedorProduto.value = p.fornecedorProduto        // Novo campo
+                quantidadeProduto.value = p.quantidadeProduto        // Novo campo
+                unidadeProduto.value = p.unidadeProduto              // Novo campo
+                valorUnitarioProduto.value = p.valorUnitarioProduto  // Novo campo
                 if (p.caminhoImagemProduto) {
                     imagem.src = p.caminhoImagemProduto
                 }
@@ -131,6 +146,10 @@ function buscarProdutoPorNome() {
                     barcodeProduto.value = p.barcodeProduto
                     nomeProduto.value = p.nomeProduto
                     precoProduto.value = p.precoProduto
+                    fornecedorProduto.value = p.fornecedorProduto        // Novo campo
+                    quantidadeProduto.value = p.quantidadeProduto        // Novo campo
+                    unidadeProduto.value = p.unidadeProduto              // Novo campo
+                    valorUnitarioProduto.value = p.valorUnitarioProduto  // Novo campo
                     if (p.caminhoImagemProduto) {
                         imagem.src = p.caminhoImagemProduto
                     }
