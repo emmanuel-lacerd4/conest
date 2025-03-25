@@ -42,14 +42,14 @@
 
             <!-- CNPJ -->
             <div class="col-md-4">
-                <label for="inputCnpjSupplier" class="form-label">CNPJ <span class="text-danger">*</span></label>
+                <label for="inputCnpjSupplier" class="form-label">CNPJ<span class="text-danger">*</span></label>
                 <input class="form-control" type="text" id="inputCnpjSupplier" spellcheck="false" required
                     maxlength="18">
             </div>
 
             <!-- Celular -->
             <div class="col-md-4">
-                <label for="inputPhoneSupplier" class="form-label">DDD e Celular <span
+                <label for="inputPhoneSupplier" class="form-label">DDD e Celular<span
                         class="text-danger">*</span></label>
                 <input class="form-control" type="tel" id="inputPhoneSupplier" spellcheck="false" required
                     maxlength="15">
@@ -86,8 +86,7 @@
 
             <!-- Endereço -->
             <div class="col-md-8">
-                <label for="inputStreetSupplier" class="form-label">Logradouro <span
-                        class="text-danger">*</span></label>
+                <label for="inputStreetSupplier" class="form-label">Logradouro <span class="text-danger">*</span></label>
                 <input class="form-control" type="text" id="inputStreetSupplier" spellcheck="false" required
                     maxlength="50">
             </div>
@@ -107,8 +106,9 @@
 
             <!-- Bairro -->
             <div class="col-md-4">
-                <label for="inputNeighborhoodSupplier" class="form-label">Bairro</label>
-                <input class="form-control" type="text" id="inputNeighborhoodSupplier" spellcheck="false"
+                <label for="inputNeighborhoodSupplier" class="form-label">Bairro <span
+                        class="text-danger">*</span></label>
+                <input class="form-control" type="text" id="inputNeighborhoodSupplier" spellcheck="false" required
                     maxlength="50">
             </div>
 
@@ -118,7 +118,7 @@
                 <button type="submit" class="btn btn-warning me-2" id="btnUpdate">Editar</button>
                 <button type="button" class="btn btn-danger me-2" id="btnDelete"
                     onclick="excluirFornecedor()">Excluir</button>
-                <button type="reset" class="btn btn-secondary" id="btnReset" onclick="resetForm()">Limpar</button>
+                <button type="reset" class="btn btn-secondary" id="btnReset" onclick="resetForm()"></button>
             </div>
         </form>
     </div>
