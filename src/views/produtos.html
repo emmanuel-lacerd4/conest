@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' script-src 'self' 'unsafe-inline'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
     <title>CONEST - Produtos</title>
     <link rel="stylesheet" href="../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="../public/css/style.css">
@@ -43,10 +43,16 @@
             </div>
 
             <!-- Nome do Produto -->
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <label for="inputNameProduct" class="form-label">Produto <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="inputNameProduct" required spellcheck="false"
                     maxlength="50">
+            </div>
+
+            <!-- Data -->
+            <div class="col-md-4">
+                <label for="inputDataProduct" class="form-label">Data de Cadastro</label>
+                <input type="text" class="form-control" id="inputDataProduct" readonly>
             </div>
 
             <!-- Imagem do Produto -->
@@ -60,7 +66,7 @@
             </div>
 
             <!-- Preço -->
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label for="inputPrecoProduct" class="form-label">Preço <span class="text-danger">*</span></label>
                 <input class="form-control no-spinner" type="number" id="inputPrecoProduct" required step="0.01"
                     min="0">
@@ -69,26 +75,32 @@
             <!-- Fornecedor -->
             <div class="col-md-6">
                 <label for="inputFornecedorProduct" class="form-label">Fornecedor</label>
-                <input type="text" class="form-control" id="inputFornecedorProduct" spellcheck="false" maxlength="50">
+                <select class="form-control" id="inputFornecedorProduct"></select>
             </div>
 
             <!-- Quantidade -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="inputQuantidadeProduct" class="form-label">Quantidade</label>
                 <input type="number" class="form-control" id="inputQuantidadeProduct" min="0" step="1">
             </div>
 
             <!-- Unidade -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="inputUnidadeProduct" class="form-label">Unidade</label>
-                <input type="text" class="form-control" id="inputUnidadeProduct" placeholder="ex.: un, kg, litro"
-                    maxlength="10">
-            </div>
-
-            <!-- Valor Unitário -->
-            <div class="col-md-4">
-                <label for="inputValorUnitarioProduct" class="form-label">Valor Unitário</label>
-                <input type="number" class="form-control" id="inputValorUnitarioProduct" step="0.01" min="0">
+                <select class="form-control" id="inputUnidadeProduct">
+                    <option value="">Selecione uma unidade</option>
+                    <option value="un">un (Unidade)</option>
+                    <option value="kg">kg (Quilograma)</option>
+                    <option value="g">g (Grama)</option>
+                    <option value="mg">mg (Miligrama)</option>
+                    <option value="l">l (Litro)</option>
+                    <option value="ml">ml (Mililitro)</option>
+                    <option value="m">m (Metro)</option>
+                    <option value="cm">cm (Centímetro)</option>
+                    <option value="mm">mm (Milímetro)</option>
+                    <option value="m²">m² (Metro quadrado)</option>
+                    <option value="m³">m³ (Metro cúbico)</option>
+                </select>
             </div>
 
             <!-- Botões -->

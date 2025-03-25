@@ -2,10 +2,8 @@
  * Modelo de dados (Produtos)
  */
 
-// Importação de bibliotecas
 const { model, Schema } = require('mongoose')
 
-// Criação da estrutura de dados ("tabela") que será usada no banco
 const produtoSchema = new Schema({
     barcodeProduto: {
         type: String,
@@ -25,22 +23,16 @@ const produtoSchema = new Schema({
     precoProduto: {
         type: String
     },
-    fornecedorProduto: { // Novo campo: fornecedor
+    nomeFornecedor: { 
         type: String
     },
-    quantidadeProduto: { // Novo campo: quantidade
+    quantidadeProduto: {
         type: String,
-        default: 0
+        default: "0"
     },
-    unidadeProduto: {   // Novo campo: unidade (ex.: un, kg, litro)
+    unidadeProduto: {
         type: String
-    },
-    valorUnitarioProduto: { // Novo campo: valor unitário
-        type: String,
-        default: 0
     }
 }, { versionKey: false })
 
-// Exportar para o main.js
-// Para modificar o nome da coleção ("tabela"), basta modificar na linha abaixo o rótulo 'Produtos', sempre iniciando com a letra maiuscula
 module.exports = model('Produtos', produtoSchema)

@@ -677,6 +677,17 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
         })
     }
 })
+
+ipcMain.handle('get-all-suppliers', async () => {
+    try {
+        const fornecedores = await fornecedorModel.find().sort({ nomeFornecedor: 1 })
+        // Garantir que o retorno seja sempre um array
+        return Array.isArray(fornecedores) ? fornecedores : []
+    } catch (error) {
+        console.error('Erro ao buscar fornecedores:', error)
+        return []
+    }
+})
 // Fim CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /********************************************/
@@ -706,7 +717,6 @@ ipcMain.handle('open-file-dialog', async () => {
 ipcMain.on('new-product', async (event, produto) => {
     console.log("Dados recebidos do frontend (produto):", produto)
     let caminhoImagemSalvo = ""
-
     try {
         if (produto.caminhoImagemPro) {
             const uploadDir = path.join(__dirname, 'uploads')
@@ -723,12 +733,10 @@ ipcMain.on('new-product', async (event, produto) => {
             nomeProduto: produto.nomePro,
             caminhoImagemProduto: caminhoImagemSalvo,
             precoProduto: produto.precoPro,
-            fornecedorProduto: produto.fornecedorPro,
+            nomeFornecedor: produto.fornecedorPro, // Corrigido para nomeFornecedor
             quantidadeProduto: produto.quantidadePro,
-            unidadeProduto: produto.unidadePro,
-            valorUnitarioProduto: produto.valorUnitarioPro
+            unidadeProduto: produto.unidadePro
         })
-        console.log("Novo produto a ser salvo:", novoProduto)
         await novoProduto.save()
         dialog.showMessageBox({
             type: 'info',
@@ -741,7 +749,6 @@ ipcMain.on('new-product', async (event, produto) => {
             }
         })
     } catch (error) {
-        console.log("Erro completo ao cadastrar produto:", error)
         if (error.code === 11000) {
             dialog.showMessageBox({
                 type: 'error',
@@ -754,7 +761,7 @@ ipcMain.on('new-product', async (event, produto) => {
                 }
             })
         } else {
-            console.log("Outro erro ao cadastrar produto:", error.message)
+            console.log("Erro ao cadastrar produto:", error)
             dialog.showMessageBox({
                 type: 'error',
                 title: "Erro",
@@ -769,14 +776,12 @@ ipcMain.on('new-product', async (event, produto) => {
 ipcMain.on('search-product', async (event, barcode) => {
     console.log("Recebido pedido de busca por código de barras:", barcode)
     try {
-        const dadosProduto = await produtoModel.find({
-            barcodeProduto: barcode
-        })
+        const dadosProduto = await produtoModel.find({ barcodeProduto: barcode })
         console.log("Resultado da busca por código de barras:", dadosProduto)
         event.reply('product-data', JSON.stringify(dadosProduto))
     } catch (error) {
         console.log("Erro ao buscar produto por código de barras:", error)
-        event.reply('product-data', JSON.stringify([])) // Retorna array vazio em caso de erro
+        event.reply('product-data', JSON.stringify([]))
     }
 })
 
@@ -790,7 +795,22 @@ ipcMain.on('search-name', async (event, proNome) => {
         event.reply('product-data-name', JSON.stringify(dadosProduto))
     } catch (error) {
         console.log("Erro ao buscar produto por nome:", error)
-        event.reply('product-data-name', JSON.stringify([])) // Retorna array vazio em caso de erro
+        event.reply('product-data-name', JSON.stringify([]))
+    }
+})
+
+// Busca por fornecedor
+ipcMain.on('search-product-by-supplier', async (event, nomeFornecedor) => {
+    console.log("Recebido pedido de busca por fornecedor:", nomeFornecedor)
+    try {
+        const dadosProduto = await produtoModel.find({
+            nomeFornecedor: nomeFornecedor // Corrigido para nomeFornecedor
+        })
+        console.log("Resultado da busca por fornecedor:", dadosProduto)
+        event.reply('product-data-supplier', JSON.stringify(dadosProduto))
+    } catch (error) {
+        console.log("Erro ao buscar produto por fornecedor:", error)
+        event.reply('product-data-supplier', JSON.stringify([]))
     }
 })
 
@@ -798,10 +818,9 @@ ipcMain.on('search-name', async (event, proNome) => {
 ipcMain.on('update-product', async (event, produto) => {
     console.log("Dados recebidos para atualização (produto):", produto)
     try {
-        // Verificar se o código de barras já existe em outro registro, exceto no produto sendo editado
         const produtoExistente = await produtoModel.findOne({
             barcodeProduto: produto.barcodePro,
-            _id: { $ne: produto.idPro } // Exclui o produto atual da busca
+            _id: { $ne: produto.idPro }
         })
         if (produtoExistente) {
             dialog.showMessageBox(product, {
@@ -814,10 +833,8 @@ ipcMain.on('update-product', async (event, produto) => {
                     event.reply('clear-barcode')
                 }
             })
-            return // Impede a atualização
+            return
         }
-
-        // Se não houver duplicidade, prosseguir com a atualização
         let produtoEditado
         if (produto.caminhoImagemPro === "") {
             produtoEditado = await produtoModel.findByIdAndUpdate(
@@ -825,16 +842,11 @@ ipcMain.on('update-product', async (event, produto) => {
                 barcodeProduto: produto.barcodePro,
                 nomeProduto: produto.nomePro,
                 precoProduto: produto.precoPro,
-                fornecedorProduto: produto.fornecedorPro,
+                nomeFornecedor: produto.fornecedorPro, // Corrigido para nomeFornecedor
                 quantidadeProduto: produto.quantidadePro,
-                unidadeProduto: produto.unidadePro,
-                valorUnitarioProduto: produto.valorUnitarioPro
-            },
-                { new: true }
-            )
-            console.log("Produto atualizado (sem nova imagem):", produtoEditado)
+                unidadeProduto: produto.unidadePro
+            }, { new: true })
         } else {
-            // Copiar a nova imagem, se fornecida
             const uploadDir = path.join(__dirname, 'uploads')
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir)
@@ -842,23 +854,18 @@ ipcMain.on('update-product', async (event, produto) => {
             const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
             const uploads = path.join(uploadDir, fileName)
             fs.copyFileSync(produto.caminhoImagemPro, uploads)
-
             produtoEditado = await produtoModel.findByIdAndUpdate(
                 produto.idPro, {
                 barcodeProduto: produto.barcodePro,
                 nomeProduto: produto.nomePro,
                 caminhoImagemProduto: uploads,
                 precoProduto: produto.precoPro,
-                fornecedorProduto: produto.fornecedorPro,
+                nomeFornecedor: produto.fornecedorPro, // Corrigido para nomeFornecedor
                 quantidadeProduto: produto.quantidadePro,
-                unidadeProduto: produto.unidadePro,
-                valorUnitarioProduto: produto.valorUnitarioPro
-            },
-                { new: true }
-            )
-            console.log("Produto atualizado (com nova imagem):", produtoEditado)
+                unidadeProduto: produto.unidadePro
+            }, { new: true })
         }
-
+        console.log("Produto atualizado:", produtoEditado)
         dialog.showMessageBox(product, {
             type: 'info',
             message: 'Dados do produto alterados com sucesso.',
@@ -888,11 +895,9 @@ ipcMain.on('delete-product', async (event, idProduto) => {
         title: 'Atenção!',
         message: 'Tem certeza que deseja excluir este produto?'
     })
-    console.log("Resposta do usuário:", response)
     if (response === 1) {
         try {
             const produtoExcluido = await produtoModel.findByIdAndDelete(idProduto)
-            console.log("Produto excluído:", produtoExcluido)
             dialog.showMessageBox({
                 type: 'info',
                 title: 'Aviso',
