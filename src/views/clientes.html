@@ -41,8 +41,7 @@
             <!-- CPF -->
             <div class="col-md-4">
                 <label for="inputCpfClient" class="form-label">CPF <span class="text-danger">*</span></label>
-                <input class="form-control" type="text" id="inputCpfClient" spellcheck="false" required maxlength="14"
-                    oninput="formatarCPF(this)" onblur="validarCPF(this)">
+                <input class="form-control" type="text" id="inputCpfClient" spellcheck="false" required maxlength="14">
                 <small id="cpfError" class="text-danger d-none">CPF INVÁLIDO!</small>
             </div>
 
@@ -64,7 +63,7 @@
             <div class="col-md-4">
                 <label for="inputCepClient" class="form-label">CEP</label>
                 <input class="form-control" type="tel" id="inputCepClient" spellcheck="false" maxlength="9"
-                    oninput="formatarCEP(this)" onblur="buscarCep(this.value.replace(/\D/g, ''))">
+                    onblur="buscarCep(this.value.replace(/\D/g, ''))">
             </div>
 
             <!-- Cidade -->
@@ -115,7 +114,8 @@
     </div>
 
     <script src="../public/js/bootstrap.min.js"></script>
-    <script src="clientes.js"></script>
+    <script src="../public/js/script.js"></script>
+    <script src="./clientes.js"></script>
 </body>
 
 </html>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://viacep.com.br">
+        content="default-src 'self' script-src 'self' 'unsafe-inline' connect-src 'self' https://viacep.com.br">
     <title>CONEST - Fornecedores</title>
     <link rel="stylesheet" href="../public/css/bootstrap.min.css">
     <link rel="stylesheet" href="../public/css/style.css">
@@ -18,7 +18,7 @@
             <!-- Buscar fornecedores -->
             <div class="col-md-8">
                 <input type="text" class="form-control" id="searchSupplier" placeholder="Buscar fornecedor..."
-                    maxlength="30" spellcheck="false">
+                    maxlength="50" spellcheck="false">
             </div>
             <div class="col-md-4">
                 <button type="button" class="btn btn-primary w-100" id="btnRead"
@@ -28,7 +28,7 @@
             <hr class="my-4">
 
             <!-- ID do fornecedor (oculto) -->
-            <div class="col-md-6 d-none" id="idSupplier">
+            <div class="col-md-6 d-none">
                 <input class="form-control" type="text" id="inputIdSupplier" placeholder="ID" readonly>
             </div>
 
@@ -44,8 +44,7 @@
             <div class="col-md-4">
                 <label for="inputCnpjSupplier" class="form-label">CNPJ <span class="text-danger">*</span></label>
                 <input class="form-control" type="text" id="inputCnpjSupplier" spellcheck="false" required
-                    maxlength="18" oninput="formatarCNPJ(this)" onblur="validarCNPJ(this)">
-                <small id="cnpjError" class="text-danger d-none">CNPJ INVÁLIDO!</small>
+                    maxlength="18">
             </div>
 
             <!-- Celular -->
@@ -53,13 +52,13 @@
                 <label for="inputPhoneSupplier" class="form-label">DDD e Celular <span
                         class="text-danger">*</span></label>
                 <input class="form-control" type="tel" id="inputPhoneSupplier" spellcheck="false" required
-                    maxlength="15" oninput="formatarTelefone(this)">
+                    maxlength="15">
             </div>
 
             <!-- Site -->
             <div class="col-md-8">
-                <label for="inputSiteSupplier" class="form-label">Site <span class="text-danger">*</span></label>
-                <input class="form-control" type="url" id="inputSiteSupplier" spellcheck="false" required maxlength="50"
+                <label for="inputSiteSupplier" class="form-label">Site</label>
+                <input class="form-control" type="url" id="inputSiteSupplier" spellcheck="false" maxlength="50"
                     pattern="https://.*" title="O site deve começar com https://">
                 <button type="button" class="mt-2 btn btn-outline-secondary" onclick="acessarSite()">Acessar
                     site</button>
@@ -67,39 +66,43 @@
 
             <!-- CEP -->
             <div class="col-md-4">
-                <label for="inputCepSupplier" class="form-label">CEP</label>
-                <input class="form-control" type="tel" id="inputCepSupplier" spellcheck="false" maxlength="9"
-                    oninput="formatarCEP(this)" onblur="buscarCep(this.value.replace(/\D/g, ''))">
+                <label for="inputCepSupplier" class="form-label">CEP <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" id="inputCepSupplier" spellcheck="false" required maxlength="9">
             </div>
 
             <!-- Cidade -->
             <div class="col-md-8">
-                <label for="inputCitySupplier" class="form-label">Cidade</label>
-                <input class="form-control" type="text" id="inputCitySupplier" spellcheck="false" maxlength="50">
+                <label for="inputCitySupplier" class="form-label">Cidade <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" id="inputCitySupplier" spellcheck="false" required
+                    maxlength="50">
             </div>
 
             <!-- Estado -->
             <div class="col-md-4">
-                <label for="inputStateSupplier" class="form-label">Estado</label>
-                <input class="form-control" type="text" id="inputStateSupplier" spellcheck="false" maxlength="2">
+                <label for="inputStateSupplier" class="form-label">Estado <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" id="inputStateSupplier" spellcheck="false" required
+                    maxlength="2">
             </div>
 
             <!-- Endereço -->
             <div class="col-md-8">
-                <label for="inputStreetSupplier" class="form-label">Logradouro</label>
-                <input class="form-control" type="text" id="inputStreetSupplier" spellcheck="false" maxlength="50">
+                <label for="inputStreetSupplier" class="form-label">Logradouro <span
+                        class="text-danger">*</span></label>
+                <input class="form-control" type="text" id="inputStreetSupplier" spellcheck="false" required
+                    maxlength="50">
             </div>
 
             <!-- Número do Endereço -->
             <div class="col-md-4">
-                <label for="inputNumberSupplier" class="form-label">Número</label>
-                <input class="form-control" type="text" id="inputNumberSupplier" spellcheck="false" maxlength="5">
+                <label for="inputNumberSupplier" class="form-label">Número <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" id="inputNumberSupplier" spellcheck="false" required
+                    maxlength="5">
             </div>
 
             <!-- Complemento -->
             <div class="col-md-4">
                 <label for="inputComplementSupplier" class="form-label">Complemento</label>
-                <input class="form-control" type="text" id="inputComplementSupplier" spellcheck="false" maxlength="5">
+                <input class="form-control" type="text" id="inputComplementSupplier" spellcheck="false" maxlength="20">
             </div>
 
             <!-- Bairro -->
@@ -115,13 +118,14 @@
                 <button type="submit" class="btn btn-warning me-2" id="btnUpdate">Editar</button>
                 <button type="button" class="btn btn-danger me-2" id="btnDelete"
                     onclick="excluirFornecedor()">Excluir</button>
-                <button type="reset" class="btn btn-secondary" id="btnReset" onclick="resetForm()"></button>
+                <button type="reset" class="btn btn-secondary" id="btnReset" onclick="resetForm()">Limpar</button>
             </div>
         </form>
     </div>
 
     <script src="../public/js/bootstrap.min.js"></script>
-    <script src="fornecedores.js"></script>
+    <script src="../public/js/script.js"></script>
+    <script src="./fornecedores.js"></script>
 </body>
 
 </html>

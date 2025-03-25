@@ -332,7 +332,6 @@ ipcMain.on('notice-client', () => {
 })
 
 // CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Recebimento dos dados de formulário clientes.
 ipcMain.on('new-client', async (event, cliente) => {
     console.log(cliente)
     try {
@@ -381,20 +380,12 @@ ipcMain.on('new-client', async (event, cliente) => {
 
 // CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('search-client', async (event, cliNome) => {
-    // Teste de recebimento do nome do cliente a ser pesquisado(passo 2).
     console.log(cliNome)
-    //Passos 3 e 4 - Pesquisar no banco de dados o cliente pelo nome.
-    // find() -> buscar no banco de dados (mongoose).
-    // RegExp -> filtro pelo nome do cliente 'i' insensitive (maiúsculo ou minúsculo).
-    // Atenção: nomeCliente -> model | cliNome -> renderizador.
     try {
         const dadosCliente = await clienteModel.find({
             nomeCliente: new RegExp(cliNome, 'i')
         })
-        console.log(dadosCliente) // Teste dos passos 3 e 4.
-        // Passo 5 - slide -> enviar os dados do cliente para o renderizador (JSON.stringfy converte para JSON).
-
-        // Melhoria na experiência do usuário (se não existir o cliente cadstrado, enviar mensagem e questionar se o usuário deseja cadastrar um novo cliente).
+        console.log(dadosCliente)
         if (dadosCliente.length === 0) {
             dialog.showMessageBox({
                 type: 'warning',
@@ -405,10 +396,8 @@ ipcMain.on('search-client', async (event, cliNome) => {
             }).then((result) => {
                 console.log(result)
                 if (result.response === 0) {
-                    // Enviar ao renderizador um pedido para setar o nome do cliente (trazendo do campo de busca) e liberar o botão adicionar.
                     event.reply('set-nameClient')
                 } else {
-                    // Enviar ao renderizador um pedido para limpar os campos do formulário.
                     event.reply('reset-form')
                 }
             })
@@ -422,20 +411,15 @@ ipcMain.on('search-client', async (event, cliNome) => {
 
 // CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('delete-client', async (event, idCliente) => {
-    // Teste de recebimento do id do cliente (passo 2 - slide)
     console.log(idCliente)
-    // Confirmação antes de excluir o cliente (IMPORTANTE!)
-    // Client é a variável ref a janela de clientes.
     const { response } = await dialog.showMessageBox(client, {
         type: 'warning',
         buttons: ['Cancelar', 'Excluir'], //[0,1]
         title: 'Atenção!',
         message: 'Tem certeza que deseja excluir este cliente?'
     })
-    // Apoio a lógica.
     console.log(response)
     if (response === 1) {
-        // Passo 3 slide.
         try {
             const clienteExcluido = await clienteModel.findByIdAndDelete(idCliente)
             dialog.showMessageBox({
@@ -452,7 +436,7 @@ ipcMain.on('delete-client', async (event, idCliente) => {
 })
 // Fim do CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Inicio do CRUD UPDATE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ipcMain.on('update-client', async (event, cliente) => {
     console.log("Dados recebidos para atualização (cliente):", cliente)
     try {
@@ -469,11 +453,12 @@ ipcMain.on('update-client', async (event, cliente) => {
                 buttons: ['OK']
             }).then((result) => {
                 if (result.response === 0) {
-                    event.reply('clear-cpf')
+                    event.reply('clear-cpf') // Limpa o campo CPF no frontend
                 }
             })
-            return
+            return // Impede a atualização se o CPF já existir
         }
+
         // Se não houver duplicidade, prosseguir com a atualização
         const clienteEditado = await clienteModel.findByIdAndUpdate(
             cliente.idCli, {
@@ -491,6 +476,7 @@ ipcMain.on('update-client', async (event, cliente) => {
         },
             { new: true }
         )
+
         console.log("Cliente atualizado:", clienteEditado)
         dialog.showMessageBox(client, {
             type: 'info',
@@ -511,10 +497,7 @@ ipcMain.on('update-client', async (event, cliente) => {
         })
     }
 })
-// Fim do CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// Fim do CRUD UPDATE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /***********************************************/
 /**************** Fornecedores ****************/
@@ -655,7 +638,7 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
                     event.reply('clear-cnpj')
                 }
             })
-            return
+            return // Impede a atualização
         }
         // Se não houver duplicidade, prosseguir com a atualização
         const fornecedorEditado = await fornecedorModel.findByIdAndUpdate(
@@ -831,7 +814,7 @@ ipcMain.on('update-product', async (event, produto) => {
                     event.reply('clear-barcode')
                 }
             })
-            return
+            return // Impede a atualização
         }
 
         // Se não houver duplicidade, prosseguir com a atualização
@@ -851,11 +834,20 @@ ipcMain.on('update-product', async (event, produto) => {
             )
             console.log("Produto atualizado (sem nova imagem):", produtoEditado)
         } else {
+            // Copiar a nova imagem, se fornecida
+            const uploadDir = path.join(__dirname, 'uploads')
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir)
+            }
+            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
+            const uploads = path.join(uploadDir, fileName)
+            fs.copyFileSync(produto.caminhoImagemPro, uploads)
+
             produtoEditado = await produtoModel.findByIdAndUpdate(
                 produto.idPro, {
                 barcodeProduto: produto.barcodePro,
                 nomeProduto: produto.nomePro,
-                caminhoImagemProduto: produto.caminhoImagemPro,
+                caminhoImagemProduto: uploads,
                 precoProduto: produto.precoPro,
                 fornecedorProduto: produto.fornecedorPro,
                 quantidadeProduto: produto.quantidadePro,
