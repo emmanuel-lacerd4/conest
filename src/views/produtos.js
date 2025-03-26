@@ -54,80 +54,77 @@ async function carregarFornecedores() {
     try {
         const fornecedores = await window.api.buscarTodosFornecedores()
         const fornecedorSelect = document.getElementById('inputFornecedorProduct')
+
+        // Limpar o select e adicionar a opção padrão
         fornecedorSelect.innerHTML = '<option value="">Selecione um fornecedor</option>'
 
-        // Verificar se fornecedores é um array e tem elementos válidos
+        // Verificar se há fornecedores e preencher o dropdown
         if (Array.isArray(fornecedores) && fornecedores.length > 0) {
-            // Filtrar elementos válidos e ordenar
-            const fornecedoresValidos = fornecedores
-                .filter(fornecedor => fornecedor && typeof fornecedor.nomeFornecedor === 'string')
-                .sort((a, b) => a.nomeFornecedor.localeCompare(b.nomeFornecedor))
-
-            // Preencher o select com os fornecedores válidos
-            fornecedoresValidos.forEach(fornecedor => {
-                const option = document.createElement('option')
-                option.value = fornecedor.nomeFornecedor
-                option.textContent = fornecedor.nomeFornecedor
-                fornecedorSelect.appendChild(option)
+            fornecedores.forEach(fornecedor => {
+                if (fornecedor.nomeFornecedor) { // Garantir que nomeFornecedor existe
+                    const option = document.createElement('option')
+                    option.value = fornecedor.nomeFornecedor
+                    option.textContent = fornecedor.nomeFornecedor
+                    fornecedorSelect.appendChild(option)
+                }
             })
         } else {
-            console.warn('Nenhum fornecedor válido encontrado.')
+            fornecedorSelect.innerHTML += '<option value="">Nenhum fornecedor cadastrado</option>'
         }
     } catch (error) {
         console.error('Erro ao carregar fornecedores:', error)
+        const fornecedorSelect = document.getElementById('inputFornecedorProduct')
+        fornecedorSelect.innerHTML = '<option value="">Erro ao carregar fornecedores</option>'
     }
 }
 
-async function uploadImage() {
-    caminhoImagem = await window.api.selecionarArquivo()
-    if (caminhoImagem) {
-        imagem.src = `file://${caminhoImagem}`
-    }
-    document.getElementById('btnCreate').focus()
-}
-
-formProduto.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const barcodeLimpo = barcodeProduto.value.replace(/\D/g, '')
-    const camposIds = ['inputBarcodeProduct', 'inputNameProduct', 'inputPrecoProduct']
-    if (!verificarCampos(camposIds)) return
-
-    const produto = {
-        idPro: idProduto.value || '',
-        barcodePro: barcodeLimpo,
-        nomePro: nomeProduto.value,
-        caminhoImagemPro: caminhoImagem || '',
-        precoPro: precoProduto.value,
-        fornecedorPro: nomeFornecedorProduto.value,
-        quantidadePro: quantidadeProduto.value || '0',
-        unidadePro: unidadeProduto.value
-    }
-
-    if (idProduto.value === '') {
-        window.api.novoProduto(produto)
-    } else {
-        window.api.editarProduto(produto)
-    }
+// Manter as variáveis globais e eventos iniciais
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('btnUpdate').disabled = true
+    document.getElementById('btnDelete').disabled = true
+    foco.focus()
+    carregarFornecedores()
 })
 
-function buscarProduto() {
+// Função para tecla Enter (apenas para código de barras)
+function teclaEnter(event) {
+    if (event.key === "Enter") {
+        event.preventDefault()
+        buscarProduto()
+    }
+}
+
+// Remover listener de Enter para nome
+function teclaEnterNome(event) {
+    // Removido, pois a busca por nome será apenas pelo botão
+}
+
+// Restaurar Enter
+function restaurarEnter() {
+    foco.removeEventListener('keydown', teclaEnter)
+}
+
+// Adicionar listener apenas para o campo de código
+foco.addEventListener('keydown', teclaEnter)
+
+// Função de busca por código (com Enter)
+async function buscarProduto() {
     let barcode = foco.value.trim()
     if (barcode === '') {
         window.api.validarBusca()
         foco.focus()
     } else {
         window.api.buscarProduto(barcode)
-        window.api.renderizarProduto((event, dadosProduto) => {
+        window.api.renderizarProduto(async (event, dadosProduto) => {
             if (!dadosProduto) return
             const produtoRenderizado = JSON.parse(dadosProduto)
             arrayProduto = produtoRenderizado
-            arrayProduto.forEach((p) => {
+            arrayProduto.forEach(async (p) => {
                 idProduto.value = p._id
                 barcodeProduto.value = p.barcodeProduto
                 nomeProduto.value = p.nomeProduto
                 dataProduto.value = new Date(p.dataCadastro).toLocaleDateString('pt-BR')
                 precoProduto.value = p.precoProduto
-                nomeFornecedorProduto.value = p.nomeFornecedor || ''
                 quantidadeProduto.value = p.quantidadeProduto || '0'
                 unidadeProduto.value = p.unidadeProduto || ''
                 if (p.caminhoImagemProduto) imagem.src = p.caminhoImagemProduto
@@ -138,30 +135,31 @@ function buscarProduto() {
                 document.getElementById('btnDelete').disabled = false
                 document.getElementById('btnCreate').disabled = true
                 restaurarEnter()
-                carregarFornecedores() // Recarregar a lista para garantir sincronia
+                await carregarFornecedores()
+                nomeFornecedorProduto.value = p.nomeFornecedor || ''
             })
         })
     }
 }
 
-function buscarProdutoPorNome() {
+// Função de busca por nome (com botão)
+async function buscarProdutoPorNome() {
     let nome = focoNome.value.trim()
     if (nome === '') {
         window.api.validarBusca()
         focoNome.focus()
     } else {
         window.api.buscarProdutoNome(nome)
-        window.api.renderizarProdutoNome((event, dadosProduto) => {
+        window.api.renderizarProdutoNome(async (event, dadosProduto) => {
             if (!dadosProduto) return
             const produtoRenderizado = JSON.parse(dadosProduto)
             arrayProduto = produtoRenderizado
-            arrayProduto.forEach((p) => {
+            arrayProduto.forEach(async (p) => {
                 idProduto.value = p._id
                 barcodeProduto.value = p.barcodeProduto
                 nomeProduto.value = p.nomeProduto
                 dataProduto.value = new Date(p.dataCadastro).toLocaleDateString('pt-BR')
                 precoProduto.value = p.precoProduto
-                nomeFornecedorProduto.value = p.nomeFornecedor || ''
                 quantidadeProduto.value = p.quantidadeProduto || '0'
                 unidadeProduto.value = p.unidadeProduto || ''
                 if (p.caminhoImagemProduto) imagem.src = p.caminhoImagemProduto
@@ -171,8 +169,8 @@ function buscarProdutoPorNome() {
                 document.getElementById('btnUpdate').disabled = false
                 document.getElementById('btnDelete').disabled = false
                 document.getElementById('btnCreate').disabled = true
-                restaurarEnter()
-                carregarFornecedores() // Recarregar a lista para garantir sincronia
+                await carregarFornecedores()
+                nomeFornecedorProduto.value = p.nomeFornecedor || ''
             })
         })
     }
@@ -244,6 +242,7 @@ document.getElementById('inputBarcodeProduct').addEventListener('input', functio
 nomeFornecedorProduto.addEventListener('change', function () {
     if (this.value) {
         buscarProdutoPorFornecedor()
+        carregarFornecedores()
     }
 })
 
@@ -255,7 +254,14 @@ window.api.resetarFormulario(() => {
     resetForm()
 })
 
+// No resetForm, recarregar fornecedores
 function resetForm() {
-    location.reload()
-    carregarFornecedores() // Garantir que a lista seja recarregada ao resetar
+    formProduto.reset()
+    imagem.src = '../public/img/camera.png'
+    foco.disabled = false
+    focoNome.disabled = false
+    document.getElementById('btnUpdate').disabled = true
+    document.getElementById('btnDelete').disabled = true
+    document.getElementById('btnCreate').disabled = false
+    carregarFornecedores()
 }

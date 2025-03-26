@@ -680,9 +680,8 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 
 ipcMain.handle('get-all-suppliers', async () => {
     try {
-        const fornecedores = await fornecedorModel.find().sort({ nomeFornecedor: 1 })
-        // Garantir que o retorno seja sempre um array
-        return Array.isArray(fornecedores) ? fornecedores : []
+        const fornecedores = await fornecedorModel.find({}, 'nomeFornecedor').sort({ nomeFornecedor: 1 })
+        return fornecedores || [] // Retorna apenas o campo nomeFornecedor em ordem alfabética
     } catch (error) {
         console.error('Erro ao buscar fornecedores:', error)
         return []

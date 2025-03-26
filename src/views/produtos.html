@@ -23,10 +23,13 @@
                 <input type="text" class="form-control" id="searchProductName" placeholder="Buscar por nome..."
                     maxlength="50" spellcheck="false">
             </div>
+            
             <div class="col-md-4">
                 <button type="button" class="btn btn-primary w-100" id="btnRead"
-                    onclick="buscarProduto()">Buscar</button>
+                    onclick="buscarProdutoPorNome()">Buscar</button>
             </div>
+
+            
 
             <hr class="my-4">
 
@@ -75,7 +78,9 @@
             <!-- Fornecedor -->
             <div class="col-md-6">
                 <label for="inputFornecedorProduct" class="form-label">Fornecedor</label>
-                <select class="form-control" id="inputFornecedorProduct"></select>
+                <select class="form-control" id="inputFornecedorProduct" name="fornecedor">
+                    <option value="">Selecione um fornecedor</option>
+                </select>
             </div>
 
             <!-- Quantidade -->
