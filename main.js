@@ -30,17 +30,15 @@ function createWindow() {
     win = new BrowserWindow({
         width: 1280,
         height: 720,
-        resizable: false, // Impede redimensionamento
+        resizable: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
     })
-    // Menu personalizado
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 
     win.loadFile('./src/views/index.html')
 
-    // Botões
     ipcMain.on('open-client', () => {
         clientWindow()
     })
@@ -65,10 +63,10 @@ function aboutWindow() {
     const main = BrowserWindow.getFocusedWindow()
     if (main) {
         about = new BrowserWindow({
-            width: 854,  // Largura
-            height: 480,  // Altura
+            width: 854,
+            height: 480,
             autoHideMenuBar: true,
-            resizable: false, // Impede redimensionamento
+            resizable: false,
             minimizable: false,
             parent: main,
             modal: true,
@@ -97,7 +95,7 @@ function clientWindow() {
         client = new BrowserWindow({
             width: 1280,
             height: 720,
-            resizable: false, // Impede redimensionamento.
+            resizable: false,
             autoHideMenuBar: true,
             parent: main,
             modal: true,
@@ -106,7 +104,7 @@ function clientWindow() {
             }
         })
     }
-    client.maximize() // Tela cheia.
+    client.maximize()
 
     client.loadFile('./src/views/clientes.html')
 }
@@ -120,7 +118,7 @@ function supplierWindow() {
         supplier = new BrowserWindow({
             width: 1280,
             height: 720,
-            resizable: false, // Impede redimensionamento.
+            resizable: false,
             autoHideMenuBar: true,
             parent: main,
             modal: true,
@@ -129,7 +127,7 @@ function supplierWindow() {
             }
         })
     }
-    supplier.maximize() // Tela cheia.
+    supplier.maximize()
 
     supplier.loadFile('./src/views/fornecedores.html')
 }
@@ -143,7 +141,7 @@ function productWindow() {
         product = new BrowserWindow({
             width: 1280,
             height: 720,
-            resizable: false, // Impede redimensionamento.
+            resizable: false,
             autoHideMenuBar: true,
             parent: main,
             modal: true,
@@ -152,7 +150,7 @@ function productWindow() {
             }
         })
     }
-    product.maximize() // Tela cheia.
+    product.maximize()
 
     product.loadFile('./src/views/produtos.html')
 }
@@ -166,7 +164,7 @@ function reportWindow() {
         report = new BrowserWindow({
             width: 1280,
             height: 720,
-            resizable: false, // Impede redimensionamento.
+            resizable: false,
             autoHideMenuBar: true,
             parent: main,
             modal: true,
@@ -175,13 +173,12 @@ function reportWindow() {
             }
         })
     }
-    report.maximize() // Tela cheia.
+    report.maximize()
 
     report.loadFile('./src/views/relatorios.html')
 }
 
 app.whenReady().then(() => {
-    //Registrar atalho global para devtools em qualquer janela ativa
     globalShortcut.register('Ctrl+Shift+I', () => {
         const tools = BrowserWindow.getFocusedWindow()
         if (tools) {
@@ -189,26 +186,18 @@ app.whenReady().then(() => {
         }
     })
 
-    // Desregistrar atalho globais antes de sair
     app.on('will-quit', () => {
         globalShortcut.unregisterAll()
     })
 
     createWindow()
-    // Melhor local para estabelecer a conexão com o banco de dados
-    // Importar antes o módulo de conexão no início do código
-    // No MongoDB é mais eficiente manter uma única conexão aberta durante todo o tempo de vida do aplicativo e usá-la quando necessário. Fechar e reabrir constantemente a conexão aumenta a sobrecarga e reduz o desempenho do servidor.
-    // Conexão com o banco ao iniciar a aplicação
     ipcMain.on('db-connect', async (event) => {
-        // A linha abaixo estabelece a conexão com o banco de dados
         await conectar()
-        // Enviar ao renderizador uma mensagem para trocar o ícone status do banco de dados (delay de 0.5s para sincronizar).
         setTimeout(() => {
             event.reply('db-message', "conectado")
-        }, 500) // 1000ms = 1s
+        }, 500)
     })
 
-    // Desconectar do banco de dados ao encerrar a aplicação
     app.on('before-quit', async () => {
         await desconectar()
     })
@@ -226,88 +215,48 @@ app.on('window-all-closed', () => {
     }
 })
 
-// Reduzir logs não críticos (mensagens no console quando executar Devtools).
 app.commandLine.appendSwitch('log-level', '3')
 
 const template = [
     {
         label: 'Cadastro',
         submenu: [
-            {
-                label: 'Clientes',
-                click: () => clientWindow()
-            },
-            {
-                label: 'Fornecedores',
-                click: () => supplierWindow()
-            },
-            {
-                label: 'Produtos',
-                click: () => productWindow()
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'Sair',
-                accelerator: 'Alt+F4',
-                click: () => app.quit()
-            }
+            { label: 'Clientes', click: () => clientWindow() },
+            { label: 'Fornecedores', click: () => supplierWindow() },
+            { label: 'Produtos', click: () => productWindow() },
+            { type: 'separator' },
+            { label: 'Sair', accelerator: 'Alt+F4', click: () => app.quit() }
         ]
     },
     {
         label: 'Relatórios',
         submenu: [
-            {
-                label: 'Clientes',
-                click: () => gerarRelatorioClientes()
-            },
-            {
-                label: 'Fornecedores',
-                click: () => gerarRelatorioFornecedores()
-            },
-            {
-                label: 'Produtos',
-                click: () => gerarRelatorioProdutos()
-            }
+            { label: 'Clientes', click: () => gerarRelatorioClientes() },
+            { label: 'Fornecedores', click: () => gerarRelatorioFornecedores() },
+            { label: 'Produtos', click: () => gerarRelatorioProdutos() }
         ]
     },
     {
         label: 'Zoom',
         submenu: [
-            {
-                label: 'Aplicar zoom',
-                role: 'zoomIn'
-            },
-            {
-                label: 'Reduzir',
-                role: 'zoomOut'
-            },
-            {
-                label: 'Restaurar o zoom padrão',
-                role: 'resetZoom'
-            },
+            { label: 'Aplicar zoom', role: 'zoomIn' },
+            { label: 'Reduzir', role: 'zoomOut' },
+            { label: 'Restaurar o zoom padrão', role: 'resetZoom' }
         ]
     },
     {
         label: 'Ajuda',
         submenu: [
-            {
-                label: 'Repositório',
-                click: () => shell.openExternal('https://github.com/emmanuel-lacerd4/conest')
-            },
-            {
-                label: 'Sobre',
-                click: () => aboutWindow()
-            }
+            { label: 'Repositório', click: () => shell.openExternal('https://github.com/emmanuel-lacerd4/conest') },
+            { label: 'Sobre', click: () => aboutWindow() }
         ]
     }
 ]
+
 /***********************************************/
 /****************** Validações *****************/
 /***********************************************/
 
-// Aviso para buscas em campo vazio.
 ipcMain.on('dialog-search', () => {
     dialog.showMessageBox({
         type: 'warning',
@@ -321,7 +270,6 @@ ipcMain.on('dialog-search', () => {
 /****************** Clientes *******************/
 /***********************************************/
 
-// Informação (pop-up) ao abrir a janela.
 ipcMain.on('notice-client', () => {
     dialog.showMessageBox({
         type: 'info',
@@ -331,7 +279,7 @@ ipcMain.on('notice-client', () => {
     })
 })
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Create
 ipcMain.on('new-client', async (event, cliente) => {
     console.log(cliente)
     try {
@@ -368,7 +316,7 @@ ipcMain.on('new-client', async (event, cliente) => {
                 buttons: ['OK']
             }).then((result) => {
                 if (result.response === 0) {
-                    event.reply('clear-cpf') // Novo evento para limpar e focar o CPF
+                    event.reply('clear-cpf')
                 }
             })
         } else {
@@ -376,9 +324,8 @@ ipcMain.on('new-client', async (event, cliente) => {
         }
     }
 })
-// Fim do CRUD Create <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read
 ipcMain.on('search-client', async (event, cliNome) => {
     console.log(cliNome)
     try {
@@ -407,14 +354,13 @@ ipcMain.on('search-client', async (event, cliNome) => {
         console.log(error)
     }
 })
-// Fim do CRUD Read <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Delete
 ipcMain.on('delete-client', async (event, idCliente) => {
     console.log(idCliente)
     const { response } = await dialog.showMessageBox(client, {
         type: 'warning',
-        buttons: ['Cancelar', 'Excluir'], //[0,1]
+        buttons: ['Cancelar', 'Excluir'],
         title: 'Atenção!',
         message: 'Tem certeza que deseja excluir este cliente?'
     })
@@ -434,16 +380,14 @@ ipcMain.on('delete-client', async (event, idCliente) => {
         }
     }
 })
-// Fim do CRUD Delete <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-// Inicio do CRUD UPDATE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Update
 ipcMain.on('update-client', async (event, cliente) => {
     console.log("Dados recebidos para atualização (cliente):", cliente)
     try {
-        // Verificar se o CPF já existe em outro registro, exceto no cliente sendo editado
         const clienteExistente = await clienteModel.findOne({
             cpfCliente: cliente.cpfCli,
-            _id: { $ne: cliente.idCli } // Exclui o cliente atual da busca
+            _id: { $ne: cliente.idCli }
         })
         if (clienteExistente) {
             dialog.showMessageBox(client, {
@@ -453,13 +397,12 @@ ipcMain.on('update-client', async (event, cliente) => {
                 buttons: ['OK']
             }).then((result) => {
                 if (result.response === 0) {
-                    event.reply('clear-cpf') // Limpa o campo CPF no frontend
+                    event.reply('clear-cpf')
                 }
             })
-            return // Impede a atualização se o CPF já existir
+            return
         }
 
-        // Se não houver duplicidade, prosseguir com a atualização
         const clienteEditado = await clienteModel.findByIdAndUpdate(
             cliente.idCli, {
             nomeCliente: cliente.nomeCli,
@@ -497,19 +440,17 @@ ipcMain.on('update-client', async (event, cliente) => {
         })
     }
 })
-// Fim do CRUD UPDATE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /***********************************************/
 /**************** Fornecedores ****************/
 /*********************************************/
 
-// Acessar site externo
 ipcMain.on('url-site', (event, site) => {
     let url = site.url
     shell.openExternal(url)
 })
 
-// CRUD Create >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Create
 ipcMain.on('new-supplier', async (event, fornecedor) => {
     console.log("Dados recebidos do frontend:", fornecedor)
     try {
@@ -562,7 +503,7 @@ ipcMain.on('new-supplier', async (event, fornecedor) => {
     }
 })
 
-// CRUD Read >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Read
 ipcMain.on('search-supplier', async (event, forNome) => {
     console.log(forNome)
     try {
@@ -592,7 +533,7 @@ ipcMain.on('search-supplier', async (event, forNome) => {
     }
 })
 
-// CRUD Delete >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Delete
 ipcMain.on('delete-supplier', async (event, idFornecedor) => {
     console.log(idFornecedor)
     const { response } = await dialog.showMessageBox(supplier, {
@@ -618,14 +559,13 @@ ipcMain.on('delete-supplier', async (event, idFornecedor) => {
     }
 })
 
-// CRUD Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CRUD Update
 ipcMain.on('update-supplier', async (event, fornecedor) => {
     console.log("Dados recebidos para atualização (fornecedor):", fornecedor)
     try {
-        // Verificar se o CNPJ já existe em outro registro, exceto no fornecedor sendo editado
         const fornecedorExistente = await fornecedorModel.findOne({
             cnpjFornecedor: fornecedor.cnpjFor,
-            _id: { $ne: fornecedor.idFor } // Exclui o fornecedor atual da busca
+            _id: { $ne: fornecedor.idFor }
         })
         if (fornecedorExistente) {
             dialog.showMessageBox(supplier, {
@@ -638,9 +578,8 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
                     event.reply('clear-cnpj')
                 }
             })
-            return // Impede a atualização
+            return
         }
-        // Se não houver duplicidade, prosseguir com a atualização
         const fornecedorEditado = await fornecedorModel.findByIdAndUpdate(
             fornecedor.idFor, {
             nomeFornecedor: fornecedor.nomeFor,
@@ -681,13 +620,12 @@ ipcMain.on('update-supplier', async (event, fornecedor) => {
 ipcMain.handle('get-all-suppliers', async () => {
     try {
         const fornecedores = await fornecedorModel.find({}, 'nomeFornecedor').sort({ nomeFornecedor: 1 })
-        return fornecedores || [] // Retorna apenas o campo nomeFornecedor em ordem alfabética
+        return fornecedores.map(f => f.nomeFornecedor)
     } catch (error) {
         console.error('Erro ao buscar fornecedores:', error)
         return []
     }
 })
-// Fim CRUD Update <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /********************************************/
 /**************** Produtos  *****************/
@@ -717,24 +655,25 @@ ipcMain.on('new-product', async (event, produto) => {
     console.log("Dados recebidos do frontend (produto):", produto)
     let caminhoImagemSalvo = ""
     try {
-        if (produto.caminhoImagemPro) {
+        if (produto.caminhoImagemProduto) {
             const uploadDir = path.join(__dirname, 'uploads')
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir)
             }
-            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
+            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemProduto)}`
             const uploads = path.join(uploadDir, fileName)
-            fs.copyFileSync(produto.caminhoImagemPro, uploads)
+            fs.copyFileSync(produto.caminhoImagemProduto, uploads)
             caminhoImagemSalvo = uploads
         }
         const novoProduto = new produtoModel({
-            barcodeProduto: produto.barcodePro,
-            nomeProduto: produto.nomePro,
+            barcodeProduto: produto.barcodeProduto,
+            nomeProduto: produto.nomeProduto,
             caminhoImagemProduto: caminhoImagemSalvo,
-            precoProduto: produto.precoPro,
-            nomeFornecedor: produto.fornecedorPro, // Corrigido para nomeFornecedor
-            quantidadeProduto: produto.quantidadePro,
-            unidadeProduto: produto.unidadePro
+            dataCadastro: produto.dataCadastro,
+            precoProduto: produto.precoProduto,
+            nomeFornecedor: produto.nomeFornecedor,
+            quantidadeProduto: produto.quantidadeProduto,
+            unidadeProduto: produto.unidadeProduto
         })
         await novoProduto.save()
         dialog.showMessageBox({
@@ -773,43 +712,54 @@ ipcMain.on('new-product', async (event, produto) => {
 
 // CRUD Read
 ipcMain.on('search-product', async (event, barcode) => {
-    console.log("Recebido pedido de busca por código de barras:", barcode)
     try {
         const dadosProduto = await produtoModel.find({ barcodeProduto: barcode })
-        console.log("Resultado da busca por código de barras:", dadosProduto)
-        event.reply('product-data', JSON.stringify(dadosProduto))
+        if (dadosProduto.length === 0) {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: 'Produtos',
+                message: 'Produto não cadastrado.\nDeseja cadastrar este produto?',
+                defaultId: 0,
+                buttons: ['Sim', 'Não']
+            }).then((result) => {
+                if (result.response === 0) {
+                    event.reply('set-barcode')
+                } else {
+                    event.reply('reset-form')
+                }
+            })
+        } else {
+            event.reply('product-data', JSON.stringify(dadosProduto))
+        }
     } catch (error) {
-        console.log("Erro ao buscar produto por código de barras:", error)
-        event.reply('product-data', JSON.stringify([]))
+        console.log(error)
     }
 })
 
 ipcMain.on('search-name', async (event, proNome) => {
-    console.log("Recebido pedido de busca por nome:", proNome)
     try {
         const dadosProduto = await produtoModel.find({
             nomeProduto: new RegExp(proNome, 'i')
         })
-        console.log("Resultado da busca por nome:", dadosProduto)
-        event.reply('product-data-name', JSON.stringify(dadosProduto))
+        if (dadosProduto.length === 0) {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: 'Produtos',
+                message: 'Produto não cadastrado.\nDeseja cadastrar este produto?',
+                defaultId: 0,
+                buttons: ['Sim', 'Não']
+            }).then((result) => {
+                if (result.response === 0) {
+                    event.reply('set-nameProduct')
+                } else {
+                    event.reply('reset-form')
+                }
+            })
+        } else {
+            event.reply('product-data-name', JSON.stringify(dadosProduto))
+        }
     } catch (error) {
-        console.log("Erro ao buscar produto por nome:", error)
-        event.reply('product-data-name', JSON.stringify([]))
-    }
-})
-
-// Busca por fornecedor
-ipcMain.on('search-product-by-supplier', async (event, nomeFornecedor) => {
-    console.log("Recebido pedido de busca por fornecedor:", nomeFornecedor)
-    try {
-        const dadosProduto = await produtoModel.find({
-            nomeFornecedor: nomeFornecedor // Corrigido para nomeFornecedor
-        })
-        console.log("Resultado da busca por fornecedor:", dadosProduto)
-        event.reply('product-data-supplier', JSON.stringify(dadosProduto))
-    } catch (error) {
-        console.log("Erro ao buscar produto por fornecedor:", error)
-        event.reply('product-data-supplier', JSON.stringify([]))
+        console.log(error)
     }
 })
 
@@ -818,8 +768,8 @@ ipcMain.on('update-product', async (event, produto) => {
     console.log("Dados recebidos para atualização (produto):", produto)
     try {
         const produtoExistente = await produtoModel.findOne({
-            barcodeProduto: produto.barcodePro,
-            _id: { $ne: produto.idPro }
+            barcodeProduto: produto.barcodeProduto,
+            _id: { $ne: produto._id }
         })
         if (produtoExistente) {
             dialog.showMessageBox(product, {
@@ -835,33 +785,33 @@ ipcMain.on('update-product', async (event, produto) => {
             return
         }
         let produtoEditado
-        if (produto.caminhoImagemPro === "") {
+        if (!produto.caminhoImagemProduto) {
             produtoEditado = await produtoModel.findByIdAndUpdate(
-                produto.idPro, {
-                barcodeProduto: produto.barcodePro,
-                nomeProduto: produto.nomePro,
-                precoProduto: produto.precoPro,
-                nomeFornecedor: produto.fornecedorPro, // Corrigido para nomeFornecedor
-                quantidadeProduto: produto.quantidadePro,
-                unidadeProduto: produto.unidadePro
+                produto._id, {
+                barcodeProduto: produto.barcodeProduto,
+                nomeProduto: produto.nomeProduto,
+                precoProduto: produto.precoProduto,
+                nomeFornecedor: produto.nomeFornecedor,
+                quantidadeProduto: produto.quantidadeProduto,
+                unidadeProduto: produto.unidadeProduto
             }, { new: true })
         } else {
             const uploadDir = path.join(__dirname, 'uploads')
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir)
             }
-            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemPro)}`
+            const fileName = `${Date.now()}_${path.basename(produto.caminhoImagemProduto)}`
             const uploads = path.join(uploadDir, fileName)
-            fs.copyFileSync(produto.caminhoImagemPro, uploads)
+            fs.copyFileSync(produto.caminhoImagemProduto, uploads)
             produtoEditado = await produtoModel.findByIdAndUpdate(
-                produto.idPro, {
-                barcodeProduto: produto.barcodePro,
-                nomeProduto: produto.nomePro,
+                produto._id, {
+                barcodeProduto: produto.barcodeProduto,
+                nomeProduto: produto.nomeProduto,
                 caminhoImagemProduto: uploads,
-                precoProduto: produto.precoPro,
-                nomeFornecedor: produto.fornecedorPro, // Corrigido para nomeFornecedor
-                quantidadeProduto: produto.quantidadePro,
-                unidadeProduto: produto.unidadePro
+                precoProduto: produto.precoProduto,
+                nomeFornecedor: produto.nomeFornecedor,
+                quantidadeProduto: produto.quantidadeProduto,
+                unidadeProduto: produto.unidadeProduto
             }, { new: true })
         }
         console.log("Produto atualizado:", produtoEditado)
@@ -914,150 +864,111 @@ ipcMain.on('delete-product', async (event, idProduto) => {
 /**************** Relatórios ****************/
 /********************************************/
 
-// Relatório de Clientes
 async function gerarRelatorioClientes() {
     try {
-        // Listar os clientes por ordem alfabética.
         const clientes = await clienteModel.find().sort({ nomeCliente: 1 })
         console.log(clientes)
-        // Formatação do documento.
-        const doc = new jsPDF('p', 'mm', 'a4') //p portrait | l landscape.
-        // Tamanho da fonte (título).
+        const doc = new jsPDF('p', 'mm', 'a4')
         doc.setFontSize(16)
-        // Escrever um texto (título).
-        doc.text("Relatório de Clientes", 16, 10) // X, Y (mm).
-        // Data
+        doc.text("Relatório de Clientes", 16, 10)
         const dataAtual = new Date().toLocaleDateString('pt-BR')
         doc.setFontSize(12)
         doc.text(`Data: ${dataAtual}`, 160, 10)
-        // Variável de apoio para formatação da altura do conteúdo.
         let y = 45
         doc.text("Nome", 14, y)
         doc.text("Celular", 80, y)
         doc.text("E-mail", 130, y)
         y += 5
-        // Desenhar uma linha.
-        doc.setLineWidth(0.5) // Expessura da linha.
-        doc.line(10, y, 200, y) // Inicio, fim.
+        doc.setLineWidth(0.5)
+        doc.line(10, y, 200, y)
         y += 10
-        // Renderizar os clientes (vetor)
         clientes.forEach((c) => {
-            // Se ultrapassar o limite da folha (A4 = 270mm) adicionar outra página.
             if (y > 250) {
                 doc.addPage()
-                y = 20 // Cabeçalho da outra pagina.
+                y = 20
             }
             doc.text(c.nomeCliente, 14, y)
             doc.text(c.foneCliente, 80, y)
             doc.text(c.emailCliente || "N/A", 130, y)
-            y += 10 // Quebra de linha
+            y += 10
         })
-        // Setar o caminho do arquivo temporário.
         const tempDir = app.getPath('temp')
-        const filePath = path.join(tempDir, 'clientes.pdf') // Nome do arquivo.
-        // Salvar temporariamente o arquivo.
+        const filePath = path.join(tempDir, 'clientes.pdf')
         doc.save(filePath)
-        // Abrir o arquivo no navegador padrão.
         shell.openPath(filePath)
     } catch (error) {
         console.log(error)
     }
 }
 
-// Relatório de Fornecedores
 async function gerarRelatorioFornecedores() {
     try {
-        // Listar os fornecedores por ordem alfabética.
         const fornecedores = await fornecedorModel.find().sort({ nomeFornecedor: 1 })
         console.log(fornecedores)
-        // Formatação do documento.
-        const doc = new jsPDF('p', 'mm', 'a4') //p portrait | l landscape.
-        // Tamanho da fonte (título).
+        const doc = new jsPDF('p', 'mm', 'a4')
         doc.setFontSize(16)
-        // Escrever um texto (título).
-        doc.text("Relatório de Fornecedores", 16, 10) // X, Y (mm).
-        // Data
+        doc.text("Relatório de Fornecedores", 16, 10)
         const dataAtual = new Date().toLocaleDateString('pt-BR')
         doc.setFontSize(12)
         doc.text(`Data: ${dataAtual}`, 160, 10)
-        // Variável de apoio para formatação da altura do conteúdo.
         let y = 45
         doc.text("Nome", 14, y)
         doc.text("Celular", 80, y)
         doc.text("Site", 130, y)
         y += 5
-        // Desenhar uma linha.
-        doc.setLineWidth(0.5) // Expessura da linha.
-        doc.line(10, y, 200, y) // Inicio, fim.
+        doc.setLineWidth(0.5)
+        doc.line(10, y, 200, y)
         y += 10
-        // Renderizar os fornecedores (vetor)
         fornecedores.forEach((c) => {
-            // Se ultrapassar o limite da folha (A4 = 270mm) adicionar outra página.
             if (y > 250) {
                 doc.addPage()
-                y = 20 // Cabeçalho da outra pagina.
+                y = 20
             }
             doc.text(c.nomeFornecedor, 14, y)
             doc.text(c.foneFornecedor, 80, y)
             doc.text(c.siteFornecedor || "N/A", 130, y)
-            y += 10 // Quebra de linha
+            y += 10
         })
-        // Setar o caminho do arquivo temporário.
         const tempDir = app.getPath('temp')
-        const filePath = path.join(tempDir, 'fornecedores.pdf') // Nome do arquivo.
-        // Salvar temporariamente o arquivo.
+        const filePath = path.join(tempDir, 'fornecedores.pdf')
         doc.save(filePath)
-        // Abrir o arquivo no navegador padrão.
         shell.openPath(filePath)
     } catch (error) {
         console.log(error)
     }
 }
 
-// Relatório de Produtos
 async function gerarRelatorioProdutos() {
     try {
-        // Listar os produtos por ordem alfabética.
         const produtos = await produtoModel.find().sort({ nomeProduto: 1 })
         console.log(produtos)
-        // Formatação do documento.
-        const doc = new jsPDF('p', 'mm', 'a4') //p portrait | l landscape.
-        // Tamanho da fonte (título).
+        const doc = new jsPDF('p', 'mm', 'a4')
         doc.setFontSize(16)
-        // Escrever um texto (título).
-        doc.text("Relatório de Produtos", 16, 10) // X, Y (mm).
-        // Data
+        doc.text("Relatório de Produtos", 16, 10)
         const dataAtual = new Date().toLocaleDateString('pt-BR')
         doc.setFontSize(12)
         doc.text(`Data: ${dataAtual}`, 160, 10)
-        // Variável de apoio para formatação da altura do conteúdo.
         let y = 45
         doc.text("Código de Barras", 14, y)
         doc.text("Produto", 80, y)
         doc.text("Valor", 160, y)
         y += 5
-        // Desenhar uma linha.
-        doc.setLineWidth(0.5) // Expessura da linha.
-        doc.line(10, y, 200, y) // Inicio, fim.
+        doc.setLineWidth(0.5)
+        doc.line(10, y, 200, y)
         y += 10
-        // Renderizar os produtos (vetor)
         produtos.forEach((c) => {
-            // Se ultrapassar o limite da folha (A4 = 270mm) adicionar outra página.
             if (y > 250) {
                 doc.addPage()
-                y = 20 // Cabeçalho da outra pagina.
+                y = 20
             }
             doc.text(c.barcodeProduto, 14, y)
             doc.text(c.nomeProduto, 80, y)
             doc.text(c.precoProduto || "N/A", 160, y)
-            y += 10 // Quebra de linha
+            y += 10
         })
-        // Setar o caminho do arquivo temporário.
         const tempDir = app.getPath('temp')
-        const filePath = path.join(tempDir, 'produtos.pdf') // Nome do arquivo.
-        // Salvar temporariamente o arquivo.
+        const filePath = path.join(tempDir, 'produtos.pdf')
         doc.save(filePath)
-        // Abrir o arquivo no navegador padrão.
         shell.openPath(filePath)
     } catch (error) {
         console.log(error)

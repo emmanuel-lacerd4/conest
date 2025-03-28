@@ -23,7 +23,10 @@ const produtoSchema = new Schema({
     precoProduto: {
         type: String
     },
-    nomeFornecedor: { 
+    nomeFornecedor: {
+        type: String
+    },
+    produtoFornecedor: {
         type: String
     },
     quantidadeProduto: {

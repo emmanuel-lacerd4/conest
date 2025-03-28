@@ -1,6 +1,6 @@
 /**
  * Processo de renderização da tela de Produtos
- * produtos.html
+ * produtos.js
  */
 
 const foco = document.getElementById('searchProduct')
@@ -9,6 +9,7 @@ const focoNome = document.getElementById('searchProductName')
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnUpdate').disabled = true
     document.getElementById('btnDelete').disabled = true
+    document.getElementById('btnCreate').disabled = false
     foco.focus()
     carregarFornecedores()
 })
@@ -51,63 +52,28 @@ let unidadeProduto = document.getElementById('inputUnidadeProduct')
 let caminhoImagem
 
 async function carregarFornecedores() {
+    const fornecedorSelect = document.getElementById('inputFornecedorProduct')
+    fornecedorSelect.innerHTML = '<option value="">Carregando fornecedores...</option>'
+
     try {
         const fornecedores = await window.api.buscarTodosFornecedores()
-        const fornecedorSelect = document.getElementById('inputFornecedorProduct')
-
-        // Limpar o select e adicionar a opção padrão
         fornecedorSelect.innerHTML = '<option value="">Selecione um fornecedor</option>'
-
-        // Verificar se há fornecedores e preencher o dropdown
-        if (Array.isArray(fornecedores) && fornecedores.length > 0) {
-            fornecedores.forEach(fornecedor => {
-                if (fornecedor.nomeFornecedor) { // Garantir que nomeFornecedor existe
-                    const option = document.createElement('option')
-                    option.value = fornecedor.nomeFornecedor
-                    option.textContent = fornecedor.nomeFornecedor
-                    fornecedorSelect.appendChild(option)
-                }
+        if (fornecedores && fornecedores.length > 0) {
+            fornecedores.forEach(nome => {
+                const option = document.createElement('option')
+                option.value = nome
+                option.textContent = nome
+                fornecedorSelect.appendChild(option)
             })
         } else {
             fornecedorSelect.innerHTML += '<option value="">Nenhum fornecedor cadastrado</option>'
         }
     } catch (error) {
         console.error('Erro ao carregar fornecedores:', error)
-        const fornecedorSelect = document.getElementById('inputFornecedorProduct')
         fornecedorSelect.innerHTML = '<option value="">Erro ao carregar fornecedores</option>'
     }
 }
 
-// Manter as variáveis globais e eventos iniciais
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('btnUpdate').disabled = true
-    document.getElementById('btnDelete').disabled = true
-    foco.focus()
-    carregarFornecedores()
-})
-
-// Função para tecla Enter (apenas para código de barras)
-function teclaEnter(event) {
-    if (event.key === "Enter") {
-        event.preventDefault()
-        buscarProduto()
-    }
-}
-
-// Remover listener de Enter para nome
-function teclaEnterNome(event) {
-    // Removido, pois a busca por nome será apenas pelo botão
-}
-
-// Restaurar Enter
-function restaurarEnter() {
-    foco.removeEventListener('keydown', teclaEnter)
-}
-
-// Adicionar listener apenas para o campo de código
-foco.addEventListener('keydown', teclaEnter)
-
-// Função de busca por código (com Enter)
 async function buscarProduto() {
     let barcode = foco.value.trim()
     if (barcode === '') {
@@ -142,7 +108,6 @@ async function buscarProduto() {
     }
 }
 
-// Função de busca por nome (com botão)
 async function buscarProdutoPorNome() {
     let nome = focoNome.value.trim()
     if (nome === '') {
@@ -176,44 +141,26 @@ async function buscarProdutoPorNome() {
     }
 }
 
-function buscarProdutoPorFornecedor() {
-    let fornecedor = nomeFornecedorProduto.value.trim()
-    if (fornecedor === '') {
-        window.api.validarBusca()
-        nomeFornecedorProduto.focus()
-    } else {
-        window.api.buscarProdutoPorFornecedor(fornecedor)
-        window.api.renderizarProdutoPorFornecedor((event, dadosProduto) => {
-            if (!dadosProduto) return
-            const produtoRenderizado = JSON.parse(dadosProduto)
-            arrayProduto = produtoRenderizado
-            if (produtoRenderizado.length === 0) {
-                alert('Nenhum produto encontrado para este fornecedor.')
-                return
-            }
-            arrayProduto.forEach((p) => {
-                idProduto.value = p._id
-                barcodeProduto.value = p.barcodeProduto
-                nomeProduto.value = p.nomeProduto
-                dataProduto.value = new Date(p.dataCadastro).toLocaleDateString('pt-BR')
-                precoProduto.value = p.precoProduto
-                nomeFornecedorProduto.value = p.nomeFornecedor || ''
-                quantidadeProduto.value = p.quantidadeProduto || '0'
-                unidadeProduto.value = p.unidadeProduto || ''
-                if (p.caminhoImagemProduto) imagem.src = p.caminhoImagemProduto
-                foco.value = ''
-                focoNome.value = ''
-                foco.disabled = true
-                focoNome.disabled = true
-                document.getElementById('btnUpdate').disabled = false
-                document.getElementById('btnDelete').disabled = false
-                document.getElementById('btnCreate').disabled = true
-                restaurarEnter()
-                carregarFornecedores() // Recarregar a lista para garantir sincronia
-            })
-        })
+// Evento de submit para cadastrar/editar produto
+formProduto.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const produto = {
+        _id: idProduto.value || undefined,
+        barcodeProduto: barcodeProduto.value,
+        nomeProduto: nomeProduto.value,
+        dataCadastro: new Date(),
+        precoProduto: precoProduto.value,
+        nomeFornecedor: nomeFornecedorProduto.value || '',
+        quantidadeProduto: quantidadeProduto.value || '0',
+        unidadeProduto: unidadeProduto.value || '',
+        caminhoImagemProduto: caminhoImagem || ''
     }
-}
+    if (idProduto.value) {
+        window.api.editarProduto(produto)
+    } else {
+        window.api.novoProduto(produto)
+    }
+})
 
 window.api.setarBarcode(() => {
     barcodeProduto.value = foco.value
@@ -239,12 +186,17 @@ document.getElementById('inputBarcodeProduct').addEventListener('input', functio
     formatarBarcode(this)
 })
 
-nomeFornecedorProduto.addEventListener('change', function () {
-    if (this.value) {
-        buscarProdutoPorFornecedor()
-        carregarFornecedores()
+async function uploadImage() {
+    try {
+        const filePath = await window.api.selecionarArquivo()
+        if (filePath) {
+            caminhoImagem = filePath
+            imagem.src = filePath
+        }
+    } catch (error) {
+        console.error('Erro ao selecionar imagem:', error)
     }
-})
+}
 
 function excluirProduto() {
     window.api.deletarProduto(idProduto.value)
@@ -254,14 +206,6 @@ window.api.resetarFormulario(() => {
     resetForm()
 })
 
-// No resetForm, recarregar fornecedores
 function resetForm() {
-    formProduto.reset()
-    imagem.src = '../public/img/camera.png'
-    foco.disabled = false
-    focoNome.disabled = false
-    document.getElementById('btnUpdate').disabled = true
-    document.getElementById('btnDelete').disabled = true
-    document.getElementById('btnCreate').disabled = false
-    carregarFornecedores()
+    location.reload()
 }
