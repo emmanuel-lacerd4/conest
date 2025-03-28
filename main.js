@@ -864,6 +864,19 @@ ipcMain.on('delete-product', async (event, idProduto) => {
 /**************** Relatórios ****************/
 /********************************************/
 
+// Handlers para geração de relatórios
+ipcMain.on('generate-client-report', async () => {
+    await gerarRelatorioClientes()
+})
+
+ipcMain.on('generate-supplier-report', async () => {
+    await gerarRelatorioFornecedores()
+})
+
+ipcMain.on('generate-product-report', async () => {
+    await gerarRelatorioProdutos()
+})
+
 async function gerarRelatorioClientes() {
     try {
         const clientes = await clienteModel.find().sort({ nomeCliente: 1 })

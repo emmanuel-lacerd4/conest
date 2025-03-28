@@ -38,5 +38,8 @@ contextBridge.exposeInMainWorld('api', {
     setarBarcode: (args) => ipcRenderer.on('set-barcode', args),
     validarBusca: () => ipcRenderer.send('dialog-search'),
     selecionarArquivo: () => ipcRenderer.invoke('open-file-dialog'),
-    clearBarcode: (args) => ipcRenderer.on('clear-barcode', args)
+    clearBarcode: (args) => ipcRenderer.on('clear-barcode', args),
+    gerarRelatorioClientes: () => ipcRenderer.send('generate-client-report'),
+    gerarRelatorioFornecedores: () => ipcRenderer.send('generate-supplier-report'),
+    gerarRelatorioProdutos: () => ipcRenderer.send('generate-product-report')
 })

@@ -145,22 +145,13 @@ footer img {
 #imageProductPreview {
     border: 1px solid #dee2e6;
     border-radius: 0.75rem;
-    /* Bordas mais arredondadas */
-    width: 280px;
-    /* Aumentei o tamanho */
-    height: 280px;
+    width: 200px;
+    height: 200px;
     padding: 0.75rem;
-    /* Aumentei o espaçamento interno */
-    position: fixed;
-    right: 1.5rem;
-    /* Ajustei o posicionamento */
-    bottom: 1.5rem;
     display: block;
     object-fit: contain;
     background-color: #fff;
-    /* Fundo branco para a imagem */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    /* Sombra mais destacada */
 }
 
 /* Remover setas de incremento/decremento do input number */
@@ -278,14 +269,12 @@ h1 {
     border-color: #5a6268;
 }
 
-/* ===== NOVOS ESTILOS ADICIONADOS ===== */
-
 /* Estilos para o container da imagem e upload */
 .image-upload-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    /* Alinha o container à direita */
+    align-items: center;
+    /* Centraliza o container */
     margin-top: 1rem;
     /* Espaçamento superior */
 }
@@ -322,10 +311,6 @@ h1 {
     transition: background-color 0.2s ease;
     text-align: center;
     /* Centraliza o texto no botão */
-    margin-left: auto;
-    /* Centraliza o botão em relação ao ícone */
-    margin-right: auto;
-    /* Centraliza o botão em relação ao ícone */
 }
 
 .upload-button:hover {
@@ -335,5 +320,5 @@ h1 {
 
 /* Adicionando a classe para o estilo de erro */
 .input-error {
-    border: 2px solid red !important
+    border: 2px solid red !important;
 }
